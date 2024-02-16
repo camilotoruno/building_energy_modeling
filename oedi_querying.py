@@ -15,14 +15,14 @@ import os
 import shutil
 import time
 import numpy as np
+import argparse
 
-def create_folder_with_prompt(folder_path):
+def create_folder_with_prompt(folder_path, overwrite):
     skip = False
     """Creates a folder with user confirmation for overwrite."""
     print("\n\n")
     if os.path.exists(folder_path):
-        overwrite = input(f"Folder '{folder_path}' already exists. Overwrite? (y/n): \n")
-        if overwrite.lower() == 'y':
+        if overwrite:
             shutil.rmtree(folder_path)  # Remove existing folder
             os.mkdir(folder_path)  # Create a new one
             print(f"Folder '{folder_path}' overwritten successfully.")
@@ -35,7 +35,7 @@ def create_folder_with_prompt(folder_path):
         
     return skip
 
-def generate_bldg_foldernames():
+def generate_bldg_foldernames(buildstock):
     # bldg zip folder names generated to match the naming scheme on OEDI
     bldg_zip_files = []
     for i, bldg_id in enumerate(buildstock.bldg_id.values):
@@ -47,7 +47,11 @@ def generate_bldg_foldernames():
     return bldg_zip_files
 
 
-def unzip_files(bldg_zip_files):
+def unzip_files(buildstock, bldg_zip_files, **kwargs):
+    download_folder = kwargs.get("download_folder")
+    zip_folder = kwargs.get("zip_folder")
+    unzip_folder = kwargs.get("unzip_folder")
+    
     startTime = time.time()   
     for i, bldg_zip in enumerate(bldg_zip_files): 
         zip_path = os.path.join(download_folder, zip_folder, bldg_zip)
@@ -69,16 +73,20 @@ def unzip_files(bldg_zip_files):
               'minutes.',  end='', flush=True)
         
         
-def download_files(bldg_zip_files):
+def download_files(buildstock, s3, bldg_zip_files, **kwargs):
+    
+    
+    
     startTime = time.time()   
     fails = 0
     failed = []
+    
     for i, bldg_zip in enumerate(bldg_zip_files): 
     
         try: 
             s3.download_file(Bucket="oedi-data-lake", 
-                                Key= oedi_filepath + bldg_zip,
-                                Filename = download_folder + zip_folder + bldg_zip )
+                                Key= kwargs.get("oedi_filepath") + bldg_zip,
+                                Filename = kwargs.get("download_folder") + kwargs.get("zip_folder") + bldg_zip )
         except: 
             print('\nError:', bldg_zip, 'failed to download. File likely not on OEDI\n\n')
             # break
@@ -94,31 +102,50 @@ def download_files(bldg_zip_files):
     
     if fails !=0: print(fails, 'files failed to download')
 
-
-def download_unzip_files(unzip=True):         
         
-    print('Downloading', len(buildstock), 'files from OEDI', end="")
-    if unzip: print(' and unzipping files')
-    else: print()
+def download_unzip(**kwargs):
     
-    bldg_zip_files = generate_bldg_foldernames()
-    download_files(bldg_zip_files)
-    if unzip: unzip_files(bldg_zip_files)
+    buildstock_file = kwargs.get('buildstock_file') 
+    download_folder = kwargs.get('download_folder') 
+    zip_folder = kwargs.get('zip_folder') 
+    unzip_folder = kwargs.get('unzip_folder') 
+    unzip = kwargs.get('unzip') 
+    overwrite = kwargs.get('overwrite')
     
+    # Access parsed arguments
+    buildstock = pd.read_csv(buildstock_file)
+
+    # Rest of your script's logic using these values
+    s3 = boto3.client('s3', config = Config(signature_version = UNSIGNED))
+    
+    # Check for existing output folders
+    skip1 = create_folder_with_prompt(download_folder + zip_folder, overwrite)
+    skip2 = create_folder_with_prompt(download_folder + unzip_folder, overwrite)
+    
+    # downlod / unzip files
+    if not (skip1 or skip2):
             
-buildstock = pd.read_csv("/Users/camilotoruno/anaconda3/envs/research/research_data/filtered_24.02.11baseline_metadata_only.csv")
-oedi_filepath = "nrel-pds-building-stock/end-use-load-profiles-for-us-building-stock/2022/resstock_amy2018_release_1/building_energy_models/upgrade=0/"
-download_folder = "/Users/camilotoruno/anaconda3/envs/research/research_data/"
-zip_folder = "zipped_building_energy_models/"
-unzip_folder = "building_energy_models/"
-s3 = boto3.client('s3', config = Config(signature_version = UNSIGNED))
+        print('Downloading', len(buildstock), 'files from OEDI', end="")
+        if unzip: print(' and unzipping files')
+        else: print()
+        
+        bldg_zip_files = generate_bldg_foldernames(buildstock)
+        download_files(buildstock, s3, bldg_zip_files, **kwargs)
+        if unzip: unzip_files(buildstock, bldg_zip_files, **kwargs)
+        
+        
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Process building energy model files")
 
-# Check for existing output folders
-skip1 = create_folder_with_prompt(download_folder + zip_folder)
-skip2 = create_folder_with_prompt(download_folder + unzip_folder)
+    # Add arguments with appropriate types and help messages
+    parser.add_argument("buildstock_file", type=str, help="Absolute Path to the buildstock CSV file")
+    parser.add_argument("oedi_filepath", type=str, help="Absolute Path to the OEDI files within the downloaded folder")
+    parser.add_argument("download_folder", type=str, help="Absolute Path to the folder containing downloaded files")
+    parser.add_argument("zip_folder", type=str, help="Output building zip folder")
+    parser.add_argument("unzip_folder", type=str, help="Output folder for unzipped buildings")
+    parser.add_argument("--unzip", action="store_true", help="Unzip downloaded files")
 
-# downlod / unzip files
-if not (skip1 or skip2): download_unzip_files(unzip=False)
+    args = parser.parse_args()
 
-
+    download_unzip(**vars(args))    
 

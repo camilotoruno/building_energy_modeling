@@ -55,25 +55,6 @@ class BuildingFolder:
         self.xml = xml
 
 
-ET.register_namespace("", "http://hpxmlonline.com/2019/10")
-ET.register_namespace("xsi", 'http://www.w3.org/2001/XMLSchema-instance')
-ET.register_namespace("", 'http://hpxmlonline.com/2019/10')
-
-download_folder = "/Users/camilotoruno/anaconda3/envs/research/research_data/"
-unzip_folder = "building_energy_models/"
-
-
-# get each folder (one per building), and the schedules and xml file in the foler
-root_dir = os.path.join(download_folder, unzip_folder)
-building_folders = get_folder_file_lists(root_dir)
-
-# for building_folder in building_folders:
-#     modify_xml(building_folder)
-    
-# print('Modified', len(building_folders), 'files')
-
-
-
 def modify_osw_and_run_openstudio(building_folders, json_path, cli_command):
     """
     Iterates through filenames, modifies a JSON entry, and executes OpenStudio workflows.
@@ -112,9 +93,31 @@ def modify_osw_and_run_openstudio(building_folders, json_path, cli_command):
         except subprocess.CalledProcessError as e:
             print(f"Error running OpenStudio CLI for file {building_folder.xml}: {e}")
 
-# Example usage
-json_path = "/Users/camilotoruno/resstock-euss.2022.1/resources/hpxml-measures/workflow/custom-run-hpxml.osw"
-cli_command = "openstudio run --workflow workflow/template-run-hpxml.osw --measures_only"
 
-modify_osw_and_run_openstudio(building_folders, json_path, cli_command)
+def main():
+    ET.register_namespace("", "http://hpxmlonline.com/2019/10")
+    ET.register_namespace("xsi", 'http://www.w3.org/2001/XMLSchema-instance')
+    ET.register_namespace("", 'http://hpxmlonline.com/2019/10')
+    
+    download_folder = "/Users/camilotoruno/anaconda3/envs/research/research_data/"
+    unzip_folder = "building_energy_models/"
+    
+    
+    # get each folder (one per building), and the schedules and xml file in the foler
+    root_dir = os.path.join(download_folder, unzip_folder)
+    building_folders = get_folder_file_lists(root_dir)
+    
+    # for building_folder in building_folders:
+    #     modify_xml(building_folder)
+        
+    # print('Modified', len(building_folders), 'files')
+    
+    
+    
+    # Example usage
+    json_path = "/Users/camilotoruno/resstock-euss.2022.1/resources/hpxml-measures/workflow/custom-run-hpxml.osw"
+    cli_command = "openstudio run --workflow workflow/template-run-hpxml.osw --measures_only"
+    
+    modify_osw_and_run_openstudio(building_folders, json_path, cli_command)
 
+main()
