@@ -6,6 +6,13 @@ Created on Thu Feb 15 23:02:00 2024
 @author: camilotoruno
 """
 
+"""
+TO DO: 
+    in the modify_osw_and_run_openstudio package 
+        modify the generated .idf to point to the correct location for the schedules file we just copied
+"""
+
+
 import oedi_querying 
 import buildstock_filtering 
 import subprocess
@@ -27,24 +34,24 @@ buildstock_folder = "/Users/camilotoruno/anaconda3/envs/research/research_data/"
 buildstock_output_file = "testing.csv"
 output_buildstock_folder = hpxml_measures_folder
 federal_poverty_levels = ['0-100%', '100-150%', '150-200%']
-city_size_limit = 1
-keep_cities = [
-                "AZ, Phoenix",
-                "CA, Los Angeles",
-                "CO, Denver",
-                "FL, Orlando",
-                "GA, Atlanta",
-                "ID, Boise City",
-                "IL, Chicago",
-                "KS, Kansas City",
-                "MA, Boston",
-                "MI, Detroit",
-                "MN, Minneapolis",
-                "NE, Omaha",
-                "NY, New York",
-                "PA, Philadelphia",
-                "TX, Dallas"
-                ]
+city_size_limit = 5
+# keep_cities = [
+#                 "AZ, Phoenix",
+#                 "CA, Los Angeles",
+#                 "CO, Denver",
+#                 "FL, Orlando",
+#                 "GA, Atlanta",
+#                 "ID, Boise City",
+#                 "IL, Chicago",
+#                 "KS, Kansas City",
+#                 "MA, Boston",
+#                 "MI, Detroit",
+#                 "MN, Minneapolis",
+#                 "NE, Omaha",
+#                 "NY, New York",
+#                 "PA, Philadelphia",
+#                 "TX, Dallas"
+#                 ]
 keep_cities = [
                 "MI, Detroit",
                 ]
@@ -78,10 +85,6 @@ oedi_querying.download_unzip(buildstock_file = buildstock_output_file,
                             overwrite= overwrite_download_folders,
                             unzip=True)
 
-
-# # #%%
-
-    
 # modify the .xml files to remove uncessary info 
 xml_modifier.modify_xml_files(oedi_download_folder, unzipped_folders_folder)
 
@@ -95,7 +98,7 @@ modify_osw_and_run_openstudio.modify_and_run(oedi_download_folder = oedi_downloa
                                     verbose=False)
 
                    
-print('Querying and running workflow time (min):', round((time.time()-startTime)/60, 1))
+print('Querying and running OpenStudio workflow time (min):', round((time.time()-startTime)/60, 1))
 
     
     

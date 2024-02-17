@@ -89,11 +89,12 @@ def modify_and_run(oedi_download_folder, osw_path, openstudio_working_dir, cli_c
 
             # copy the generated schedules file to the correct output folder
             generated_schedule = find_file_w_name_fragment('schedule', search_path)
-            
-            print('oedi_download_folder:', oedi_download_folder)
-            print('searching folder: ', search_path)
-            print('generated schedule:', generated_schedule)
             shutil.copy(generated_schedule, building_folder_obj.folder)
+            
+            """
+            TO DO: 
+                point the .idf to the correct location for the schedules file we just copied
+            """
 
         
         except (ValueError, json.JSONDecodeError) as e:
