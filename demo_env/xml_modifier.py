@@ -45,7 +45,7 @@ def modify_xml(building_obj):
                encoding="UTF-8", xml_declaration=True)
     
 
-def get_folder_file_lists(root_dir):
+def get_bldg_objs_list(root_dir):
     """
     Gets a list of files in each subfolder within the given directory.
     
@@ -56,23 +56,26 @@ def get_folder_file_lists(root_dir):
       A dictionary where keys are folder paths and values are lists of files in that folder.
     """
     
-    folders = []
+    building_files_data_objects = []
     i = 0
     for folder in os.listdir(root_dir):
         if os.path.isdir(os.path.join(root_dir, folder)):
             full_path = os.path.join(root_dir, folder)
-            folders.append( BuildingFolder(full_path) )
+            building_files_data_objects.append( BuildingFilesData(full_path) )
             for file in os.listdir(full_path):
                 if "schedules.csv" in file:
-                    folders[i].set_csv(os.path.join(full_path, file))
+                    building_files_data_objects[i].set_csv(os.path.join(full_path, file))
                 elif "in.xml" in file:
-                    folders[i].set_xml(os.path.join(full_path, file))
+                    building_files_data_objects[i].set_xml(os.path.join(full_path, file))
+                elif "in.idf" in file:
+                    building_files_data_objects[i].set_idf(os.path.join(full_path, file))
+                
             i += 1
             
-    return folders
+    return building_files_data_objects
         
 
-class BuildingFolder:
+class BuildingFilesData:
     """
     Represents a custom object with folder, schedule, and xml attributes.
     """
@@ -80,12 +83,16 @@ class BuildingFolder:
         self.folder = folder
         self.csv = None
         self.xml = None
+        self.idf = None
     
     def set_csv(self, csv):
         self.csv = csv
     
     def set_xml(self, xml):
         self.xml = xml
+    
+    def set_idf(self, idf):
+        self.idf = idf
 
 
 def modify_xml_files(oedi_download_folder, unzip_folder):
@@ -95,7 +102,7 @@ def modify_xml_files(oedi_download_folder, unzip_folder):
     
     # get each folder (one per building), and the schedules and xml file in the foler
     root_dir = os.path.join(oedi_download_folder, unzip_folder)
-    building_objects = get_folder_file_lists(root_dir)
+    building_objects = get_bldg_objs_list(root_dir)
     
     for building_obj in building_objects:
         modify_xml(building_obj)

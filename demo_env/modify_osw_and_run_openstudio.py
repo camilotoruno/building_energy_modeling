@@ -28,7 +28,7 @@ def modify_and_run(oedi_download_folder, osw_path, openstudio_working_dir, cli_c
                    unzip_folder, verbose):
     
     """
-    Iterates through filenames, modifies a JSON entry, and executes OpenStudio workflows.
+    Iterates through filenames, modifies a JSON entry, and executes OpenStudio workflow.
     
     Args:
       filenames: A list of filenames.
@@ -39,7 +39,12 @@ def modify_and_run(oedi_download_folder, osw_path, openstudio_working_dir, cli_c
       ValueError: If the JSON file cannot be loaded or modified.
       subprocess.CalledProcessError: If the OpenStudio CLI command fails.
     """
-    
+
+    if not os.path.exists(osw_path):
+        raise FileNotFoundError(f'Openstudio workflow {osw_path} not found') 
+    if not os.path.exists(openstudio_working_dir):
+        raise FileNotFoundError(f'Openstudio directory {openstudio_working_dir} not found')
+
     print('\nGenerating EnergyPlus files..')
     
     ET.register_namespace("", "http://hpxmlonline.com/2019/10")
@@ -50,7 +55,7 @@ def modify_and_run(oedi_download_folder, osw_path, openstudio_working_dir, cli_c
     root_dir = os.path.join(oedi_download_folder, unzip_folder)
     
     # generate building folders objects (holds folder, xml, csv paths)
-    building_folders_objects = xml_modifier.get_folder_file_lists(root_dir)  
+    building_folders_objects = xml_modifier.get_bldg_objs_list(root_dir)  
 
     startTime = time.time()
     for i, building_folder_obj in enumerate(building_folders_objects):
@@ -73,7 +78,7 @@ def modify_and_run(oedi_download_folder, osw_path, openstudio_working_dir, cli_c
                 cwd=openstudio_working_dir,
                 capture_output=True,
                 text=True
-            )
+                )
             
             # Check for errors and process the output
             if result.returncode != 0:
@@ -90,11 +95,6 @@ def modify_and_run(oedi_download_folder, osw_path, openstudio_working_dir, cli_c
             # copy the generated schedules file to the correct output folder
             generated_schedule = find_file_w_name_fragment('schedule', search_path)
             shutil.copy(generated_schedule, building_folder_obj.folder)
-            
-            """
-            TO DO: 
-                point the .idf to the correct location for the schedules file we just copied
-            """
 
         
         except (ValueError, json.JSONDecodeError) as e:
@@ -110,7 +110,9 @@ def modify_and_run(oedi_download_folder, osw_path, openstudio_working_dir, cli_c
               "Estimated time remaining", round(est_time_min - duration, 1), 
               'minutes.', 'Avg speed (sec/.idf):', round(1/rate*60, 1),  end='', flush=True)
     
-    print('\nAll EnergyPlus files generated.\n')    
+    print('\nAll EnergyPlus files generated.\n')  
+
+
 if __name__ == "__main__":
     modify_and_run()
     
