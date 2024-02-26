@@ -20,7 +20,6 @@ import argparse
 def create_folder(folder_path, overwrite):
     skip = False
     """Creates a folder with user confirmation for overwrite."""
-    print("\n\n")
     if os.path.exists(folder_path):
         if overwrite:
             shutil.rmtree(folder_path)  # Remove existing folder
@@ -105,6 +104,7 @@ def download_files(buildstock, s3, bldg_zip_files, **kwargs):
         
 def download_unzip(**kwargs):
     
+    print('Downloading building and schedule files from OEDI...')
     buildstock_file = kwargs.get('buildstock_file') 
     buildstock_folder = kwargs.get('buildstock_folder')
     download_folder = kwargs.get('download_folder') 
