@@ -98,4 +98,10 @@ if args["unzip"]:
     # Reset the .idf files' schedules file path to be relative (assumes schedules in same folder as idf)
     Set_Relative_Schedules_Filepath(building_objects_list, **args)
     
+    # remove original files, keep generated ones
+    for bldg in building_objects_list:
+        print('Removing original (unmodified) files..')
+        os.remove(bldg.schedules)   # remove the original schedules file (keeping the generated one)
+        os.remove(bldg.xml)         # remove the original .xml file (keeping the modified one)
+
 print('Workflow completed')    
