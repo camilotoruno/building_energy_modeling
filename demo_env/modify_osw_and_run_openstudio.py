@@ -24,8 +24,7 @@ def find_file_w_name_fragment(name_fragment, path):
                 return os.path.join(root, file)
 
 
-def modify_and_run(oedi_download_folder, osw_path, openstudio_working_dir, cli_command,
-                   unzip_folder, verbose):
+def modify_and_run(building_folders_objects, **kwargs):
     
     """
     Iterates through filenames, modifies a JSON entry, and executes OpenStudio workflow.
@@ -39,37 +38,43 @@ def modify_and_run(oedi_download_folder, osw_path, openstudio_working_dir, cli_c
       ValueError: If the JSON file cannot be loaded or modified.
       subprocess.CalledProcessError: If the OpenStudio CLI command fails.
     """
+    
+    print('\nGenerating EnergyPlus files..')
+    
+    # load arguments 
+    openstudio_workflow_folder = kwargs.get('openstudio_workflow_folder')
+    openstudio_working_dir = kwargs.get("openstudio_working_dir")
+    osw_path = kwargs.get("osw_path")
+    verbose= kwargs.get('verbose')
 
     if not os.path.exists(osw_path):
         raise FileNotFoundError(f'Openstudio workflow {osw_path} not found') 
     if not os.path.exists(openstudio_working_dir):
         raise FileNotFoundError(f'Openstudio directory {openstudio_working_dir} not found')
+    
+    # construct the command line call to openstudio
+    openstudio_workflow = kwargs.get('openstudio_workflow')
+    openstudio_path = kwargs.get('openstudio_path')
+    cli_command = f"{openstudio_path} run --workflow workflow/{openstudio_workflow} --measures_only"
 
-    print('\nGenerating EnergyPlus files..')
     
     ET.register_namespace("", "http://hpxmlonline.com/2019/10")
     ET.register_namespace("xsi", 'http://www.w3.org/2001/XMLSchema-instance')
     ET.register_namespace("", 'http://hpxmlonline.com/2019/10')
     
-    # get each folder (one per building), and the schedules and xml file in the foler
-    root_dir = os.path.join(oedi_download_folder, unzip_folder)
-    
-    # generate building folders objects (holds folder, xml, csv paths)
-    building_folders_objects = xml_modifier.get_bldg_objs_list(root_dir)  
-
+    # get each folder (one per building), and the schedules and xml file in the foler    
     startTime = time.time()
-    for i, building_folder_obj in enumerate(building_folders_objects):
+    for i, building in enumerate(building_folders_objects):
         try:
             # Load the JSON file
             with open(osw_path , 'r') as f:
-                data = json.load(f)
+                openstudio_workflow_file = json.load(f)
         
-            # Modify the entry with the building_folder_obj
-            data['steps'][0]['arguments']['hpxml_path']  = building_folder_obj.xml  # Replace 'hpxml_path' with the xml filepath
+            openstudio_workflow_file['steps'][0]['arguments']['hpxml_path'] = building.modified_xml  
         
             # Write the modified JSON back
             with open(osw_path, 'w') as f:
-                json.dump(data, f, indent=4)
+                json.dump(openstudio_workflow_file, f, indent=4)
         
             # call the openstudio command line interface
             result = subprocess.run(
@@ -87,21 +92,21 @@ def modify_and_run(oedi_download_folder, osw_path, openstudio_working_dir, cli_c
                 print("OpenStudio output:", result.stdout)
             
             # copy the generated .idf file to the correct output folder
-            generated_idf = os.path.join(oedi_download_folder, 'run/in.idf')
-            shutil.copy(generated_idf, building_folder_obj.folder)
+            generated_idf = os.path.join(openstudio_workflow_folder, 'run', 'in.idf')
+            shutil.copy(generated_idf, building.folder)
             
-            search_path = os.path.join(oedi_download_folder, "generated_files")
-
-            # copy the generated schedules file to the correct output folder
-            generated_schedule = find_file_w_name_fragment('schedule', search_path)
-            shutil.copy(generated_schedule, building_folder_obj.folder)
-
+            # copy the generated schedules file to the correct output folder and save name to bldg object
+            search_path = os.path.join(openstudio_workflow_folder, "generated_files")
+            generated_schedule = find_file_w_name_fragment('schedule', search_path)  # find schedules file in openstudio output folder
+            shutil.copy(generated_schedule, building.folder)
+            building_folders_objects[i].schedules_new = os.path.join(building.folder, os.path.split(generated_schedule)[1])
         
+        # raise errors if they occured whle reading openstudio json file
         except (ValueError, json.JSONDecodeError) as e:
-            raise Exception(f"Error modifying JSON for file {building_folder_obj.xml}: {e}")
+            raise Exception(f"Error modifying JSON for file {building.xml}: {e}")
       
         except subprocess.CalledProcessError as e:
-            raise Exception(f"Error running OpenStudio CLI for file {building_folder_obj.xml}: {e}")
+            raise Exception(f"Error running OpenStudio CLI for file {building.xml}: {e}")
         
         duration = (time.time() - startTime)/60
         rate = (i+1)/duration 
@@ -111,11 +116,12 @@ def modify_and_run(oedi_download_folder, osw_path, openstudio_working_dir, cli_c
               'minutes.', 'Avg speed (sec/.idf):', round(1/rate*60, 1),  end='', flush=True)
     
     print('\nAll EnergyPlus files generated.\n')  
-
-
-if __name__ == "__main__":
-    modify_and_run()
     
+    # update the bldg objects with new files 
+    for i in range(len(building_folders_objects)):
+        building_folders_objects[i].assign_folders_contents()
+        
+    return building_folders_objects
     
     
     
