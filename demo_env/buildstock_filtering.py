@@ -12,9 +12,8 @@ city, and city size.
 import pandas as pd 
 import numpy as np 
 import random
-from argparse import ArgumentParser
 import os 
-
+from building_class import BuildingFilesData
 
 # def det_num_small_cities_can_sim(city_bins):
 #     sum_tot = 0
@@ -127,20 +126,51 @@ def check_unique(buildstock):
     print('unique ratio', len(np.unique(buildstock.bldg_id.values))/len(buildstock))
 
 
-def filtering(buildstock_folder, buildstock_file, federal_poverty_levels, 
-              city_size_limit, keep_cities, exclude_cities, output_file, output_folder,
-              save = False, verbose = False):   
+def filtering(**kwargs): 
+    
+    def initialize_bldg_obj_ls(buildstock):
+        building_objects = [BuildingFilesData(ID) for ID in buildstock['bldg_id'].values ]
+        
+        for i, bldg in enumerate(building_objects):
+            bldg.city = buildstock.loc[i, 'in.city'].split(", ")[1] # remove the state code from city
+            
+        return building_objects
+    
+            
+    buildstock_folder = kwargs.get('buildstock_folder') 
+    buildstock_file = kwargs.get('buildstock_file') 
+    federal_poverty_levels = kwargs.get('federal_poverty_levels') 
+    city_size_limit = kwargs.get('city_size_limit') 
+    keep_cities = kwargs.get('keep_cities') 
+    exclude_cities = kwargs.get('exclude_cities') 
+    
+    output_file = kwargs.get('buildstock_output_file')
+    output_folder = kwargs.get('buildstock_output_folder')
+    
+    if not kwargs.get('save'):
+        save = False
+    else: 
+        save = True
+        
+    if not kwargs.get('verbose'):
+        verbose = False
+
     
     if not os.path.exists(os.path.join(buildstock_folder, buildstock_file)):
         raise OSError(f'Could not find buildstock file {os.path.join(buildstock_folder, buildstock_file)}')
     
+    
     print('Loading buildstock and filtering..')
-    ibuildstock = pd.read_csv(os.path.join(buildstock_folder + buildstock_file))
+    ibuildstock = pd.read_csv(os.path.join(buildstock_folder, buildstock_file), low_memory=False)
     obuildstock = filter_cities(ibuildstock, keep_cities, exclude_cities, verbose)
     obuildstock = filter_poverty(obuildstock, federal_poverty_levels, verbose)
     obuildstock = obuildstock.reset_index(drop=True)   
     # check_unique(obuildstock)
     obuildstock = filter_city_size(obuildstock, city_size_limit, keep_cities, verbose)
+    
+    # create list of bldg objects for workflow
+    building_objects = initialize_bldg_obj_ls(obuildstock)
+        
     # check_unique(obuildstock)
     
     # reset the bldg index ids to ascending (maybe needed if metadata ran thru the ResStock/Openstudio workflows)
@@ -152,7 +182,6 @@ def filtering(buildstock_folder, buildstock_file, federal_poverty_levels,
         print('Filtered buildstock saved at', os.path.join(output_folder, output_file))
     else:
         print('Filtered buildstock not saved!')
-
-if __name__ == "__main__":
-    filtering()
+    
+    return building_objects
 
