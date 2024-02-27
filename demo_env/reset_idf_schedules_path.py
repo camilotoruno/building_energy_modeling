@@ -9,7 +9,7 @@ Created on Thu Feb 22 23:53:49 2024
 from eppy.modeleditor import IDF
 import sys
 import os 
-from xml_modifier import get_bldg_objs_list
+# from xml_modifier import get_bldg_objs_list
 import argparse
 
 def set_idf_schedule_path(idf_filename):
@@ -28,13 +28,11 @@ def set_idf_schedule_path(idf_filename):
     idf_obj.save()
 
 
-def Set_Relative_Schedules_Filepath(**kwargs):
-    print('Resetting scheduels file path in .idf files...')
+def Set_Relative_Schedules_Filepath(building_objects, **kwargs):
+    print('Resetting schedules file path in .idf files...')
     # load the function's arguments 
     iddfile = kwargs.get('iddfile')
     pathnameto_eppy = kwargs.get('pathnameto_eppy') 
-    unzipped_buildings_folder = kwargs.get('unzipped_buildings_folder')
-    openstudio_workflow_dir = kwargs.get('openstudio_workflow_dir')
     
     if not os.path.exists(iddfile):
         raise FileNotFoundError('Correct the path to the .idd file. Find filepath to OpenStudio-3.4.0/EnergyPlus/Energy+.idd') 
@@ -43,8 +41,6 @@ def Set_Relative_Schedules_Filepath(**kwargs):
     
     sys.path.append(pathnameto_eppy)
     IDF.setiddname(iddfile)
-
-    building_objects = get_bldg_objs_list(os.path.join(openstudio_workflow_dir, unzipped_buildings_folder))
     
     for building in building_objects:
         set_idf_schedule_path(building.idf)
