@@ -13,23 +13,7 @@ import pandas as pd
 import numpy as np 
 import random
 import os 
-from building_class import BuildingFilesData
-
-# def det_num_small_cities_can_sim(city_bins):
-#     sum_tot = 0
-#     city_bins = city_bins.sort_values()
-#     city_count = 2
-#     for i in range(0, len(city_bins)):
-#         if sum_tot + city_bins[i] < city_count*400:
-#             sum_tot = sum_tot + city_bins[i]
-#         else: break
-    
-#     for j in range(0, i):
-#         print(city_bins.index[j])
-#     print(i, 'cities for price of ', city_count)
-    
-#     print('\n\nRemember to re-ID the BUILDING ID!')
-    
+from building_class import BuildingFilesData  
 
 def filter_cities(buildstock, keep_cities, exclude_cities, verbose):
     # note this modifies the original buildstock object (?)
@@ -77,6 +61,10 @@ def filter_city_size(buildstock, city_size_limit, keep_cities, verbose):
             all_values = list(range(num_houses_in_city))
         
             # Shuffle the list to randomize the order
+            random.seed(0)      # use the same seed so that if the same exact 
+                                # number of houses are required (from the same / for all cities )
+                                # the list is consistent. 
+                                
             random.shuffle(all_values)
             
             # Select the desired number of unique values from the shuffled list
@@ -99,7 +87,21 @@ def filter_city_size(buildstock, city_size_limit, keep_cities, verbose):
             rbuildstock = pd.concat([rbuildstock, city_buildstock.iloc[ rows_2_keep ] ],
                                     axis= 0,
                                     ignore_index=True)
-    
+            
+            # # CODE BELOW FAILS FOR UNKOWN REASON 
+            # # deal with all potential cases of dataframe(s) being empty to resolve Warning
+            # # 
+            # if rbuildstock.empty and not city_buildstock.iloc[rows_2_keep].empty:
+            #     rbuildstock = city_buildstock.iloc[rows_2_keep].copy()  # Assign directly
+            # elif rbuildstock.empty and city_buildstock.iloc[rows_2_keep].empty:
+            #     rbuildstock = pd.DataFrame(columns = buildstock.columns)
+            # elif city_buildstock.iloc[rows_2_keep].empty:
+            #     rbuildstock = rbuildstock.copy()
+            # else:
+            #     rbuildstock = pd.concat([rbuildstock, city_buildstock.iloc[ rows_2_keep ] ],
+            #             axis= 0,
+            #             ignore_index=True)
+                
         
         return rbuildstock
     
@@ -122,6 +124,7 @@ def filter_poverty(buildstock, acceptable_federal_poverty_levels, verbose):
     if verbose: print('\t', len(buildstock), 'house records remaining')
     return buildstock
 
+
 def check_unique(buildstock):
     print('unique ratio', len(np.unique(buildstock.bldg_id.values))/len(buildstock))
 
@@ -135,6 +138,7 @@ def filtering(**kwargs):
             bldg.city = buildstock.loc[i, 'in.city'].split(", ")[1] # remove the state code from city
             
         return building_objects
+            
     
             
     buildstock_folder = kwargs.get('buildstock_folder') 
@@ -143,19 +147,12 @@ def filtering(**kwargs):
     city_size_limit = kwargs.get('city_size_limit') 
     keep_cities = kwargs.get('keep_cities') 
     exclude_cities = kwargs.get('exclude_cities') 
-    
     output_file = kwargs.get('buildstock_output_file')
     output_folder = kwargs.get('buildstock_output_folder')
+    save_buildstock = kwargs.get('save_buildstock')
+    verbose = kwargs.get('verbose')
     
-    if not kwargs.get('save'):
-        save = False
-    else: 
-        save = True
-        
-    if not kwargs.get('verbose'):
-        verbose = False
-
-    
+    # check the input buildstock file exists
     if not os.path.exists(os.path.join(buildstock_folder, buildstock_file)):
         raise OSError(f'Could not find buildstock file {os.path.join(buildstock_folder, buildstock_file)}')
     
@@ -170,18 +167,17 @@ def filtering(**kwargs):
     
     # create list of bldg objects for workflow
     building_objects = initialize_bldg_obj_ls(obuildstock)
-        
     # check_unique(obuildstock)
     
-    # reset the bldg index ids to ascending (maybe needed if metadata ran thru the ResStock/Openstudio workflows)
+    # # reset the bldg index ids to ascending (maybe needed if metadata ran thru the ResStock/Openstudio workflows)
     # obuildstock['bldg_id'] = obuildstock.index.values + 1
     
-    print('\nFinal:', len(obuildstock), 'house records remaining')
-    if save:
+    print('\nBuildstock filtered.', len(obuildstock), 'houses remaining.')
+    if save_buildstock:
         obuildstock.to_csv(os.path.join(output_folder, output_file), index=False)
-        print('Filtered buildstock saved at', os.path.join(output_folder, output_file))
+        if verbose: print('Filtered buildstock saved at', os.path.join(output_folder, output_file))
     else:
         print('Filtered buildstock not saved!')
-    
+
     return building_objects
 

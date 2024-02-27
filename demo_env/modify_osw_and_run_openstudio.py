@@ -14,8 +14,8 @@ import json
 import xml_modifier 
 import time
 import shutil
+from tqdm import tqdm
        
-
 def find_file_w_name_fragment(name_fragment, path):
     # return the first file with a given name_fragment in its file name
     for root, dirs, files in os.walk(path):
@@ -38,8 +38,6 @@ def modify_and_run(building_folders_objects, **kwargs):
       ValueError: If the JSON file cannot be loaded or modified.
       subprocess.CalledProcessError: If the OpenStudio CLI command fails.
     """
-    
-    print('\nGenerating EnergyPlus files..')
     
     # load arguments 
     openstudio_workflow_folder = kwargs.get('openstudio_workflow_folder')
@@ -64,7 +62,10 @@ def modify_and_run(building_folders_objects, **kwargs):
     
     # get each folder (one per building), and the schedules and xml file in the foler    
     startTime = time.time()
-    for i, building in enumerate(building_folders_objects):
+
+    i = 0
+    # Use tqdm to iterate with a progress bar
+    for building in tqdm(building_folders_objects, desc="Generating EnergyPlus files", smoothing=0.01): # smoothing near avg time est
         try:
             # Load the JSON file
             with open(osw_path , 'r') as f:
@@ -108,15 +109,8 @@ def modify_and_run(building_folders_objects, **kwargs):
         except subprocess.CalledProcessError as e:
             raise Exception(f"Error running OpenStudio CLI for file {building.xml}: {e}")
         
-        duration = (time.time() - startTime)/60
-        rate = (i+1)/duration 
-        est_time_min = (len(building_folders_objects)+1)/rate
-        print('\r', str(i+1), '/', len(building_folders_objects), 'files generated.', 
-              "Estimated time remaining", round(est_time_min - duration, 1), 
-              'minutes.', 'Avg speed (sec/.idf):', round(1/rate*60, 1),  end='', flush=True)
-    
-    print('\nAll EnergyPlus files generated.\n')  
-    
+        i += 1
+        
     # update the bldg objects with new files 
     for i in range(len(building_folders_objects)):
         building_folders_objects[i].assign_folders_contents()

@@ -7,26 +7,20 @@ Created on Sun Feb 11 16:45:12 2024
 """
 
 import boto3
-import pandas as pd
 import zipfile
 import os
 import shutil
-import time
-import numpy as np
-import argparse
+from tqdm import tqdm 
 
 from botocore import UNSIGNED
 from botocore.client import Config
-from building_class import BuildingFilesData
 
-
-def create_bldg_folder(folder_path, overwrite, verbose):
+def create_bldg_folder(folder_path, verbose):
     """Creates a folder with user confirmation for overwrite."""
     if os.path.exists(folder_path):
-        if overwrite:
-            shutil.rmtree(folder_path)  # Remove existing folder
-            os.mkdir(folder_path)  # Create a new one
-            if verbose: print(f"Folder '{folder_path}' overwritten successfully.")
+        shutil.rmtree(folder_path)  # Remove existing folder
+        os.mkdir(folder_path)  # Create a new one
+        if verbose: print(f"Folder '{folder_path}' overwritten successfully.")
     else:
         os.makedirs(folder_path)
         
@@ -60,13 +54,12 @@ def unzip_files(building_objects_list):
         
         
 def download_files(s3, bldg_obj_lst, **kwargs):
-    
-    startTime = time.time()   
     fails = 0
     failed = []
-    
-    for i, bldg in enumerate(bldg_obj_lst): 
 
+    # Use tqdm to iterate with a progress bar
+    for bldg in tqdm(bldg_obj_lst, desc="Downloading files", smoothing=0.01): # near average smoothing of est time
+        # Increment counter after each successful download        
         try:             
             s3.download_file(Bucket="oedi-data-lake", 
                                 Key= bldg.oedi_zip_fldr,
@@ -78,32 +71,20 @@ def download_files(s3, bldg_obj_lst, **kwargs):
             fails += 1
             failed.append(bldg.oedi_zip_fldr)
         
-        duration = (time.time() - startTime)/60
-        rate = (i+1)/duration 
-        est_time_min = (len(bldg_obj_lst)+1)/rate
-        print('\r', str(i+1), '/', len(bldg_obj_lst), 'downloaded.', 
-              "Estimated time remaining", round(est_time_min - duration, 1), 
-              'minutes.',  end='', flush=True)
-    
-    print("\n", end="\n", flush=False)
     if fails !=0: print(fails, 'files failed to download')
 
         
-def download_unzip(building_objects_list, **kwargs):
-    
-    print('Downloading building and schedule files from OEDI...')
-    
+def download_unzip(building_objects_list, **kwargs):    
     # laod arguments 
     unzip = kwargs.get('unzip') 
-    overwrite = kwargs.get('overwrite_download_folders')
     verbose = kwargs.get('verbose')   
         
     # oedi has a standard form for how a bldg id maps to a folder name, generate it
     building_objects_list = generate_bldg_foldernames(building_objects_list, **kwargs)
     
-    # if overwrite download folder 
+    # overwrite download folder 
     download_folder = os.path.join(kwargs.get('oedi_download_folder'), kwargs.get('bldg_download_folder_basename'))
-    if overwrite and os.path.exists(download_folder):
+    if os.path.exists(download_folder):
         shutil.rmtree( download_folder )  # Remove existing folder
         os.mkdir( download_folder )  # Create a new one
     
@@ -111,20 +92,14 @@ def download_unzip(building_objects_list, **kwargs):
     
     # Create / check for building folders
     for bldg in building_objects_list:
-        create_bldg_folder(os.path.split(bldg.folder)[0], overwrite, verbose)
-        
-    # downlod / unzip files
-    if overwrite:
-        
-        print('Downloading', len(building_objects_list), 'files from OEDI', end="")
-        if unzip: print(' and unzipping files\n')
-        else: print()
-        
-        download_files(s3, building_objects_list, **kwargs)
-        if unzip: unzip_files(building_objects_list)
-        
-    # update the bldg objects with new files 
-    for i in range(len(building_objects_list)):
-        building_objects_list[i].assign_folders_contents()
+        create_bldg_folder(os.path.split(bldg.folder)[0], verbose)
+    
+    download_files(s3, building_objects_list, **kwargs)
+    if unzip: 
+        unzip_files(building_objects_list)
+
+        # update the bldg objects with new files 
+        for i in range(len(building_objects_list)):
+            building_objects_list[i].assign_folders_contents()
         
     return building_objects_list

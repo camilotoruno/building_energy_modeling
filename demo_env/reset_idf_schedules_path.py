@@ -7,6 +7,7 @@ Created on Thu Feb 22 23:53:49 2024
 """
 
 from eppy.modeleditor import IDF
+from tqdm import tqdm
 import sys
 import os 
 # from xml_modifier import get_bldg_objs_list
@@ -29,7 +30,6 @@ def set_idf_schedule_path(idf_filename):
 
 
 def Set_Relative_Schedules_Filepath(building_objects, **kwargs):
-    print('Resetting schedules file path in .idf files...')
     # load the function's arguments 
     iddfile = kwargs.get('iddfile')
     pathnameto_eppy = kwargs.get('pathnameto_eppy') 
@@ -42,21 +42,9 @@ def Set_Relative_Schedules_Filepath(building_objects, **kwargs):
     sys.path.append(pathnameto_eppy)
     IDF.setiddname(iddfile)
     
-    for building in building_objects:
+    # Use tqdm to iterate with a progress bar
+    for building in tqdm(building_objects, desc="Setting .idf schedules", smoothing=0): # smoothing near avg time est
         set_idf_schedule_path(building.idf)
-        
-        
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Set relative schedules.csv file path for all idf files")
-
-    # Add arguments with appropriate types and help messages
-    parser.add_argument("iddfile", type=str, help="Buildstock CSV file")
-    parser.add_argument("pathnameto_eppy", type=str, help="Absolute path to the buildstock folder")
-    parser.add_argument("unzipped_buildings_folder", type=str, help="Path to the unzipped building_folder")
-
-    args = parser.parse_args()
-
-    Set_Relative_Schedules_Filepath(**vars(args)) 
     
     
     
