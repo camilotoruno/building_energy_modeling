@@ -15,6 +15,7 @@ not being able to find the associated / required files for emissions schenarios
 import xml.etree.ElementTree as ET
 import os 
 
+
 def change_attrib_text(new_text, root, attrib):
     """Change the schedules.csv file to point to the downloaded one for a building """
     for element in root.iter():
@@ -36,80 +37,27 @@ def modify_xml(building_obj):
     root = tree.getroot()
     
     remove_tags(root, 'EmissionsScenarios')  # Replace with the tag name you want to remove
-    change_attrib_text(building_obj.csv, root, attrib='SchedulesFilePath')
+    change_attrib_text(building_obj.schedules, root, attrib='SchedulesFilePath')
     change_attrib_text(new_text="../../../weather/G5100330.epw", 
                         root=root, 
                         attrib='EPWFilePath') # point to arbitrary epw file I have (required for workflow, not for .idf)
     
-    tree.write(os.path.join(building_obj.folder, "modified_in.xml"), 
-               encoding="UTF-8", xml_declaration=True)
+    # write the modified building xml file 
+    modified_xml = os.path.join(building_obj.folder, "modified_in.xml")
+    tree.write(modified_xml, encoding="UTF-8", xml_declaration=True)
     
-
-def get_bldg_objs_list(root_dir):
-    """
-    Gets a list of files in each subfolder within the given directory.
-    
-    Args:
-      root_dir: The path to the starting directory.
-    
-    Returns:
-      A dictionary where keys are folder paths and values are lists of files in that folder.
-    """
-    
-    building_files_data_objects = []
-    i = 0
-    for folder in os.listdir(root_dir):
-        if os.path.isdir(os.path.join(root_dir, folder)):
-            full_path = os.path.join(root_dir, folder)
-            building_files_data_objects.append( BuildingFilesData(full_path) )
-            for file in os.listdir(full_path):
-                if "schedules.csv" in file:
-                    building_files_data_objects[i].set_csv(os.path.join(full_path, file))
-                elif "in.xml" in file:
-                    building_files_data_objects[i].set_xml(os.path.join(full_path, file))
-                elif "in.idf" in file:
-                    building_files_data_objects[i].set_idf(os.path.join(full_path, file))
-                
-            i += 1
-            
-    return building_files_data_objects
-        
-
-class BuildingFilesData:
-    """
-    Represents a custom object with folder, schedule, and xml attributes.
-    """
-    def __init__(self, folder):
-        self.folder = folder
-        self.csv = None
-        self.xml = None
-        self.idf = None
-    
-    def set_csv(self, csv):
-        self.csv = csv
-    
-    def set_xml(self, xml):
-        self.xml = xml
-    
-    def set_idf(self, idf):
-        self.idf = idf
+    return modified_xml
 
 
-def modify_xml_files(oedi_download_folder, unzip_folder):
+def modify_xml_files(bldg_obj_list):
+    
     ET.register_namespace("", "http://hpxmlonline.com/2019/10")
     ET.register_namespace("xsi", 'http://www.w3.org/2001/XMLSchema-instance')
     ET.register_namespace("", 'http://hpxmlonline.com/2019/10')    
-    
-    # get each folder (one per building), and the schedules and xml file in the foler
-    root_dir = os.path.join(oedi_download_folder, unzip_folder)
-    building_objects = get_bldg_objs_list(root_dir)
-    
-    for building_obj in building_objects:
-        modify_xml(building_obj)
+            
+    for i in range(len(bldg_obj_list)):
+        bldg_obj_list[i].modified_xml = modify_xml(bldg_obj_list[i])
         
-    print('\nModified', len(building_objects), 'hpxml (.xml) files')
+    print('\nModified', len(bldg_obj_list), 'hpxml (.xml) files')
 
-
-if __name__ == "__main__":
-    modify_xml_files()
-    
+    return bldg_obj_list

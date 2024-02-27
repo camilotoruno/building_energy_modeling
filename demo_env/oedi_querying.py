@@ -8,8 +8,6 @@ Created on Sun Feb 11 16:45:12 2024
 
 import boto3
 import pandas as pd
-from botocore import UNSIGNED
-from botocore.client import Config
 import zipfile
 import os
 import shutil
@@ -17,84 +15,73 @@ import time
 import numpy as np
 import argparse
 
-def create_folder(folder_path, overwrite):
-    skip = False
+from botocore import UNSIGNED
+from botocore.client import Config
+from building_class import BuildingFilesData
+
+
+def create_bldg_folder(folder_path, overwrite, verbose):
     """Creates a folder with user confirmation for overwrite."""
     if os.path.exists(folder_path):
         if overwrite:
             shutil.rmtree(folder_path)  # Remove existing folder
             os.mkdir(folder_path)  # Create a new one
-            print(f"Folder '{folder_path}' overwritten successfully.")
-        else:
-            print(f"Folder '{folder_path}' was not overwritten.")
-            skip = True
+            if verbose: print(f"Folder '{folder_path}' overwritten successfully.")
     else:
-        os.mkdir(folder_path)
-        print(f"Folder '{folder_path}' created successfully.")
+        os.makedirs(folder_path)
         
-    return skip
 
-def generate_bldg_foldernames(buildstock):
+def generate_bldg_foldernames(building_objects_list, bldg_download_folder_basename, **kwargs):
     # bldg zip folder names generated to match the naming scheme on OEDI
-    bldg_zip_files = []
-    for i, bldg_id in enumerate(buildstock.bldg_id.values):
-        bldg_id = str(bldg_id)
-        bldg_id = bldg_id.zfill(7) # padd the building number with zeros
-        bldg_zip = "bldg" + bldg_id + "-up00.zip"  # add the prefix and suffix to filename
-        bldg_zip_files.append(bldg_zip)  
-        
-    return bldg_zip_files
-
-
-def unzip_files(buildstock, bldg_zip_files, **kwargs):
-    download_folder = kwargs.get("download_folder")
-    zip_folder = kwargs.get("zip_folder")
-    unzip_folder = kwargs.get("unzip_folder")
     
-    startTime = time.time()   
-    for i, bldg_zip in enumerate(bldg_zip_files): 
-        zip_path = os.path.join(download_folder, zip_folder, bldg_zip)
-        unzip_path = os.path.join(download_folder, unzip_folder, bldg_zip.split('.')[0])
+    for i, bldg in enumerate(building_objects_list):
+        # construct the zip folder name from the id and scenario (-up-00 means upgrade 0)
+        
+        building_objects_list[i].id = str(bldg.id).zfill(7) # padd the building number with zeros
+        
+        # generate the oedi folder name and the download folder name
+        bldg_zip = "bldg" + building_objects_list[i].id + "-up00.zip"  # add the prefix and suffix to filename
+        building_objects_list[i].oedi_zip_fldr = os.path.join(kwargs.get('oedi_filepath'), bldg_zip)
+        building_objects_list[i].zip = os.path.join(kwargs.get('oedi_download_folder'), bldg_download_folder_basename, bldg.city, bldg_zip)
+        building_objects_list[i].folder = building_objects_list[i].zip.split('.zip')[0]
+        
+    return building_objects_list
+
+
+def unzip_files(building_objects_list):    
+    for bldg in building_objects_list:
         try: 
-            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-                zip_ref.extractall(unzip_path)
+            with zipfile.ZipFile(bldg.zip, 'r') as zip_ref:
+                zip_ref.extractall(bldg.folder)
             
         except: 
-            raise Exception('\nError:', zip_path, 'failed to unzip')
-            break
-        
-        duration = (time.time() - startTime)/60
-        rate = (i+1)/duration 
-        est_time_min = (len(buildstock)+1)/rate
-        print('\r', str(i+1), '/', len(buildstock), 'unzipped.', 
-              "Estimated time remaining", round(est_time_min - duration, 1), 
-              'minutes.',  end='', flush=True)
+            raise Exception('\nError:', bldg.zip, 'failed to unzip')
+            break              
         
         
-def download_files(buildstock, s3, bldg_zip_files, **kwargs):
+def download_files(s3, bldg_obj_lst, **kwargs):
     
     startTime = time.time()   
     fails = 0
     failed = []
     
-    for i, bldg_zip in enumerate(bldg_zip_files): 
-    
-        try: 
-            download_path = os.path.join(kwargs.get("download_folder"), kwargs.get("zip_folder"), bldg_zip)
-            
+    for i, bldg in enumerate(bldg_obj_lst): 
+
+        try:             
             s3.download_file(Bucket="oedi-data-lake", 
-                                Key= kwargs.get("oedi_filepath") + bldg_zip,
-                                Filename = download_path)
+                                Key= bldg.oedi_zip_fldr,
+                                Filename = bldg.zip
+                                )
         except: 
-            print('\nError:', bldg_zip, 'failed to download. File likely not on OEDI\n\n')
+            raise FileNotFoundError('Building', bldg.id, 'failed to download. File likely not on OEDI\n\n')
             # break
             fails += 1
-            failed.append(bldg_zip)
+            failed.append(bldg.oedi_zip_fldr)
         
         duration = (time.time() - startTime)/60
         rate = (i+1)/duration 
-        est_time_min = (len(buildstock)+1)/rate
-        print('\r', str(i+1), '/', len(buildstock), 'downloaded.', 
+        est_time_min = (len(bldg_obj_lst)+1)/rate
+        print('\r', str(i+1), '/', len(bldg_obj_lst), 'downloaded.', 
               "Estimated time remaining", round(est_time_min - duration, 1), 
               'minutes.',  end='', flush=True)
     
@@ -102,52 +89,42 @@ def download_files(buildstock, s3, bldg_zip_files, **kwargs):
     if fails !=0: print(fails, 'files failed to download')
 
         
-def download_unzip(**kwargs):
+def download_unzip(building_objects_list, **kwargs):
     
     print('Downloading building and schedule files from OEDI...')
-    buildstock_file = kwargs.get('buildstock_file') 
-    buildstock_folder = kwargs.get('buildstock_folder')
-    download_folder = kwargs.get('download_folder') 
-    zip_folder = kwargs.get('zip_folder') 
-    unzip_folder = kwargs.get('unzip_folder') 
-    unzip = kwargs.get('unzip') 
-    overwrite = kwargs.get('overwrite')
     
-    # Access parsed arguments
-    buildstock = pd.read_csv(os.path.join(buildstock_folder, buildstock_file))
-
-    # Rest of your script's logic using these values
+    # laod arguments 
+    unzip = kwargs.get('unzip') 
+    overwrite = kwargs.get('overwrite_download_folders')
+    verbose = kwargs.get('verbose')   
+        
+    # oedi has a standard form for how a bldg id maps to a folder name, generate it
+    building_objects_list = generate_bldg_foldernames(building_objects_list, **kwargs)
+    
+    # if overwrite download folder 
+    download_folder = os.path.join(kwargs.get('oedi_download_folder'), kwargs.get('bldg_download_folder_basename'))
+    if overwrite and os.path.exists(download_folder):
+        shutil.rmtree( download_folder )  # Remove existing folder
+        os.mkdir( download_folder )  # Create a new one
+    
     s3 = boto3.client('s3', config = Config(signature_version = UNSIGNED))
     
-    # Check for existing output folders
-    skip1 = create_folder(os.path.join(download_folder, zip_folder), overwrite)
-    skip2 = create_folder(os.path.join(download_folder, unzip_folder), overwrite)
-    
+    # Create / check for building folders
+    for bldg in building_objects_list:
+        create_bldg_folder(os.path.split(bldg.folder)[0], overwrite, verbose)
+        
     # downlod / unzip files
-    if not (skip1 or skip2):
-            
-        print('Downloading', len(buildstock), 'files from OEDI', end="")
-        if unzip: print(' and unzipping files')
+    if overwrite:
+        
+        print('Downloading', len(building_objects_list), 'files from OEDI', end="")
+        if unzip: print(' and unzipping files\n')
         else: print()
         
-        bldg_zip_files = generate_bldg_foldernames(buildstock)
-        download_files(buildstock, s3, bldg_zip_files, **kwargs)
-        if unzip: unzip_files(buildstock, bldg_zip_files, **kwargs)
+        download_files(s3, building_objects_list, **kwargs)
+        if unzip: unzip_files(building_objects_list)
         
+    # update the bldg objects with new files 
+    for i in range(len(building_objects_list)):
+        building_objects_list[i].assign_folders_contents()
         
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Process building energy model files")
-
-    # Add arguments with appropriate types and help messages
-    parser.add_argument("buildstock_file", type=str, help="Buildstock CSV file")
-    parser.add_argument("buildstock_folder", type=str, help="Absolute path to the buildstock folder")
-    parser.add_argument("oedi_filepath", type=str, help="Absolute Path to the OEDI files within the downloaded folder")
-    parser.add_argument("download_folder", type=str, help="Absolute Path to the folder containing downloaded files")
-    parser.add_argument("zip_folder", type=str, help="Output building zip folder")
-    parser.add_argument("unzip_folder", type=str, help="Output folder for unzipped buildings")
-    parser.add_argument("--unzip", action="store_true", help="Unzip downloaded files")
-
-    args = parser.parse_args()
-
-    download_unzip(**vars(args))    
-
+    return building_objects_list
