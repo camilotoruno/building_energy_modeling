@@ -17,9 +17,9 @@ import oedi_querying
 import buildstock_filtering 
 import xml_modifier
 import modify_osw_and_run_openstudio 
-import time
-from reset_idf_schedules_path import Set_Relative_Schedules_Filepath
 import os
+from reset_idf_schedules_path import Set_Relative_Schedules_Filepath
+from tqdm import tqdm
             
 hpxml_measures_folder = "/Users/camilotoruno/resstock-euss.2022.1/resources/hpxml-measures"
 openstudio_workflow_folder = os.path.join(hpxml_measures_folder, "workflow")
@@ -83,8 +83,6 @@ if 'unzip' not in args.keys(): args['unzip'] = False
 building_objects_list = buildstock_filtering.filtering(**args)
 
 # query oedi for the required building zip file
-print('\n')
-startTime = time.time()         # for timing the long portion of the script
 building_objects_list = oedi_querying.download_unzip(building_objects_list, **args)
 
 if args["unzip"]: 
@@ -93,15 +91,14 @@ if args["unzip"]:
     
     # call the openstudi command line interface to generate the .idf from .xml 
     building_objects_list = modify_osw_and_run_openstudio.modify_and_run(building_objects_list, **args)
-    print('Querying and running OpenStudio workflow time (min):', round((time.time()-startTime)/60, 1))
-    
+        
     # Reset the .idf files' schedules file path to be relative (assumes schedules in same folder as idf)
     Set_Relative_Schedules_Filepath(building_objects_list, **args)
     
-    # remove original files, keep generated ones
-    for bldg in building_objects_list:
-        print('Removing original (unmodified) files..')
+    # remove original files, keep generated ones        
+    # Use tqdm to iterate with a progress bar
+    for bldg in tqdm(building_objects_list, desc="Removing original files", smoothing=0.01): # smoothing near avg time est
         os.remove(bldg.schedules)   # remove the original schedules file (keeping the generated one)
         os.remove(bldg.xml)         # remove the original .xml file (keeping the modified one)
 
-print('Workflow completed')    
+print('\nWorkflow completed')    

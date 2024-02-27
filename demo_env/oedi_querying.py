@@ -10,11 +10,10 @@ import boto3
 import zipfile
 import os
 import shutil
-import time
+from tqdm import tqdm 
 
 from botocore import UNSIGNED
 from botocore.client import Config
-
 
 def create_bldg_folder(folder_path, verbose):
     """Creates a folder with user confirmation for overwrite."""
@@ -55,13 +54,12 @@ def unzip_files(building_objects_list):
         
         
 def download_files(s3, bldg_obj_lst, **kwargs):
-    
-    startTime = time.time()   
     fails = 0
     failed = []
-    
-    for i, bldg in enumerate(bldg_obj_lst): 
 
+    # Use tqdm to iterate with a progress bar
+    for bldg in tqdm(bldg_obj_lst, desc="Downloading files", smoothing=0.01): # near average smoothing of est time
+        # Increment counter after each successful download        
         try:             
             s3.download_file(Bucket="oedi-data-lake", 
                                 Key= bldg.oedi_zip_fldr,
@@ -73,21 +71,10 @@ def download_files(s3, bldg_obj_lst, **kwargs):
             fails += 1
             failed.append(bldg.oedi_zip_fldr)
         
-        duration = (time.time() - startTime)/60
-        rate = (i+1)/duration 
-        est_time_min = (len(bldg_obj_lst)+1)/rate
-        print('\r', str(i+1), '/', len(bldg_obj_lst), 'downloaded.', 
-              "Estimated time remaining", round(est_time_min - duration, 1), 
-              'minutes.',  end='', flush=True)
-    
-    print("\n", end="\n", flush=False)
     if fails !=0: print(fails, 'files failed to download')
 
         
-def download_unzip(building_objects_list, **kwargs):
-    
-    print('Downloading building and schedule files from OEDI...')
-    
+def download_unzip(building_objects_list, **kwargs):    
     # laod arguments 
     unzip = kwargs.get('unzip') 
     verbose = kwargs.get('verbose')   
@@ -106,11 +93,6 @@ def download_unzip(building_objects_list, **kwargs):
     # Create / check for building folders
     for bldg in building_objects_list:
         create_bldg_folder(os.path.split(bldg.folder)[0], verbose)
-        
-    # downlod / unzip files
-    print('Downloading', len(building_objects_list), 'files from OEDI', end="")
-    if unzip: print(' and unzipping files\n')
-    else: print()
     
     download_files(s3, building_objects_list, **kwargs)
     if unzip: 

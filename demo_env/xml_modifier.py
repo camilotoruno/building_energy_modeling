@@ -14,7 +14,7 @@ not being able to find the associated / required files for emissions schenarios
 
 import xml.etree.ElementTree as ET
 import os 
-
+from tqdm import tqdm
 
 def change_attrib_text(new_text, root, attrib):
     """Change the schedules.csv file to point to the downloaded one for a building """
@@ -54,10 +54,13 @@ def modify_xml_files(bldg_obj_list):
     ET.register_namespace("", "http://hpxmlonline.com/2019/10")
     ET.register_namespace("xsi", 'http://www.w3.org/2001/XMLSchema-instance')
     ET.register_namespace("", 'http://hpxmlonline.com/2019/10')    
-            
-    for i in range(len(bldg_obj_list)):
+    
+    i = 0
+    # Use tqdm to iterate with a progress bar
+    for _ in tqdm(bldg_obj_list, desc="Modifying building .xml files", smoothing=0): # smoothing near avg time est
+        # Your download logic here (using s3, obj, and kwargs)
+        # Increment counter after each successful download
         bldg_obj_list[i].modified_xml = modify_xml(bldg_obj_list[i])
-        
-    print('\nModified', len(bldg_obj_list), 'hpxml (.xml) files')
+        i += 1
 
     return bldg_obj_list
