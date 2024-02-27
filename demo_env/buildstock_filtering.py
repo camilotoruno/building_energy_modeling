@@ -87,7 +87,21 @@ def filter_city_size(buildstock, city_size_limit, keep_cities, verbose):
             rbuildstock = pd.concat([rbuildstock, city_buildstock.iloc[ rows_2_keep ] ],
                                     axis= 0,
                                     ignore_index=True)
-    
+            
+            # # CODE BELOW FAILS FOR UNKOWN REASON 
+            # # deal with all potential cases of dataframe(s) being empty to resolve Warning
+            # # 
+            # if rbuildstock.empty and not city_buildstock.iloc[rows_2_keep].empty:
+            #     rbuildstock = city_buildstock.iloc[rows_2_keep].copy()  # Assign directly
+            # elif rbuildstock.empty and city_buildstock.iloc[rows_2_keep].empty:
+            #     rbuildstock = pd.DataFrame(columns = buildstock.columns)
+            # elif city_buildstock.iloc[rows_2_keep].empty:
+            #     rbuildstock = rbuildstock.copy()
+            # else:
+            #     rbuildstock = pd.concat([rbuildstock, city_buildstock.iloc[ rows_2_keep ] ],
+            #             axis= 0,
+            #             ignore_index=True)
+                
         
         return rbuildstock
     
@@ -124,6 +138,7 @@ def filtering(**kwargs):
             bldg.city = buildstock.loc[i, 'in.city'].split(", ")[1] # remove the state code from city
             
         return building_objects
+            
     
             
     buildstock_folder = kwargs.get('buildstock_folder') 
@@ -157,7 +172,7 @@ def filtering(**kwargs):
     # # reset the bldg index ids to ascending (maybe needed if metadata ran thru the ResStock/Openstudio workflows)
     # obuildstock['bldg_id'] = obuildstock.index.values + 1
     
-    print('\nFinal:', len(obuildstock), 'house records remaining')
+    print('\nBuildstock filtered.', len(obuildstock), 'houses remaining.')
     if save_buildstock:
         obuildstock.to_csv(os.path.join(output_folder, output_file), index=False)
         if verbose: print('Filtered buildstock saved at', os.path.join(output_folder, output_file))
