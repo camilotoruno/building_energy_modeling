@@ -1,0 +1,23 @@
+{
+    "run_directory": "run",
+    "measure_paths": [
+        ".."
+    ],
+    "steps": [
+        {
+            "arguments": {
+                "hpxml_path": "/Users/camilotoruno/Documents/GitHub/building_energy_modeling/resstock-euss.2022.1/resources/hpxml-measures/workflow/Buildings/Dallas/bldg0000063-up00/modified_in.xml",
+                "output_dir": "../workflow/run",
+                "debug": true,
+                "add_component_loads": false,
+                "skip_validation": false
+            },
+            "measure_dir_name": "HPXMLtoOpenStudio"
+        }
+    ],
+    "run_options": {
+        "fast": true,
+        "skip_expand_objects": true,
+        "skip_energyplus_preprocess": true
+    }
+}
