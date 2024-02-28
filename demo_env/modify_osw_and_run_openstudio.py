@@ -63,7 +63,6 @@ def modify_and_run(building_folders_objects, **kwargs):
     # get each folder (one per building), and the schedules and xml file in the foler    
     startTime = time.time()
 
-    i = 0
     # Use tqdm to iterate with a progress bar
     for building in tqdm(building_folders_objects, desc="Generating EnergyPlus files", smoothing=0.01): # smoothing near avg time est
         try:
@@ -100,7 +99,10 @@ def modify_and_run(building_folders_objects, **kwargs):
             search_path = os.path.join(openstudio_workflow_folder, "generated_files")
             generated_schedule = find_file_w_name_fragment('schedule', search_path)  # find schedules file in openstudio output folder
             shutil.copy(generated_schedule, building.folder)
-            building_folders_objects[i].schedules_new = os.path.join(building.folder, os.path.split(generated_schedule)[1])
+
+            # copy the run log
+            shutil.copy(os.path.join(openstudio_workflow_folder, 'run', 'run.log'), building.folder)
+            # building_folders_objects[i].schedules_new = os.path.join(building.folder, os.path.split(generated_schedule)[1])
         
         # raise errors if they occured whle reading openstudio json file
         except (ValueError, json.JSONDecodeError) as e:
@@ -108,9 +110,7 @@ def modify_and_run(building_folders_objects, **kwargs):
       
         except subprocess.CalledProcessError as e:
             raise Exception(f"Error running OpenStudio CLI for file {building.xml}: {e}")
-        
-        i += 1
-        
+                
     # update the bldg objects with new files 
     for i in range(len(building_folders_objects)):
         building_folders_objects[i].assign_folders_contents()
