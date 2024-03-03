@@ -1,0 +1,364 @@
+Dependency=Geometry Attic Type	Dependency=Location Region	Dependency=Vintage	Option=None	Option=Uninsulated	Option=R-7	Option=R-13	Option=R-19	Option=R-30	Option=R-38	Option=R-49	sampling_probability
+Vented Attic	CR02	<1940	0	0	0.04	0.14	0.16	0.28	0.13	0.26	0.00805468
+Vented Attic	CR02	1940s	0	0	0.04	0.14	0.16	0.28	0.13	0.26	0.00219584
+Vented Attic	CR02	1950s	0	0	0.03	0.08	0.14	0.23	0.15	0.36	0.00462303
+Vented Attic	CR02	1960s	0	0	0.01	0.04	0.16	0.36	0.09	0.34	0.00390116
+Vented Attic	CR02	1970s	0	0	0.01	0.07	0.12	0.22	0.19	0.39	0.00565651
+Vented Attic	CR02	1980s	0	0	0	0.01	0.08	0.27	0.4	0.23	0.0038467
+Vented Attic	CR02	1990s	0	0	0	0	0.01	0.2	0.26	0.54	0.00511326
+Vented Attic	CR02	2000s	0	0	0	0	0.01	0.21	0.25	0.53	0.00523545
+Vented Attic	CR02	2010s	0	0	0	0	0.01	0.21	0.25	0.53	0.00169019
+Vented Attic	CR03	<1940	0	0.04	0.14	0.16	0.28	0.13	0.22	0.04	0.00642362
+Vented Attic	CR03	1940s	0	0.04	0.14	0.16	0.28	0.13	0.22	0.04	0.00176888
+Vented Attic	CR03	1950s	0	0.03	0.08	0.14	0.23	0.15	0.28	0.08	0.00417671
+Vented Attic	CR03	1960s	0	0.01	0.04	0.16	0.36	0.09	0.26	0.08	0.00361206
+Vented Attic	CR03	1970s	0	0.01	0.07	0.12	0.22	0.19	0.31	0.08	0.0039285
+Vented Attic	CR03	1980s	0	0	0.01	0.08	0.27	0.4	0.22	0.02	0.00407003
+Vented Attic	CR03	1990s	0	0	0	0	0.02	0.57	0.39	0.03	0.00310995
+Vented Attic	CR03	2000s	0	0	0	0	0.05	0.54	0.32	0.1	0.00294953
+Vented Attic	CR03	2010s	0	0	0	0	0.05	0.54	0.32	0.1	0.000874714
+Vented Attic	CR04	<1940	0	0.04	0.14	0.16	0.28	0.13	0.22	0.04	0.018051
+Vented Attic	CR04	1940s	0	0.04	0.14	0.16	0.28	0.13	0.22	0.04	0.00712265
+Vented Attic	CR04	1950s	0	0.03	0.08	0.14	0.23	0.15	0.28	0.08	0.0155115
+Vented Attic	CR04	1960s	0	0.01	0.04	0.16	0.36	0.09	0.26	0.08	0.0117044
+Vented Attic	CR04	1970s	0	0.01	0.07	0.12	0.22	0.19	0.31	0.08	0.0132131
+Vented Attic	CR04	1980s	0	0	0.01	0.08	0.27	0.4	0.22	0.02	0.0084078
+Vented Attic	CR04	1990s	0	0	0	0	0.02	0.48	0.33	0.17	0.012599
+Vented Attic	CR04	2000s	0	0	0	0	0.02	0.34	0.33	0.31	0.0107249
+Vented Attic	CR04	2010s	0	0	0	0	0.02	0.34	0.33	0.31	0.00265534
+Vented Attic	CR05	<1940	0	0.04	0.14	0.16	0.28	0.13	0.22	0.04	0.00248142
+Vented Attic	CR05	1940s	0	0.04	0.14	0.16	0.28	0.13	0.22	0.04	0.00102454
+Vented Attic	CR05	1950s	0	0.03	0.08	0.14	0.23	0.15	0.28	0.08	0.00228978
+Vented Attic	CR05	1960s	0	0.01	0.04	0.16	0.36	0.09	0.26	0.08	0.00210626
+Vented Attic	CR05	1970s	0	0.01	0.07	0.12	0.22	0.19	0.31	0.08	0.00466842
+Vented Attic	CR05	1980s	0	0	0.01	0.08	0.27	0.4	0.22	0.02	0.00330186
+Vented Attic	CR05	1990s	0	0	0	0	0	0.53	0.44	0.03	0.00454141
+Vented Attic	CR05	2000s	0	0	0	0	0.06	0.21	0.5	0.24	0.00511594
+Vented Attic	CR05	2010s	0	0	0	0	0.06	0.21	0.5	0.24	0.00179285
+Vented Attic	CR06	<1940	0	0.04	0.14	0.16	0.28	0.13	0.22	0.04	0.00297608
+Vented Attic	CR06	1940s	0	0.04	0.14	0.16	0.28	0.13	0.22	0.04	0.00148785
+Vented Attic	CR06	1950s	0	0.03	0.08	0.14	0.23	0.15	0.28	0.08	0.00228448
+Vented Attic	CR06	1960s	0	0.01	0.04	0.16	0.36	0.09	0.26	0.08	0.00239127
+Vented Attic	CR06	1970s	0	0.01	0.07	0.12	0.22	0.19	0.31	0.08	0.00427173
+Vented Attic	CR06	1980s	0	0	0.01	0.08	0.27	0.4	0.22	0.02	0.00289985
+Vented Attic	CR06	1990s	0	0	0.01	0	0.16	0.14	0.58	0.12	0.00425715
+Vented Attic	CR06	2000s	0	0	0	0	0.01	0.14	0.65	0.21	0.0039073
+Vented Attic	CR06	2010s	0	0	0	0	0.01	0.14	0.65	0.21	0.00133438
+Vented Attic	CR07	<1940	0	0.04	0.14	0.16	0.28	0.13	0.22	0.04	0.0189342
+Vented Attic	CR07	1940s	0	0.04	0.14	0.16	0.28	0.13	0.22	0.04	0.00602287
+Vented Attic	CR07	1950s	0	0.03	0.08	0.14	0.23	0.15	0.28	0.08	0.0128443
+Vented Attic	CR07	1960s	0	0.01	0.04	0.16	0.36	0.09	0.26	0.08	0.00916244
+Vented Attic	CR07	1970s	0	0.01	0.07	0.12	0.22	0.19	0.31	0.08	0.00896788
+Vented Attic	CR07	1980s	0	0	0.01	0.08	0.27	0.4	0.22	0.02	0.00784259
+Vented Attic	CR07	1990s	0	0	0	0	0.12	0.6	0.22	0.05	0.00723217
+Vented Attic	CR07	2000s	0	0	0	0	0.07	0.52	0.31	0.1	0.00631708
+Vented Attic	CR07	2010s	0	0	0	0	0.07	0.52	0.31	0.1	0.00189144
+Vented Attic	CR08	<1940	0	0.04	0.14	0.16	0.28	0.13	0.22	0.04	0.0117303
+Vented Attic	CR08	1940s	0	0.04	0.14	0.16	0.28	0.13	0.22	0.04	0.00541843
+Vented Attic	CR08	1950s	0	0.03	0.08	0.14	0.23	0.15	0.28	0.08	0.0108987
+Vented Attic	CR08	1960s	0	0.01	0.04	0.16	0.36	0.09	0.26	0.08	0.0106133
+Vented Attic	CR08	1970s	0	0.01	0.07	0.12	0.22	0.19	0.31	0.08	0.0143791
+Vented Attic	CR08	1980s	0	0	0.01	0.08	0.27	0.4	0.22	0.02	0.0128683
+Vented Attic	CR08	1990s	0	0	0	0	0.09	0.66	0.18	0.06	0.0151086
+Vented Attic	CR08	2000s	0	0	0	0	0.05	0.57	0.34	0.04	0.0139108
+Vented Attic	CR08	2010s	0	0	0	0	0.05	0.57	0.34	0.04	0.00453849
+Vented Attic	CR09	<1940	0	0.18	0.16	0.28	0.13	0.22	0.04	0	0.00978991
+Vented Attic	CR09	1940s	0	0.18	0.16	0.28	0.13	0.22	0.04	0	0.00803049
+Vented Attic	CR09	1950s	0	0.11	0.14	0.23	0.15	0.28	0.08	0	0.0194339
+Vented Attic	CR09	1960s	0	0.04	0.16	0.36	0.09	0.26	0.08	0	0.022152
+Vented Attic	CR09	1970s	0	0.08	0.12	0.22	0.19	0.31	0.08	0	0.0334773
+Vented Attic	CR09	1980s	0	0.01	0.08	0.27	0.4	0.22	0.02	0	0.0347192
+Vented Attic	CR09	1990s	0	0	0	0	0.27	0.64	0.08	0.01	0.0380213
+Vented Attic	CR09	2000s	0	0	0	0	0.13	0.7	0.16	0.01	0.0418418
+Vented Attic	CR09	2010s	0	0	0	0	0.13	0.7	0.16	0.01	0.014953
+Vented Attic	CR10	<1940	0	0.18	0.16	0.28	0.13	0.22	0.04	0	0.0006024
+Vented Attic	CR10	1940s	0	0.18	0.16	0.28	0.13	0.22	0.04	0	0.000600833
+Vented Attic	CR10	1950s	0	0.11	0.14	0.23	0.15	0.28	0.08	0	0.00178096
+Vented Attic	CR10	1960s	0	0.04	0.16	0.36	0.09	0.26	0.08	0	0.00217764
+Vented Attic	CR10	1970s	0	0.08	0.12	0.22	0.19	0.31	0.08	0	0.0045291
+Vented Attic	CR10	1980s	0	0.01	0.08	0.27	0.4	0.22	0.02	0	0.00447278
+Vented Attic	CR10	1990s	0	0	0	0	0.18	0.54	0.28	0	0.00608229
+Vented Attic	CR10	2000s	0	0	0	0	0.01	0.62	0.34	0.03	0.00714471
+Vented Attic	CR10	2010s	0	0	0	0	0.01	0.62	0.34	0.03	0.00160605
+Vented Attic	CR11	<1940	0	0.18	0.16	0.28	0.13	0.22	0.04	0	0.00621256
+Vented Attic	CR11	1940s	0	0.18	0.16	0.28	0.13	0.22	0.04	0	0.00476672
+Vented Attic	CR11	1950s	0	0.11	0.14	0.23	0.15	0.28	0.08	0	0.0111357
+Vented Attic	CR11	1960s	0	0.04	0.16	0.36	0.09	0.26	0.08	0	0.00908366
+Vented Attic	CR11	1970s	0	0.08	0.12	0.22	0.19	0.31	0.08	0	0.0112713
+Vented Attic	CR11	1980s	0	0.01	0.08	0.27	0.4	0.22	0.02	0	0.00987863
+Vented Attic	CR11	1990s	0	0	0	0	0.17	0.71	0.12	0.01	0.00769311
+Vented Attic	CR11	2000s	0	0	0	0	0.11	0.58	0.28	0.04	0.00840624
+Vented Attic	CR11	2010s	0	0	0	0	0.11	0.58	0.28	0.04	0.00197458
+Unvented Attic	CR02	<1940	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR02	1940s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR02	1950s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR02	1960s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR02	1970s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR02	1980s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR02	1990s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR02	2000s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR02	2010s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR03	<1940	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR03	1940s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR03	1950s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR03	1960s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR03	1970s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR03	1980s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR03	1990s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR03	2000s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR03	2010s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR04	<1940	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR04	1940s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR04	1950s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR04	1960s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR04	1970s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR04	1980s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR04	1990s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR04	2000s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR04	2010s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR05	<1940	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR05	1940s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR05	1950s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR05	1960s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR05	1970s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR05	1980s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR05	1990s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR05	2000s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR05	2010s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR06	<1940	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR06	1940s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR06	1950s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR06	1960s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR06	1970s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR06	1980s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR06	1990s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR06	2000s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR06	2010s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR07	<1940	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR07	1940s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR07	1950s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR07	1960s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR07	1970s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR07	1980s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR07	1990s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR07	2000s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR07	2010s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR08	<1940	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR08	1940s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR08	1950s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR08	1960s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR08	1970s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR08	1980s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR08	1990s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR08	2000s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR08	2010s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR09	<1940	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR09	1940s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR09	1950s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR09	1960s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR09	1970s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR09	1980s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR09	1990s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR09	2000s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR09	2010s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR10	<1940	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR10	1940s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR10	1950s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR10	1960s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR10	1970s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR10	1980s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR10	1990s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR10	2000s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR10	2010s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR11	<1940	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR11	1940s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR11	1950s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR11	1960s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR11	1970s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR11	1980s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR11	1990s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR11	2000s	0	1	0	0	0	0	0	0	0
+Unvented Attic	CR11	2010s	0	1	0	0	0	0	0	0	0
+None	CR02	<1940	1	0	0	0	0	0	0	0	0.00206715
+None	CR02	1940s	1	0	0	0	0	0	0	0	0.000403533
+None	CR02	1950s	1	0	0	0	0	0	0	0	0.000728225
+None	CR02	1960s	1	0	0	0	0	0	0	0	0.00125324
+None	CR02	1970s	1	0	0	0	0	0	0	0	0.00222937
+None	CR02	1980s	1	0	0	0	0	0	0	0	0.00167262
+None	CR02	1990s	1	0	0	0	0	0	0	0	0.00167993
+None	CR02	2000s	1	0	0	0	0	0	0	0	0.00141079
+None	CR02	2010s	1	0	0	0	0	0	0	0	0.000993535
+None	CR03	<1940	1	0	0	0	0	0	0	0	0.00674616
+None	CR03	1940s	1	0	0	0	0	0	0	0	0.000865177
+None	CR03	1950s	1	0	0	0	0	0	0	0	0.00113103
+None	CR03	1960s	1	0	0	0	0	0	0	0	0.00146016
+None	CR03	1970s	1	0	0	0	0	0	0	0	0.00226661
+None	CR03	1980s	1	0	0	0	0	0	0	0	0.0020102
+None	CR03	1990s	1	0	0	0	0	0	0	0	0.000991857
+None	CR03	2000s	1	0	0	0	0	0	0	0	0.00100741
+None	CR03	2010s	1	0	0	0	0	0	0	0	0.000608494
+None	CR04	<1940	1	0	0	0	0	0	0	0	0.00659008
+None	CR04	1940s	1	0	0	0	0	0	0	0	0.00145419
+None	CR04	1950s	1	0	0	0	0	0	0	0	0.00231033
+None	CR04	1960s	1	0	0	0	0	0	0	0	0.00384782
+None	CR04	1970s	1	0	0	0	0	0	0	0	0.00614732
+None	CR04	1980s	1	0	0	0	0	0	0	0	0.00397485
+None	CR04	1990s	1	0	0	0	0	0	0	0	0.00369271
+None	CR04	2000s	1	0	0	0	0	0	0	0	0.00291287
+None	CR04	2010s	1	0	0	0	0	0	0	0	0.00134488
+None	CR05	<1940	1	0	0	0	0	0	0	0	0.000499014
+None	CR05	1940s	1	0	0	0	0	0	0	0	0.000157675
+None	CR05	1950s	1	0	0	0	0	0	0	0	0.000370401
+None	CR05	1960s	1	0	0	0	0	0	0	0	0.000693956
+None	CR05	1970s	1	0	0	0	0	0	0	0	0.00167058
+None	CR05	1980s	1	0	0	0	0	0	0	0	0.00132791
+None	CR05	1990s	1	0	0	0	0	0	0	0	0.0012386
+None	CR05	2000s	1	0	0	0	0	0	0	0	0.00117852
+None	CR05	2010s	1	0	0	0	0	0	0	0	0.000791475
+None	CR06	<1940	1	0	0	0	0	0	0	0	0.000659867
+None	CR06	1940s	1	0	0	0	0	0	0	0	0.000226903
+None	CR06	1950s	1	0	0	0	0	0	0	0	0.000379122
+None	CR06	1960s	1	0	0	0	0	0	0	0	0.000881778
+None	CR06	1970s	1	0	0	0	0	0	0	0	0.00167414
+None	CR06	1980s	1	0	0	0	0	0	0	0	0.00138175
+None	CR06	1990s	1	0	0	0	0	0	0	0	0.00159745
+None	CR06	2000s	1	0	0	0	0	0	0	0	0.00128116
+None	CR06	2010s	1	0	0	0	0	0	0	0	0.000820393
+None	CR07	<1940	1	0	0	0	0	0	0	0	0.0161135
+None	CR07	1940s	1	0	0	0	0	0	0	0	0.00391773
+None	CR07	1950s	1	0	0	0	0	0	0	0	0.00569901
+None	CR07	1960s	1	0	0	0	0	0	0	0	0.00634934
+None	CR07	1970s	1	0	0	0	0	0	0	0	0.00565313
+None	CR07	1980s	1	0	0	0	0	0	0	0	0.0038066
+None	CR07	1990s	1	0	0	0	0	0	0	0	0.00298635
+None	CR07	2000s	1	0	0	0	0	0	0	0	0.00320108
+None	CR07	2010s	1	0	0	0	0	0	0	0	0.00183933
+None	CR08	<1940	1	0	0	0	0	0	0	0	0.00263004
+None	CR08	1940s	1	0	0	0	0	0	0	0	0.00104537
+None	CR08	1950s	1	0	0	0	0	0	0	0	0.00177212
+None	CR08	1960s	1	0	0	0	0	0	0	0	0.00313115
+None	CR08	1970s	1	0	0	0	0	0	0	0	0.00489983
+None	CR08	1980s	1	0	0	0	0	0	0	0	0.00430376
+None	CR08	1990s	1	0	0	0	0	0	0	0	0.00393639
+None	CR08	2000s	1	0	0	0	0	0	0	0	0.00336224
+None	CR08	2010s	1	0	0	0	0	0	0	0	0.00221605
+None	CR09	<1940	1	0	0	0	0	0	0	0	0.00182993
+None	CR09	1940s	1	0	0	0	0	0	0	0	0.00113162
+None	CR09	1950s	1	0	0	0	0	0	0	0	0.00249511
+None	CR09	1960s	1	0	0	0	0	0	0	0	0.00570584
+None	CR09	1970s	1	0	0	0	0	0	0	0	0.013346
+None	CR09	1980s	1	0	0	0	0	0	0	0	0.0141095
+None	CR09	1990s	1	0	0	0	0	0	0	0	0.0110725
+None	CR09	2000s	1	0	0	0	0	0	0	0	0.011235
+None	CR09	2010s	1	0	0	0	0	0	0	0	0.00611335
+None	CR10	<1940	1	0	0	0	0	0	0	0	0.00011169
+None	CR10	1940s	1	0	0	0	0	0	0	0	8.98996e-05
+None	CR10	1950s	1	0	0	0	0	0	0	0	0.000312344
+None	CR10	1960s	1	0	0	0	0	0	0	0	0.000647673
+None	CR10	1970s	1	0	0	0	0	0	0	0	0.00146197
+None	CR10	1980s	1	0	0	0	0	0	0	0	0.00190846
+None	CR10	1990s	1	0	0	0	0	0	0	0	0.00185901
+None	CR10	2000s	1	0	0	0	0	0	0	0	0.00139988
+None	CR10	2010s	1	0	0	0	0	0	0	0	0.000534981
+None	CR11	<1940	1	0	0	0	0	0	0	0	0.00316496
+None	CR11	1940s	1	0	0	0	0	0	0	0	0.00135158
+None	CR11	1950s	1	0	0	0	0	0	0	0	0.00287582
+None	CR11	1960s	1	0	0	0	0	0	0	0	0.00483546
+None	CR11	1970s	1	0	0	0	0	0	0	0	0.00701921
+None	CR11	1980s	1	0	0	0	0	0	0	0	0.00569581
+None	CR11	1990s	1	0	0	0	0	0	0	0	0.00352189
+None	CR11	2000s	1	0	0	0	0	0	0	0	0.00294412
+None	CR11	2010s	1	0	0	0	0	0	0	0	0.00153902
+Finished Attic or Cathedral Ceilings	CR02	<1940	1	0	0	0	0	0	0	0	0.000203068
+Finished Attic or Cathedral Ceilings	CR02	1940s	1	0	0	0	0	0	0	0	2.64189e-05
+Finished Attic or Cathedral Ceilings	CR02	1950s	1	0	0	0	0	0	0	0	5.50762e-05
+Finished Attic or Cathedral Ceilings	CR02	1960s	1	0	0	0	0	0	0	0	4.30814e-05
+Finished Attic or Cathedral Ceilings	CR02	1970s	1	0	0	0	0	0	0	0	6.14966e-05
+Finished Attic or Cathedral Ceilings	CR02	1980s	1	0	0	0	0	0	0	0	6.97821e-05
+Finished Attic or Cathedral Ceilings	CR02	1990s	1	0	0	0	0	0	0	0	9.21475e-05
+Finished Attic or Cathedral Ceilings	CR02	2000s	1	0	0	0	0	0	0	0	0.00011232
+Finished Attic or Cathedral Ceilings	CR02	2010s	1	0	0	0	0	0	0	0	3.66141e-05
+Finished Attic or Cathedral Ceilings	CR03	<1940	1	0	0	0	0	0	0	0	0.000187069
+Finished Attic or Cathedral Ceilings	CR03	1940s	1	0	0	0	0	0	0	0	2.20773e-05
+Finished Attic or Cathedral Ceilings	CR03	1950s	1	0	0	0	0	0	0	0	5.15119e-05
+Finished Attic or Cathedral Ceilings	CR03	1960s	1	0	0	0	0	0	0	0	4.07092e-05
+Finished Attic or Cathedral Ceilings	CR03	1970s	1	0	0	0	0	0	0	0	4.42287e-05
+Finished Attic or Cathedral Ceilings	CR03	1980s	1	0	0	0	0	0	0	0	7.88285e-05
+Finished Attic or Cathedral Ceilings	CR03	1990s	1	0	0	0	0	0	0	0	5.6095e-05
+Finished Attic or Cathedral Ceilings	CR03	2000s	1	0	0	0	0	0	0	0	5.23853e-05
+Finished Attic or Cathedral Ceilings	CR03	2010s	1	0	0	0	0	0	0	0	1.71406e-05
+Finished Attic or Cathedral Ceilings	CR04	<1940	1	0	0	0	0	0	0	0	0.000454614
+Finished Attic or Cathedral Ceilings	CR04	1940s	1	0	0	0	0	0	0	0	7.70613e-05
+Finished Attic or Cathedral Ceilings	CR04	1950s	1	0	0	0	0	0	0	0	0.000167114
+Finished Attic or Cathedral Ceilings	CR04	1960s	1	0	0	0	0	0	0	0	0.000119922
+Finished Attic or Cathedral Ceilings	CR04	1970s	1	0	0	0	0	0	0	0	0.00013679
+Finished Attic or Cathedral Ceilings	CR04	1980s	1	0	0	0	0	0	0	0	0.000143671
+Finished Attic or Cathedral Ceilings	CR04	1990s	1	0	0	0	0	0	0	0	0.000217662
+Finished Attic or Cathedral Ceilings	CR04	2000s	1	0	0	0	0	0	0	0	0.000227807
+Finished Attic or Cathedral Ceilings	CR04	2010s	1	0	0	0	0	0	0	0	5.49936e-05
+Finished Attic or Cathedral Ceilings	CR05	<1940	1	0	0	0	0	0	0	0	5.85136e-05
+Finished Attic or Cathedral Ceilings	CR05	1940s	1	0	0	0	0	0	0	0	1.21637e-05
+Finished Attic or Cathedral Ceilings	CR05	1950s	1	0	0	0	0	0	0	0	2.65428e-05
+Finished Attic or Cathedral Ceilings	CR05	1960s	1	0	0	0	0	0	0	0	2.40395e-05
+Finished Attic or Cathedral Ceilings	CR05	1970s	1	0	0	0	0	0	0	0	5.05376e-05
+Finished Attic or Cathedral Ceilings	CR05	1980s	1	0	0	0	0	0	0	0	5.57365e-05
+Finished Attic or Cathedral Ceilings	CR05	1990s	1	0	0	0	0	0	0	0	7.50571e-05
+Finished Attic or Cathedral Ceilings	CR05	2000s	1	0	0	0	0	0	0	0	0.000101013
+Finished Attic or Cathedral Ceilings	CR05	2010s	1	0	0	0	0	0	0	0	3.48561e-05
+Finished Attic or Cathedral Ceilings	CR06	<1940	1	0	0	0	0	0	0	0	7.40441e-05
+Finished Attic or Cathedral Ceilings	CR06	1940s	1	0	0	0	0	0	0	0	1.6094e-05
+Finished Attic or Cathedral Ceilings	CR06	1950s	1	0	0	0	0	0	0	0	2.43935e-05
+Finished Attic or Cathedral Ceilings	CR06	1960s	1	0	0	0	0	0	0	0	2.39431e-05
+Finished Attic or Cathedral Ceilings	CR06	1970s	1	0	0	0	0	0	0	0	3.94574e-05
+Finished Attic or Cathedral Ceilings	CR06	1980s	1	0	0	0	0	0	0	0	3.75655e-05
+Finished Attic or Cathedral Ceilings	CR06	1990s	1	0	0	0	0	0	0	0	5.74989e-05
+Finished Attic or Cathedral Ceilings	CR06	2000s	1	0	0	0	0	0	0	0	6.88054e-05
+Finished Attic or Cathedral Ceilings	CR06	2010s	1	0	0	0	0	0	0	0	2.47784e-05
+Finished Attic or Cathedral Ceilings	CR07	<1940	1	0	0	0	0	0	0	0	0.000629514
+Finished Attic or Cathedral Ceilings	CR07	1940s	1	0	0	0	0	0	0	0	9.46323e-05
+Finished Attic or Cathedral Ceilings	CR07	1950s	1	0	0	0	0	0	0	0	0.000181692
+Finished Attic or Cathedral Ceilings	CR07	1960s	1	0	0	0	0	0	0	0	0.000118117
+Finished Attic or Cathedral Ceilings	CR07	1970s	1	0	0	0	0	0	0	0	0.000109937
+Finished Attic or Cathedral Ceilings	CR07	1980s	1	0	0	0	0	0	0	0	0.000156737
+Finished Attic or Cathedral Ceilings	CR07	1990s	1	0	0	0	0	0	0	0	0.000140583
+Finished Attic or Cathedral Ceilings	CR07	2000s	1	0	0	0	0	0	0	0	0.000137217
+Finished Attic or Cathedral Ceilings	CR07	2010s	1	0	0	0	0	0	0	0	4.19617e-05
+Finished Attic or Cathedral Ceilings	CR08	<1940	1	0	0	0	0	0	0	0	0.000331654
+Finished Attic or Cathedral Ceilings	CR08	1940s	1	0	0	0	0	0	0	0	6.83218e-05
+Finished Attic or Cathedral Ceilings	CR08	1950s	1	0	0	0	0	0	0	0	0.000135082
+Finished Attic or Cathedral Ceilings	CR08	1960s	1	0	0	0	0	0	0	0	0.000116973
+Finished Attic or Cathedral Ceilings	CR08	1970s	1	0	0	0	0	0	0	0	0.000157803
+Finished Attic or Cathedral Ceilings	CR08	1980s	1	0	0	0	0	0	0	0	0.000226813
+Finished Attic or Cathedral Ceilings	CR08	1990s	1	0	0	0	0	0	0	0	0.000240236
+Finished Attic or Cathedral Ceilings	CR08	2000s	1	0	0	0	0	0	0	0	0.00025831
+Finished Attic or Cathedral Ceilings	CR08	2010s	1	0	0	0	0	0	0	0	9.72376e-05
+Finished Attic or Cathedral Ceilings	CR09	<1940	1	0	0	0	0	0	0	0	0.000240003
+Finished Attic or Cathedral Ceilings	CR09	1940s	1	0	0	0	0	0	0	0	8.47889e-05
+Finished Attic or Cathedral Ceilings	CR09	1950s	1	0	0	0	0	0	0	0	0.000207042
+Finished Attic or Cathedral Ceilings	CR09	1960s	1	0	0	0	0	0	0	0	0.00021583
+Finished Attic or Cathedral Ceilings	CR09	1970s	1	0	0	0	0	0	0	0	0.000312127
+Finished Attic or Cathedral Ceilings	CR09	1980s	1	0	0	0	0	0	0	0	0.000475239
+Finished Attic or Cathedral Ceilings	CR09	1990s	1	0	0	0	0	0	0	0	0.000471807
+Finished Attic or Cathedral Ceilings	CR09	2000s	1	0	0	0	0	0	0	0	0.000672823
+Finished Attic or Cathedral Ceilings	CR09	2010s	1	0	0	0	0	0	0	0	0.000274405
+Finished Attic or Cathedral Ceilings	CR10	<1940	1	0	0	0	0	0	0	0	1.38958e-05
+Finished Attic or Cathedral Ceilings	CR10	1940s	1	0	0	0	0	0	0	0	6.60858e-06
+Finished Attic or Cathedral Ceilings	CR10	1950s	1	0	0	0	0	0	0	0	1.91893e-05
+Finished Attic or Cathedral Ceilings	CR10	1960s	1	0	0	0	0	0	0	0	2.23156e-05
+Finished Attic or Cathedral Ceilings	CR10	1970s	1	0	0	0	0	0	0	0	4.46415e-05
+Finished Attic or Cathedral Ceilings	CR10	1980s	1	0	0	0	0	0	0	0	6.40257e-05
+Finished Attic or Cathedral Ceilings	CR10	1990s	1	0	0	0	0	0	0	0	8.72169e-05
+Finished Attic or Cathedral Ceilings	CR10	2000s	1	0	0	0	0	0	0	0	0.000123504
+Finished Attic or Cathedral Ceilings	CR10	2010s	1	0	0	0	0	0	0	0	2.79902e-05
+Finished Attic or Cathedral Ceilings	CR11	<1940	1	0	0	0	0	0	0	0	0.000165728
+Finished Attic or Cathedral Ceilings	CR11	1940s	1	0	0	0	0	0	0	0	5.51982e-05
+Finished Attic or Cathedral Ceilings	CR11	1950s	1	0	0	0	0	0	0	0	0.000123617
+Finished Attic or Cathedral Ceilings	CR11	1960s	1	0	0	0	0	0	0	0	0.000102182
+Finished Attic or Cathedral Ceilings	CR11	1970s	1	0	0	0	0	0	0	0	0.000129701
+Finished Attic or Cathedral Ceilings	CR11	1980s	1	0	0	0	0	0	0	0	0.000170925
+Finished Attic or Cathedral Ceilings	CR11	1990s	1	0	0	0	0	0	0	0	0.000123924
+Finished Attic or Cathedral Ceilings	CR11	2000s	1	0	0	0	0	0	0	0	0.000148876
+Finished Attic or Cathedral Ceilings	CR11	2010s	1	0	0	0	0	0	0	0	3.96595e-05
+# Source: NEEA Residential Building Stock Assessment, 2012
+# Source: Nettleton, G.; Edwards, J. (2012). Data Collection-Data Characterization Summary, NorthernSTAR Building America Partnership, Building Technologies Program. Washington, D.C.: U.S. Department of Energy, as described in Roberts et al., 'Assessment of the U.S. Department of Energy's Home Energy Score Tool', 2012, and Merket 'Building America Field Data Repository', Webinar, 2014
+# Source: Derived from Home Innovation Research Labs 1982-2007 Data
