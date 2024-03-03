@@ -31,29 +31,30 @@ filtering_arguments = {
         "buildstock_output_file": "full_buildstock_24.02.27.csv",
         "buildstock_output_folder": cwd, 
         "federal_poverty_levels": ['0-100%', '100-150%', '150-200%'],   # federal poverty levels to match format of buildstock_file
-        "city_size_limit": 400,                                           # max number of houses per city
+        "city_size_limit": 100,                                           # max number of houses per city
         "keep_cities": [
-                        "AZ, Phoenix",
-                        "CA, Los Angeles",
-                        "CO, Denver",
-                        "FL, Orlando",
-                        "GA, Atlanta",
-                        "ID, Boise City",
-                        "IL, Chicago",
-                        "KS, Kansas City",
-                        "MA, Boston",
-                        "MI, Detroit",
-                        "MN, Minneapolis",
-                        "NE, Omaha",
-                        "NY, New York",
-                        "PA, Philadelphia",
+                        # "AZ, Phoenix",
+                        # "CA, Los Angeles",
+                        # "CO, Denver",
+                        # "FL, Orlando",
+                        # "GA, Atlanta",
+                        # "ID, Boise City",
+                        # "IL, Chicago",
+                        # "KS, Kansas City",
+                        # "MA, Boston",
+                        # "MI, Detroit",
+                        # "MN, Minneapolis",
+                        # "NE, Omaha",
+                        # "NY, New York",
+                        # "PA, Philadelphia",
                         "TX, Dallas"
                         ],
         "exclude_cities": ['In another census Place', 'Not in a census Place']     # can be an empty list
         }
 
 oedi_querying_arguments = {
-        "oedi_download_folder": openstudio_args["openstudio_workflow_folder"],      # set as desired 
+        "oedi_download_folder": "/Users/camilotoruno/Documents",                        # set as desired 
+        # "oedi_download_folder": openstudio_args["openstudio_workflow_folder"],      # set as desired 
         "bldg_download_folder_basename": 'Buildings',                               # set as desired. Root name for folder of generated files
         "unzip": True,      # default False
         }
@@ -67,12 +68,13 @@ openstudio_workflow_arguments = {
 
 misc_arguments = {
         # set the location of your virtual environment 
-        "conda_venv_dir": os.path.join(os.path.sep, "Users", "camilotoruno", "anaconda3", "envs", "research"),            
+        "conda_venv_dir": os.path.join(os.path.sep, "Users", "camilotoruno", "anaconda3", "envs", "research"),
+        # "conda_venv_dir": "/Users/camilotoruno/anaconda3/envs/ResStock_to_EnergyPlus"               
         }
 
 # add calculated openstudio arguments to user arguments
 arguments = {**filtering_arguments, **oedi_querying_arguments, **openstudio_workflow_arguments, **misc_arguments}
-arguments.update(openstudio_args) 
+arguments.update(openstudio_args)   # add generated openstudio args to user arguments 
 
 # set optional and calculated arguments 
 arguments = argument_builder.set_optional_args(arguments)
