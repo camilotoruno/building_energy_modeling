@@ -6,4 +6,6 @@ The script.py can be run from terminal or an IDE. Arguments for the functions ar
 
 To function this package requires that the ResStock repository resstock-euss.2022.1 (https://github.com/NREL/resstock/releases/tag/euss.2022.1) be downloaded. It also requires OpenStudio 3.4.0, the release and download versions for which can be found here (https://github.com/NREL/OpenStudio/releases?page=2). Note that OpenStudio released an update for the Windows installer on release after this which may be necessary for some uses. 
 
+Then you must add the OpenStudio package to the PATH environment variable. On Mac's Terminal enter export PATH=$PATH:~/usr/local/bin/openstudio. 
+
 Create the required environment by calling conda env create --file conda_environment.yml
