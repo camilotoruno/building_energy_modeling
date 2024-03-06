@@ -27,11 +27,11 @@ openstudio_args = argument_builder.set_openstudio_args(cwd)
 filtering_arguments = {
         "buildstock_file": "baseline_metadata_only.csv",              # must be generated (derived) by resstock-euss.2022.1 version of ResStock
         # "buildstock_file": "baseline_metadata_only_example_subset.csv", # must be generated (derived) by resstock-euss.2022.1 version of ResStock
-        "buildstock_folder": cwd,
+        "buildstock_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "research_data"),
         "buildstock_output_file": "full_buildstock_24.02.27.csv",
         "buildstock_output_folder": cwd, 
         "federal_poverty_levels": ['0-100%', '100-150%', '150-200%'],   # federal poverty levels to match format of buildstock_file
-        "city_size_limit": 100,                                           # max number of houses per city
+        "city_size_limit": 1,                                           # max number of houses per city
         "keep_cities": [
                         # "AZ, Phoenix",
                         # "CA, Los Angeles",
@@ -53,23 +53,30 @@ filtering_arguments = {
         }
 
 oedi_querying_arguments = {
-        "oedi_download_folder": "/Users/camilotoruno/Documents",                        # set as desired 
-        # "oedi_download_folder": openstudio_args["openstudio_workflow_folder"],      # set as desired 
+        # "oedi_download_folder": "/Users/camilotoruno/Documents",                        # set as desired 
+        # "oedi_download_folder": os.path.join(os.path.sep, "Users", "ctoruno", "research_data"),
+        "oedi_download_folder": filtering_arguments['buildstock_folder'],
         "bldg_download_folder_basename": 'Buildings',                               # set as desired. Root name for folder of generated files
         "unzip": True,      # default False
         }
 
 openstudio_workflow_arguments = {
         # openstudio arguments 
-        "openstudio_path": os.path.join(os.path.sep, "usr", "local", "bin", "openstudio"),        # Set to local path. Requires openstudio version 3.4.0 in bin
+        # Mac example
+        # "openstudio_path": os.path.join(os.path.sep, "usr", "local", "bin", "openstudio"),        # Set to local path. Requires openstudio version 3.4.0 in bin
         # set the OpenStudio application path to your downloaded copy. Requires OpenStudio 3.4.0
-        "openstudio_application_path": os.path.join(os.path.sep, "Applications", "OpenStudio-3.4.0"),
+        # "openstudio_application_path": os.path.join(os.path.sep, "Applications", "OpenStudio-3.4.0"),
+
+        # Windows example 
+        "openstudio_path": os.path.join(os.path.sep, "openstudio-3.4.0", "bin", "openstudio.exe"),        # Set to local path. Requires openstudio version 3.4.0 in bin
+        # set the OpenStudio application path to your downloaded copy. Requires OpenStudio 3.4.0
+        "openstudio_application_path":  os.path.join(os.path.sep, "openstudio-3.4.0"),
         }
 
 misc_arguments = {
         # set the location of your virtual environment 
-        "conda_venv_dir": os.path.join(os.path.sep, "Users", "camilotoruno", "anaconda3", "envs", "research"),
-        # "conda_venv_dir": "/Users/camilotoruno/anaconda3/envs/ResStock_to_EnergyPlus"               
+        "conda_venv_dir": os.path.join(os.path.sep, "Users", "ctoruno", "AppData", "Local", "anaconda3", "envs", "ResStock2EnergyPlus"),
+        # "conda_venv_dir": os.path.join(os.path.sep, "Users", "camilotoruno", "anaconda3", "envs", "research"),
         }
 
 # add calculated openstudio arguments to user arguments
