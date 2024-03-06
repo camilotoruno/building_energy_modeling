@@ -20,9 +20,11 @@ Package Setup:
     pip install tqdm boto3 pandas eppy
 
 Script.py setup
+
     To determine where your anaconda3 folder which contains the virtual environment you created: On windows from the Users/<user> folder in the command prompt enter dir /s anaconda3. This will return something like  C:\Users\ctoruno\AppData\Local. Set the filtering_arguments dictionary entry "buildstock_folder" to the envrionment path (e.g. "\Users\ctoruno\AppData\Local\anaconda3\envs\<env_name>")
 
 Running workflow
+    
     Either run the script.py from your favorite IDE with the anaconda envrionment's python as the interpretter or 
 
     Navigate to the folder where script.py is located. Activate your anaconda environment with conda activate <env_name> and then call python script.py
