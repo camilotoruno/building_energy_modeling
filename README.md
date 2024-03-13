@@ -11,21 +11,21 @@ Package Setup:
     Then you must add the OpenStudio package to the PATH environment variable. 
         On Mac's Terminal enter export PATH=$PATH:~/usr/local/bin/openstudio. 
         
-        For windows, follow these instructions to add to the PATH variable (https://learn.microsoft.com/en-us/previous-versions/office/developer/sharepoint-2010/ee537574(v=office.14)). Based on my installation, the path to the openstudio.exe can be found at <C:\openstudio-3.4.0\bin\openstudio.exe>, add this to the PATH variable. 
+        For windows, follow these instructions to add to the PATH variable (https://learn.microsoft.com/en-us/previous-versions/office/developer/sharepoint-2010/ee537574(v=office.14)). Based on my installation, the path to the openstudio.exe can be found at ```C:\openstudio-3.4.0\bin\openstudio.exe```, add this to the PATH variable. 
 
-    Create the required Python environment by calling conda create --name <env_name> python=3.11.4
+    Create the required Python environment by calling ```conda create --name <env_name> python=3.11.4```
 
-    Then activate the environment using conda activate <env_name>. Now install the required packages 
+    Then activate the environment using ```conda activate <env_name>```. Now install the required packages 
 
-    pip install tqdm boto3 pandas eppy
+    ```pip install tqdm boto3 pandas eppy```
 
 Script.py setup
 
-    To determine where your anaconda3 folder which contains the virtual environment you created: On windows from the Users/<user> folder in the command prompt enter dir /s anaconda3. This will return something like  C:\Users\ctoruno\AppData\Local. Set the filtering_arguments dictionary entry "buildstock_folder" to the envrionment path (e.g. "\Users\ctoruno\AppData\Local\anaconda3\envs\<env_name>")
+    To determine where your anaconda3 folder which contains the virtual environment you created: On windows from the ```Users/<user>``` folder in the command prompt enter ```dir /s anaconda3```. This will return something like ```C:\Users\ctoruno\AppData\Local```. Set the ```filtering_arguments``` dictionary entry ```"buildstock_folder"``` to the envrionment path (e.g. ```"\Users\ctoruno\AppData\Local\anaconda3\envs\<env_name>"```)
 
 Running workflow
     
     Either run the script.py from your favorite IDE with the anaconda envrionment's python as the interpretter or 
 
-    Navigate to the folder where script.py is located. Activate your anaconda environment with conda activate <env_name> and then call python script.py
+    Navigate to the folder where script.py is located. Activate your anaconda environment with ```conda activate <env_name>``` and then call ```python script.py```
 
