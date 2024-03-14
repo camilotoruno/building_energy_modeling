@@ -1,4 +1,5 @@
 import os
+from sys import platform 
 
 class argument_builder:
 
@@ -11,7 +12,13 @@ class argument_builder:
 
     def set_calculated_args(arguments):
         # set calculated/generated arguments 
-        arguments['pathnameto_eppy'] = os.path.join(arguments['conda_venv_dir'], "lib", "python3.11", "site-packages", "eppy")
+        if platform == 'darwin':  # mac system
+            arguments['pathnameto_eppy'] = os.path.join(arguments['conda_venv_dir'], "lib", "python3.11", "site-packages", "eppy")
+        elif platform == 'win32':  # windows
+            arguments['pathnameto_eppy'] = os.path.join(arguments['conda_venv_dir'], "Lib", "site-packages", "eppy")
+        else:
+            raise OSError('Operating System not recognized.')
+
         arguments["iddfile"] = os.path.join(arguments["openstudio_application_path"], "EnergyPlus", "Energy+.idd")
         arguments["oedi_filepath"] = "nrel-pds-building-stock/end-use-load-profiles-for-us-building-stock/2022/resstock_amy2018_release_1/building_energy_models/upgrade=0/"
         return arguments

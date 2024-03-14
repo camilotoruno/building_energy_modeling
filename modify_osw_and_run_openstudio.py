@@ -71,7 +71,9 @@ def modify_and_run(building_folders_objects, **kwargs):
                 openstudio_workflow_file = json.load(f)
         
             openstudio_workflow_file['steps'][0]['arguments']['hpxml_path'] = building.modified_xml  
-        
+            openstudio_workflow_file['steps'][0]['arguments']['output_dir'] = os.path.join('..', 'workflow', 'run')
+            # output_dir": "../workflow/run" 
+
             # Write the modified JSON back
             with open(osw_path, 'w') as f:
                 json.dump(openstudio_workflow_file, f, indent=4)
