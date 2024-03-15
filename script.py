@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
         # Set user defined arguments 
         filtering_arguments = {
-                "buildstock_file": "baseline_metadata_only.csv",              # must be generated (derived) by resstock-euss.2022.1 version of ResStock
+                "buildstock_file": "baseline_metadata_only_example_subset.csv",              # must be generated (derived) by resstock-euss.2022.1 version of ResStock
                 # "buildstock_file": "baseline_metadata_only_example_subset.csv", # must be generated (derived) by resstock-euss.2022.1 version of ResStock
                 
                 "buildstock_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "GitHub", "building_energy_modeling"),
@@ -35,22 +35,22 @@ if __name__ == '__main__':
                 "buildstock_output_file": "testing_buildstock_24.03.14.csv",
                 "buildstock_output_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "local_research_data"), 
                 "federal_poverty_levels": ['0-100%', '100-150%', '150-200%'],   # federal poverty levels to match format of buildstock_file
-                "city_size_limit": 40,                                           # max number of houses per city
+                "city_size_limit": 5,                                           # max number of houses per city
                 "keep_cities": [
-                                # "AZ, Phoenix",
-                                # "CA, Los Angeles",
-                                # "CO, Denver",
-                                # "FL, Orlando",
-                                # "GA, Atlanta",
-                                # "ID, Boise City",
-                                # "IL, Chicago",
-                                # "KS, Kansas City",
-                                # "MA, Boston",
-                                # "MI, Detroit",
-                                # "MN, Minneapolis",
-                                # "NE, Omaha",
-                                # "NY, New York",
-                                # "PA, Philadelphia",
+                                "AZ, Phoenix",
+                                "CA, Los Angeles",
+                                "CO, Denver",
+                                "FL, Orlando",
+                                "GA, Atlanta",
+                                "ID, Boise City",
+                                "IL, Chicago",
+                                "KS, Kansas City",
+                                "MA, Boston",
+                                "MI, Detroit",
+                                "MN, Minneapolis",
+                                "NE, Omaha",
+                                "NY, New York",
+                                "PA, Philadelphia",
                                 "TX, Dallas"
                                 ],
                 "exclude_cities": ['In another census Place', 'Not in a census Place']     # can be an empty list
@@ -64,7 +64,7 @@ if __name__ == '__main__':
 
         epw_data = {
                 "weather_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "local_research_data", "weather"), 
-                "scenario_folders": ["Historical"]#, "RCP4.5", "RCP8.5"]
+                "scenario_folders": ["Historical", "RCP4.5", "RCP8.5"]
                 }
 
         openstudio_workflow_arguments = {

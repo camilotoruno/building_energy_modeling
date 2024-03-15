@@ -14,7 +14,9 @@ import shutil
 import argument_builder
 import multiprocessing
 import time 
-
+import math 
+import tqdm 
+from reset_idf_schedules_path import Set_Relative_Schedules_Filepath
 
 class Job:
     def __init__(self, bldg, id, no_jobs, **arguments):
@@ -31,6 +33,14 @@ def find_file_w_name_fragment(name_fragment, path):
             if name_fragment in file:
                 return os.path.join(root, file)
 
+
+def get_elapsed_time(elapsed_time):
+        # Convert elapsed time to hours, minutes, seconds
+    hours = int(elapsed_time // 3600)
+    minutes = int((elapsed_time % 3600) // 60)
+    seconds = int(elapsed_time % 60)
+
+    return hours, minutes, seconds
 
 def run_job(job):
 
@@ -92,6 +102,9 @@ def run_job(job):
                     os.path.join(job.bldg.folder, job.bldg.filebasename + "_osw.log"))
         job.bldg.new_schedule = os.path.join(job.bldg.folder, os.path.split(generated_schedule)[1])
 
+        # change the idf file to have a relative filepath for the schedule file
+        Set_Relative_Schedules_Filepath(job.bldg, **job.arguments)
+
 
     # raise errors if they occured while reading openstudio json file
     except (ValueError, json.JSONDecodeError) as e:
@@ -131,32 +144,24 @@ def modify_and_run(buildings, **kwargs):
     for i, bldg in enumerate(buildings):
         jobs.append(Job(bldg, i, len(buildings), **kwargs))
 
-    num_cpus = min(multiprocessing.cpu_count(), len(jobs)) - 2
-    print(f'Generating {len(jobs)} .idf files using {num_cpus} CPU cores')
+    num_cpus = min( math.floor(0.9 * multiprocessing.cpu_count()), len(jobs)) 
     pool = multiprocessing.Pool(processes=num_cpus)
-
     no_jobs = len(jobs)
     startTime = time.time()
-    result = pool.map_async(run_job, jobs)
-    while not result.ready():
-        # Print remaining jobs (optional)
-        no_completed = no_jobs - result._number_left
-        if no_completed > 0:
-            elapsed_time = time.time() - startTime
-            rate = (no_completed / elapsed_time) * (60*60)        #hours
-            est_remaining_time = round(no_jobs / rate, 2)
-            print(f"Jobs remaining: {result._number_left}. Estimated time remaining {est_remaining_time} (hrs)")
-            time.sleep(10)
+    
+    print(f'Generating {len(jobs)} .idf files using {num_cpus} CPU cores')
+    for _ in tqdm.tqdm(pool.imap_unordered(run_job, jobs), total=no_jobs, desc="Generating .idf files", smoothing=0.01):
+        pass
 
-    real_results = result.get()
-    elapsed_time = round((time.time() - startTime) / 60/60, 2)
-    print(f"{len(jobs)} jobs completed in {elapsed_time} seconds.")  # Print total completed jobs
+    # real_results = result.get()
+    hours, minutes, seconds = get_elapsed_time(time.time() - startTime)
+    print(f"{len(jobs)} jobs completed in: {hours:02d}:{minutes:02d}:{seconds:02d}")
 
-    buildings = []
-    for result in real_results:
-        buildings.append(result.bldg)  # Assign results back to jobs
+    # buildings = []
+    # for result in real_results:
+    #     buildings.append(result.bldg)  # Assign results back to jobs
 
-    return buildings
+    # return buildings
     
     
     

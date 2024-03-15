@@ -15,6 +15,7 @@ import multiprocessing
 import threading 
 import queue
 import time 
+from tqdm import tqdm 
 
 from botocore import UNSIGNED
 from botocore.client import Config
@@ -75,8 +76,6 @@ def download_worker(q, s3):
 
         
 def download_unzip(building_objects_list, **kwargs): 
-    startTime = time.time()
-    print(f'Downloading {len(building_objects_list)} bldg folders from OEDI with multithreading...')
 
     # laod arguments 
     unzip = kwargs.get('unzip') 
@@ -96,8 +95,14 @@ def download_unzip(building_objects_list, **kwargs):
     # Create / check for building folders
     for bldg in building_objects_list:
         create_bldg_folder(os.path.split(bldg.folder)[0], verbose)
-    
-    num_threads = math.floor(multiprocessing.cpu_count() * (3/4))    
+
+
+    # ... (rest of the code up to creating download_queue) ...
+
+    # Create a progress bar with total number of buildings
+    pbar = tqdm(total=len(building_objects_list), desc="Downloading OEDI files", smoothing=0.01)
+    # num_threads = math.floor(multiprocessing.cpu_count() * (3/4)) * 40
+    num_threads = 400
     download_queue = queue.Queue()
 
     # Create worker threads
@@ -107,9 +112,10 @@ def download_unzip(building_objects_list, **kwargs):
         thread.start()
         threads.append(thread)
 
-    # Add download tasks to the queue
+    # Add download tasks to the queue and update progress bar
     for bldg in building_objects_list:
         download_queue.put(bldg)
+        pbar.update()  # Update progress bar for each added task
 
     # Wait for all tasks to finish (using queue.join())
     download_queue.join()
@@ -122,8 +128,8 @@ def download_unzip(building_objects_list, **kwargs):
     for thread in threads:
         thread.join()
 
-    elapsed_time = round((time.time() - startTime) / 60, 2)
-    print(f"Downloads completed in {elapsed_time} minutes.")
+    pbar.close()  # Close the progress bar
+
 
     if unzip: 
         unzip_files(building_objects_list)

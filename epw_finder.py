@@ -3,7 +3,7 @@ import glob
 import copy 
 
 def weather_file_lookup(building_objects_list, **kwargs): 
-    print('Looking up weather files for each city...')
+    print('Finding weather files for each city...')
 
                
     # Find the weather files for each building and scenario and attach to each bldg in building objects list

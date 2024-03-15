@@ -40,7 +40,7 @@ def modify_xml_files(buildings):
     
     i = 0
     # Use tqdm to iterate with a progress bar
-    for _ in tqdm(buildings, desc="Modifying building .xml files", smoothing=0): # smoothing near avg time est
+    for _ in tqdm(buildings, desc="Modifying building .xml files", smoothing=0.01): # smoothing near avg time est
         # Your download logic here (using s3, obj, and kwargs)
         # Increment counter after each successful download
 
