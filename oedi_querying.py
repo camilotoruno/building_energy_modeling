@@ -76,6 +76,7 @@ def download_worker(q, s3):
 
         
 def download_unzip(building_objects_list, **kwargs): 
+    startTime = time.time()
 
     # laod arguments 
     unzip = kwargs.get('unzip') 
@@ -96,11 +97,11 @@ def download_unzip(building_objects_list, **kwargs):
     for bldg in building_objects_list:
         create_bldg_folder(os.path.split(bldg.folder)[0], verbose)
 
-
-    # ... (rest of the code up to creating download_queue) ...
+    print(f'Downloading {len(building_objects_list)} building files from OEDI...')
+    print(f"Rough download time estimate: {round(0.1375*len(building_objects_list)/60, 2)} min")
 
     # Create a progress bar with total number of buildings
-    pbar = tqdm(total=len(building_objects_list), desc="Downloading OEDI files", smoothing=0.01)
+    # pbar = tqdm(total=len(building_objects_list), desc="Downloading OEDI files", smoothing=0.01)
     # num_threads = math.floor(multiprocessing.cpu_count() * (3/4)) * 40
     num_threads = 400
     download_queue = queue.Queue()
@@ -115,7 +116,7 @@ def download_unzip(building_objects_list, **kwargs):
     # Add download tasks to the queue and update progress bar
     for bldg in building_objects_list:
         download_queue.put(bldg)
-        pbar.update()  # Update progress bar for each added task
+        # pbar.update()  # Update progress bar for each added task
 
     # Wait for all tasks to finish (using queue.join())
     download_queue.join()
@@ -127,9 +128,13 @@ def download_unzip(building_objects_list, **kwargs):
     # Wait for all threads to finish
     for thread in threads:
         thread.join()
-
-    pbar.close()  # Close the progress bar
-
+        
+    # Convert elapsed time to hours, minutes, seconds
+    elapsed_time = time.time() - startTime
+    hours = int(elapsed_time // 3600)
+    minutes = int((elapsed_time % 3600) // 60)
+    seconds = int(elapsed_time % 60)
+    print(f"{len(building_objects_list)} files downloaded in: {hours:02d}hr:{minutes:02d}min:{seconds:02d}sec \n")
 
     if unzip: 
         unzip_files(building_objects_list)

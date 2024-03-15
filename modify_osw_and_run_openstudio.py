@@ -33,15 +33,6 @@ def find_file_w_name_fragment(name_fragment, path):
             if name_fragment in file:
                 return os.path.join(root, file)
 
-
-def get_elapsed_time(elapsed_time):
-        # Convert elapsed time to hours, minutes, seconds
-    hours = int(elapsed_time // 3600)
-    minutes = int((elapsed_time % 3600) // 60)
-    seconds = int(elapsed_time % 60)
-
-    return hours, minutes, seconds
-
 def run_job(job):
 
     # Build the openstudio arguments for this job and create a working copy of the base workflow folder
@@ -144,24 +135,17 @@ def modify_and_run(buildings, **kwargs):
     for i, bldg in enumerate(buildings):
         jobs.append(Job(bldg, i, len(buildings), **kwargs))
 
+    # Setup the job pool
     num_cpus = min( math.floor(0.9 * multiprocessing.cpu_count()), len(jobs)) 
     pool = multiprocessing.Pool(processes=num_cpus)
     no_jobs = len(jobs)
     startTime = time.time()
     
+    # Execute the job pool and track progress with tqdm progress bar
     print(f'Generating {len(jobs)} .idf files using {num_cpus} CPU cores')
     for _ in tqdm.tqdm(pool.imap_unordered(run_job, jobs), total=no_jobs, desc="Generating .idf files", smoothing=0.01):
         pass
 
-    # real_results = result.get()
-    hours, minutes, seconds = get_elapsed_time(time.time() - startTime)
-    print(f"{len(jobs)} jobs completed in: {hours:02d}:{minutes:02d}:{seconds:02d}")
-
-    # buildings = []
-    # for result in real_results:
-    #     buildings.append(result.bldg)  # Assign results back to jobs
-
-    # return buildings
     
     
     

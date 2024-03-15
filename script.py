@@ -10,6 +10,7 @@ ResStock buildstock data.
 
 import os
 import multiprocessing
+import time 
 
 # import custom classes and functions
 import oedi_querying 
@@ -24,9 +25,9 @@ if __name__ == '__main__':
         multiprocessing.freeze_support()
         cwd = os.getcwd()   
 
-        # Set user defined arguments 
+        ######################################### SET USER DEFINED ARGUMENTS ####################################################################
         filtering_arguments = {
-                "buildstock_file": "baseline_metadata_only_example_subset.csv",              # must be generated (derived) by resstock-euss.2022.1 version of ResStock
+                "buildstock_file": "baseline_metadata_only.csv",              # must be generated (derived) by resstock-euss.2022.1 version of ResStock
                 # "buildstock_file": "baseline_metadata_only_example_subset.csv", # must be generated (derived) by resstock-euss.2022.1 version of ResStock
                 
                 "buildstock_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "GitHub", "building_energy_modeling"),
@@ -35,22 +36,22 @@ if __name__ == '__main__':
                 "buildstock_output_file": "testing_buildstock_24.03.14.csv",
                 "buildstock_output_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "local_research_data"), 
                 "federal_poverty_levels": ['0-100%', '100-150%', '150-200%'],   # federal poverty levels to match format of buildstock_file
-                "city_size_limit": 5,                                           # max number of houses per city
+                "city_size_limit": 400,                                           # max number of houses per city
                 "keep_cities": [
-                                "AZ, Phoenix",
-                                "CA, Los Angeles",
-                                "CO, Denver",
-                                "FL, Orlando",
-                                "GA, Atlanta",
-                                "ID, Boise City",
-                                "IL, Chicago",
-                                "KS, Kansas City",
-                                "MA, Boston",
-                                "MI, Detroit",
-                                "MN, Minneapolis",
-                                "NE, Omaha",
-                                "NY, New York",
-                                "PA, Philadelphia",
+                                # "AZ, Phoenix",
+                                # "CA, Los Angeles",
+                                # "CO, Denver",
+                                # "FL, Orlando",
+                                # "GA, Atlanta",
+                                # "ID, Boise City",
+                                # "IL, Chicago",
+                                # "KS, Kansas City",
+                                # "MA, Boston",
+                                # "MI, Detroit",
+                                # "MN, Minneapolis",
+                                # "NE, Omaha",
+                                # "NY, New York",
+                                # "PA, Philadelphia",
                                 "TX, Dallas"
                                 ],
                 "exclude_cities": ['In another census Place', 'Not in a census Place']     # can be an empty list
@@ -88,11 +89,9 @@ if __name__ == '__main__':
                 "verbose": False,
                 "cwd": cwd
                 }
+        
         # add calculated openstudio arguments to user arguments
         arguments = {**filtering_arguments, **oedi_querying_arguments, **epw_data, **openstudio_workflow_arguments, **misc_arguments}
-        # arguments.update(openstudio_args)   # add generated openstudio args to user arguments 
-
-        # set optional and calculated arguments 
         arguments = argument_builder.set_optional_args(arguments)
         arguments = argument_builder.set_calculated_args(arguments)
 
@@ -104,6 +103,7 @@ if __name__ == '__main__':
         building_objects_list = buildstock_filtering.filtering(**arguments)
 
         # Query oedi for the required building zip file
+        startTime = time.time()
         building_objects_list = oedi_querying.download_unzip(building_objects_list, **arguments)
 
         # Find the weather files for each building and scenario and attach to each bldg in building objects list
@@ -111,19 +111,18 @@ if __name__ == '__main__':
 
         # if the files were unzipped, proceed with processing 
         if arguments["unzip"]: 
-                #  Modify the xml files to allow openstudio workflow to run 
+                #  Modify the xml files to allow openstudio workflow to run.
                 building_objects_list = xml_modifier.modify_xml_files(building_objects_list)
 
                 # Call the openstudi command line interface to generate the .idf from .xml 
-                building_objects_list = modify_osw_and_run_openstudio.modify_and_run(building_objects_list, **arguments)
-                        
-                # Reset the .idf files' schedules file path to be relative (assumes schedules in same folder as idf)
-                #     Set_Relative_Schedules_Filepath(building_objects_list, **arguments)
-                
-                #     # Remove original files, keep generated ones        
-                #     # Use tqdm to iterate with a progress bar
-                #     for bldg in tqdm(building_objects_list, desc="Removing original files", smoothing=0.01): # smoothing near avg time est
-                #         os.remove(bldg.schedules)   # remove the original schedules file (keeping the generated one)
-                #         os.remove(bldg.xml)         # remove the original .xml file (keeping the modified one)
+                modify_osw_and_run_openstudio.modify_and_run(building_objects_list, **arguments)
 
-                print('\nWorkflow completed\n')    
+
+        
+        # Convert elapsed time to hours, minutes, seconds
+        elapsed_time = time.time() - startTime
+        hours = int(elapsed_time // 3600)
+        minutes = int((elapsed_time % 3600) // 60)
+        seconds = int(elapsed_time % 60)
+        print(f"\nWorkflow completed. {len(building_objects_list)} buildings generated in: {hours:02d}hr:{minutes:02d}min:{seconds:02d}sec \n")
+
