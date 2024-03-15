@@ -19,11 +19,13 @@ Create the required Python environment by calling ```conda create --name <env_na
 
 Then activate the environment using ```conda activate <env_name>```. Now install the required packages 
 
-```pip install tqdm boto3 pandas eppy```
+```pip install boto3==1.29.1 tqdm==4.65.0 pandas==2.1.4 argparse==1.4.0 eppy==0.5.63```
 
 ## Script.py Setup
 
 To determine where your anaconda3 folder which contains the virtual environment you created: On windows from the ```Users/<user>``` folder in the command prompt enter ```dir /s anaconda3```. This will return something like ```C:\Users\ctoruno\AppData\Local```. Set the ```filtering_arguments``` dictionary entry ```"buildstock_folder"``` to the envrionment path (e.g. ```"\Users\ctoruno\AppData\Local\anaconda3\envs\<env_name>"```)
+
+Describe the weather scenarios you want to run by listing the folders that contain weather. The assumed file structure is ```weather/<scenario>/<city>```. 
 
 ## Running workflow
     

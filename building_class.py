@@ -14,19 +14,28 @@ class BuildingFilesData:
     def __init__(self, ID):
         # require initialization with the folder of the files for the building
         self.id = ID
-        self.folder = None
-        self.zip = None
-        
-        self.xml = None        
-        self.modified_xml = None        
-
-        self.idf = None
-        self.oedi_zip_fldr = None
         self.city = None    
-        
+        self.weather_scenario = None
+        self.filebasename = None
+
+        ## Input files / folders
+        self.folder = None
+
+        self.xml = None        
+        self.idf = None
+        self.epw = None      # list to store epws to use in generation of bldg 
+
+        ## Generated files 
+        self.modified_xml = None     # list of modified xmls (one for each weather file)
+        self.output_idf = None
+
         self.schedules = None
         self.schedules_new = None
-    
+
+        self.oedi_zip_fldr = None
+        self.zip = None
+
+
     def assign_folders_contents(self):  
         for file in os.listdir(self.folder):
             filepath = os.path.join(self.folder, file)

@@ -15,6 +15,7 @@ import random
 import os 
 from building_class import BuildingFilesData  
 
+
 def filter_cities(buildstock, keep_cities, exclude_cities, verbose):
     # note this modifies the original buildstock object (?)
     

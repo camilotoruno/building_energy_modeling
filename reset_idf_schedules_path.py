@@ -44,7 +44,7 @@ def Set_Relative_Schedules_Filepath(building_objects, **kwargs):
     
     # Use tqdm to iterate with a progress bar
     for building in tqdm(building_objects, desc="Setting .idf schedules", smoothing=0): # smoothing near avg time est
-        set_idf_schedule_path(building.idf)
+        set_idf_schedule_path(building.output_idf)
     
     
     
