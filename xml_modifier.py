@@ -55,12 +55,12 @@ def modify_xml_files(buildings):
                             attrib='EPWFilePath') # point to arbitrary epw file I have (required for workflow, not for .idf)
         
         # write the modified building xml file 
-        file_basename = os.path.join(buildings[i].folder, "bldg" + buildings[i].id + "_" + buildings[i].weather_scenario)
-        buildings[i].modified_xml = file_basename + ".xml"
+        buildings[i].filebasename = os.path.join(buildings[i].folder, "bldg" + buildings[i].id + "_" + buildings[i].weather_scenario)
+        buildings[i].modified_xml = buildings[i].filebasename + ".xml"
         tree.write(buildings[i].modified_xml, encoding="UTF-8", xml_declaration=True)
 
         # generate the name for the output idf files to be generated 
-        buildings[i].output_idf = file_basename + ".idf"
+        buildings[i].output_idf = buildings[i].filebasename + ".idf"
 
         i += 1
 

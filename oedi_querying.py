@@ -10,7 +10,11 @@ import boto3
 import zipfile
 import os
 import shutil
-from tqdm import tqdm 
+import math 
+import multiprocessing
+import threading 
+import queue
+import time 
 
 from botocore import UNSIGNED
 from botocore.client import Config
@@ -53,28 +57,27 @@ def unzip_files(building_objects_list):
             break              
         
         
-def download_files(s3, bldg_obj_lst, **kwargs):
-    fails = 0
-    failed = []
+def download_worker(q, s3):
+    while True:
+        bldg = q.get()
+        if bldg is None:
+            break  # Sentinel value to signal thread termination
+        try:
+            s3.download_file(
+                Bucket="oedi-data-lake",
+                Key=bldg.oedi_zip_fldr,
+                Filename=bldg.zip
+            )
+        except Exception as e:
+            raise FileNotFoundError(f"Building {bldg.id} failed to download. Error: {e}")
+        q.task_done()  # Signal task completion for queue management
 
-    # Use tqdm to iterate with a progress bar
-    for bldg in tqdm(bldg_obj_lst, desc="Downloading files", smoothing=0.01): # near average smoothing of est time
-        # Increment counter after each successful download        
-        try:             
-            s3.download_file(Bucket="oedi-data-lake", 
-                                Key= bldg.oedi_zip_fldr,
-                                Filename = bldg.zip
-                                )
-        except: 
-            raise FileNotFoundError('Building', bldg.id, 'failed to download. File likely not on OEDI\n\n')
-            # break
-            fails += 1
-            failed.append(bldg.oedi_zip_fldr)
-        
-    if fails !=0: print(fails, 'files failed to download')
 
         
-def download_unzip(building_objects_list, **kwargs):    
+def download_unzip(building_objects_list, **kwargs): 
+    startTime = time.time()
+    print(f'Downloading {len(building_objects_list)} bldg folders from OEDI with multithreading...')
+
     # laod arguments 
     unzip = kwargs.get('unzip') 
     verbose = kwargs.get('verbose')   
@@ -94,7 +97,34 @@ def download_unzip(building_objects_list, **kwargs):
     for bldg in building_objects_list:
         create_bldg_folder(os.path.split(bldg.folder)[0], verbose)
     
-    download_files(s3, building_objects_list, **kwargs)
+    num_threads = math.floor(multiprocessing.cpu_count() * (3/4))    
+    download_queue = queue.Queue()
+
+    # Create worker threads
+    threads = []
+    for i in range(num_threads):
+        thread = threading.Thread(target=download_worker, args=(download_queue, s3))
+        thread.start()
+        threads.append(thread)
+
+    # Add download tasks to the queue
+    for bldg in building_objects_list:
+        download_queue.put(bldg)
+
+    # Wait for all tasks to finish (using queue.join())
+    download_queue.join()
+
+    # Signal termination to worker threads (using sentinel value)
+    for _ in range(num_threads):
+        download_queue.put(None)
+
+    # Wait for all threads to finish
+    for thread in threads:
+        thread.join()
+
+    elapsed_time = round((time.time() - startTime) / 60, 2)
+    print(f"Downloads completed in {elapsed_time} minutes.")
+
     if unzip: 
         unzip_files(building_objects_list)
 

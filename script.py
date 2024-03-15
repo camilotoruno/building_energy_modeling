@@ -9,119 +9,121 @@ ResStock buildstock data.
 """
 
 import os
-from tqdm import tqdm
+import multiprocessing
 
 # import custom classes and functions
 import oedi_querying 
 import buildstock_filtering 
 import xml_modifier
 import modify_osw_and_run_openstudio 
-from argument_builder import argument_builder  
+import argument_builder  
 from reset_idf_schedules_path import Set_Relative_Schedules_Filepath
 import epw_finder
 
-cwd = os.getcwd()   
-openstudio_args = argument_builder.set_openstudio_args(cwd)
+if __name__ == '__main__':
+        multiprocessing.freeze_support()
+        cwd = os.getcwd()   
 
-# Set user defined arguments 
-filtering_arguments = {
-        "buildstock_file": "baseline_metadata_only_example_subset.csv",              # must be generated (derived) by resstock-euss.2022.1 version of ResStock
-        # "buildstock_file": "baseline_metadata_only_example_subset.csv", # must be generated (derived) by resstock-euss.2022.1 version of ResStock
-        
-        "buildstock_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "GitHub", "building_energy_modeling"),
-        # "buildstock_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "research_data"),
+        # Set user defined arguments 
+        filtering_arguments = {
+                "buildstock_file": "baseline_metadata_only.csv",              # must be generated (derived) by resstock-euss.2022.1 version of ResStock
+                # "buildstock_file": "baseline_metadata_only_example_subset.csv", # must be generated (derived) by resstock-euss.2022.1 version of ResStock
+                
+                "buildstock_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "GitHub", "building_energy_modeling"),
+                # "buildstock_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "research_data"),
 
-        "buildstock_output_file": "testing_buildstock_24.03.14.csv",
-        "buildstock_output_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "local_research_data"), 
-        "federal_poverty_levels": ['0-100%', '100-150%', '150-200%'],   # federal poverty levels to match format of buildstock_file
-        "city_size_limit": 1,                                           # max number of houses per city
-        "keep_cities": [
-                        # "AZ, Phoenix",
-                        # "CA, Los Angeles",
-                        # "CO, Denver",
-                        # "FL, Orlando",
-                        # "GA, Atlanta",
-                        # "ID, Boise City",
-                        # "IL, Chicago",
-                        # "KS, Kansas City",
-                        # "MA, Boston",
-                        # "MI, Detroit",
-                        # "MN, Minneapolis",
-                        # "NE, Omaha",
-                        # "NY, New York",
-                        # "PA, Philadelphia",
-                        "TX, Dallas"
-                        ],
-        "exclude_cities": ['In another census Place', 'Not in a census Place']     # can be an empty list
-        }
+                "buildstock_output_file": "testing_buildstock_24.03.14.csv",
+                "buildstock_output_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "local_research_data"), 
+                "federal_poverty_levels": ['0-100%', '100-150%', '150-200%'],   # federal poverty levels to match format of buildstock_file
+                "city_size_limit": 40,                                           # max number of houses per city
+                "keep_cities": [
+                                # "AZ, Phoenix",
+                                # "CA, Los Angeles",
+                                # "CO, Denver",
+                                # "FL, Orlando",
+                                # "GA, Atlanta",
+                                # "ID, Boise City",
+                                # "IL, Chicago",
+                                # "KS, Kansas City",
+                                # "MA, Boston",
+                                # "MI, Detroit",
+                                # "MN, Minneapolis",
+                                # "NE, Omaha",
+                                # "NY, New York",
+                                # "PA, Philadelphia",
+                                "TX, Dallas"
+                                ],
+                "exclude_cities": ['In another census Place', 'Not in a census Place']     # can be an empty list
+                }
 
-oedi_querying_arguments = {
-        "oedi_download_folder": filtering_arguments['buildstock_output_folder'],
-        "bldg_download_folder_basename": 'Buildings',                               # set as desired. Root name for folder of generated files
-        "unzip": True,      # default False
-        }
+        oedi_querying_arguments = {
+                "oedi_download_folder": filtering_arguments['buildstock_output_folder'],
+                "bldg_download_folder_basename": 'Buildings',                               # set as desired. Root name for folder of generated files
+                "unzip": True,      # default False
+                }
 
-epw_data = {
-        "weather_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "local_research_data", "weather"), 
-        "scenario_folders": ["Historical"]#, "RCP4.5", "RCP8.5"]
-        }
+        epw_data = {
+                "weather_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "local_research_data", "weather"), 
+                "scenario_folders": ["Historical"]#, "RCP4.5", "RCP8.5"]
+                }
 
-openstudio_workflow_arguments = {
-        # Mac example
-        "openstudio_path": os.path.join(os.path.sep, "usr", "local", "bin", "openstudio"),        # Set to local path. Requires openstudio version 3.4.0 in bin
-        "openstudio_application_path": os.path.join(os.path.sep, "Applications", "OpenStudio-3.4.0"),  # set the OpenStudio application path to your downloaded copy. Requires OpenStudio 3.4.0
+        openstudio_workflow_arguments = {
+                # Mac example
+                "openstudio_path": os.path.join(os.path.sep, "usr", "local", "bin", "openstudio"),        # Set to local path. Requires openstudio version 3.4.0 in bin
+                "openstudio_application_path": os.path.join(os.path.sep, "Applications", "OpenStudio-3.4.0"),  # set the OpenStudio application path to your downloaded copy. Requires OpenStudio 3.4.0
 
-        # # Windows example 
-        # "openstudio_path": os.path.join(os.path.sep, "openstudio-3.4.0", "bin", "openstudio.exe"),        # Set to local path. Requires openstudio version 3.4.0 in bin
-        # "openstudio_application_path":  os.path.join(os.path.sep, "openstudio-3.4.0"),   # set the OpenStudio application path to your downloaded copy. Requires OpenStudio 3.4.0
-        }
+                # # Windows example 
+                # "openstudio_path": os.path.join(os.path.sep, "openstudio-3.4.0", "bin", "openstudio.exe"),        # Set to local path. Requires openstudio version 3.4.0 in bin
+                # "openstudio_application_path":  os.path.join(os.path.sep, "openstudio-3.4.0"),   # set the OpenStudio application path to your downloaded copy. Requires OpenStudio 3.4.0
+                }
 
-misc_arguments = {
-        # set the location of your virtual environment 
-        # Mac example
-        "conda_venv_dir": os.path.join(os.path.sep, "Users", "camilotoruno", "anaconda3", "envs", "research"),
+        misc_arguments = {
+                # set the location of your virtual environment 
+                # Mac example
+                "conda_venv_dir": os.path.join(os.path.sep, "Users", "camilotoruno", "anaconda3", "envs", "research"),
 
-        # # Windows example
-        # "conda_venv_dir": os.path.join(os.path.sep, "Users", "ctoruno", "AppData", "Local", "anaconda3", "envs", "ResStock2EnergyPlus"),
+                # # Windows example
+                # "conda_venv_dir": os.path.join(os.path.sep, "Users", "ctoruno", "AppData", "Local", "anaconda3", "envs", "ResStock2EnergyPlus"),
 
-        "verbose": False
-        }
-# add calculated openstudio arguments to user arguments
-arguments = {**filtering_arguments, **oedi_querying_arguments, **epw_data, **openstudio_workflow_arguments, **misc_arguments}
-arguments.update(openstudio_args)   # add generated openstudio args to user arguments 
+                "verbose": False,
+                "cwd": cwd
+                }
+        # add calculated openstudio arguments to user arguments
+        arguments = {**filtering_arguments, **oedi_querying_arguments, **epw_data, **openstudio_workflow_arguments, **misc_arguments}
+        # arguments.update(openstudio_args)   # add generated openstudio args to user arguments 
 
-# set optional and calculated arguments 
-arguments = argument_builder.set_optional_args(arguments)
-arguments = argument_builder.set_calculated_args(arguments)
+        # set optional and calculated arguments 
+        arguments = argument_builder.set_optional_args(arguments)
+        arguments = argument_builder.set_calculated_args(arguments)
 
 
-#################################### BEGING PROCESSING DATA ########################################################
+        #################################### BEGING PROCESSING DATA ########################################################
 
-# Filter the buildstock data by the desired characteristics 
-# capture a list of custom objects to track the folders, id and other useful info for each building
-building_objects_list = buildstock_filtering.filtering(**arguments)
+        # Filter the buildstock data by the desired characteristics 
+        # capture a list of custom objects to track the folders, id and other useful info for each building
+        building_objects_list = buildstock_filtering.filtering(**arguments)
 
-# Query oedi for the required building zip file
-building_objects_list = oedi_querying.download_unzip(building_objects_list, **arguments)
+        # Query oedi for the required building zip file
+        building_objects_list = oedi_querying.download_unzip(building_objects_list, **arguments)
 
-# Find the weather files for each building and scenario and attach to each bldg in building objects list
-building_objects_list = epw_finder.weather_file_lookup(building_objects_list, **arguments)
+        # Find the weather files for each building and scenario and attach to each bldg in building objects list
+        building_objects_list = epw_finder.weather_file_lookup(building_objects_list, **arguments)
 
-# if the files were unzipped, proceed with processing 
-if arguments["unzip"]: 
-    #  Modify the xml files to allow openstudio workflow to run 
-    building_objects_list = xml_modifier.modify_xml_files(building_objects_list)
+        # if the files were unzipped, proceed with processing 
+        if arguments["unzip"]: 
+                #  Modify the xml files to allow openstudio workflow to run 
+                building_objects_list = xml_modifier.modify_xml_files(building_objects_list)
 
-    # Call the openstudi command line interface to generate the .idf from .xml 
-    building_objects_list = modify_osw_and_run_openstudio.modify_and_run(building_objects_list, **arguments)
-        
-    # Reset the .idf files' schedules file path to be relative (assumes schedules in same folder as idf)
-    Set_Relative_Schedules_Filepath(building_objects_list, **arguments)
-    
-#     # Remove original files, keep generated ones        
-#     # Use tqdm to iterate with a progress bar
-#     for bldg in tqdm(building_objects_list, desc="Removing original files", smoothing=0.01): # smoothing near avg time est
-#         os.remove(bldg.schedules)   # remove the original schedules file (keeping the generated one)
-#         os.remove(bldg.xml)         # remove the original .xml file (keeping the modified one)
+                # Call the openstudi command line interface to generate the .idf from .xml 
+                building_objects_list = modify_osw_and_run_openstudio.modify_and_run(building_objects_list, **arguments)
+                        
+                # Reset the .idf files' schedules file path to be relative (assumes schedules in same folder as idf)
+                #     Set_Relative_Schedules_Filepath(building_objects_list, **arguments)
+                
+                #     # Remove original files, keep generated ones        
+                #     # Use tqdm to iterate with a progress bar
+                #     for bldg in tqdm(building_objects_list, desc="Removing original files", smoothing=0.01): # smoothing near avg time est
+                #         os.remove(bldg.schedules)   # remove the original schedules file (keeping the generated one)
+                #         os.remove(bldg.xml)         # remove the original .xml file (keeping the modified one)
 
-print('\nWorkflow completed\n')    
+                print('\nWorkflow completed\n')    
