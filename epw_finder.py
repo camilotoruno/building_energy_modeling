@@ -33,6 +33,7 @@ def weather_file_lookup(building_objects_list, **kwargs):
                 if ".epw" in filepath:
                     bldg.epw = filepath
                     bldg.weather_scenario = scenario_folders[i] + "-" + str(j) # add the scenario name 
+                    bldg.filebasename = "bldg" + bldg.id + "_" + bldg.weather_scenario
                     new_buildings.append(copy.deepcopy(bldg))
 
                     if verbose: 
