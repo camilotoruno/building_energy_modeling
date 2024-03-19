@@ -66,26 +66,38 @@ def download_worker(q, s3):
 
 
 def file_check(building_objects_list, **kwargs): 
-    # overwrite download folder 
+    jobs = []
     download_folder = os.path.join(kwargs.get('oedi_download_folder'), kwargs.get('bldg_download_folder_basename'))
-    if os.path.exists(download_folder):
-        if kwargs.get('verbose'): warnings.warn('Overwriting OEDI download folder contents')
+    
+    if not os.path.exists(download_folder):
+        print(f'Making output folder {download_folder}')
+        os.mkdir( download_folder )  # Create a new one
+
+    elif kwargs.get('overwrite_output'):
+        print(f'Overwriting: {download_folder}')
         shutil.rmtree( download_folder )  # Remove existing folder
         os.mkdir( download_folder )  # Create a new one
+
+    else: print(f"Download folder exists and overwrite not enabled. Existing files will be skipped during processing.")
     
-    if building_objects_list:
+    if building_objects_list:    # If a bldg objects list is passed check for folders. 
         # Create / check for building folders
         for bldg in building_objects_list:
-            """Creates a folder with user confirmation for overwrite."""
-            folder_path = os.path.split(bldg.folder)[0] 
-            if os.path.exists(folder_path):
-                if kwargs.get('verbose'): warnings.warn(f"Building folder '{folder_path}' overwritten.")
-                shutil.rmtree(folder_path)  # Remove existing folder
+            folder_path = bldg.folder
+            print(f"\toedi_querying: folder_path: {folder_path}")
+            if not os.path.exists(folder_path):
                 os.mkdir(folder_path)  # Create a new one
-            else:
-                if kwargs.get('verbose'): warnings.warn(f"Making building folder '{folder_path}'.")
-                os.makedirs(folder_path)
+                jobs.append(bldg)
 
+            elif kwargs.get('overwrite_output'):
+                if kwargs.get('verbose'): warnings.warn(f"Output building folder '{folder_path}' overwritten.")
+                shutil.rmtree(folder_path)  # Remove existing folder
+                os.mkdir(folder_path)  # Create a new one                
+                jobs.append(bldg)
+
+            elif kwargs.get('verbose'): print(f'\tOutput building folder already exists. Not overwritten: {folder_path}')
+
+    return jobs
 
 def download_unzip(building_objects_list, **kwargs): 
     startTime = time.time()
@@ -96,17 +108,17 @@ def download_unzip(building_objects_list, **kwargs):
         
     # oedi has a standard form for how a bldg id maps to a folder name, generate it
     building_objects_list = generate_bldg_foldernames(building_objects_list, **kwargs)
-    file_check(building_objects_list, **kwargs)
+    jobs = file_check(building_objects_list, **kwargs)
 
     s3 = boto3.client('s3', config = Config(signature_version = UNSIGNED))
 
-    print(f'Downloading {len(building_objects_list)} building files from OEDI...')
-    print(f"Rough download time estimate: {round(0.1375*len(building_objects_list)/60, 2)} min")
+    print(f'Downloading {len(jobs)} building files from OEDI...')
+    print(f"Rough download time estimate: {round(0.1375*len(jobs)/60, 2)} min")
 
     # Create a progress bar with total number of buildings
     # pbar = tqdm(total=len(building_objects_list), desc="Downloading OEDI files", smoothing=0.01)
     # num_threads = math.floor(multiprocessing.cpu_count() * (3/4)) * 40
-    num_threads = 400
+    num_threads = 20
     download_queue = queue.Queue()
 
     # Create worker threads
@@ -117,7 +129,7 @@ def download_unzip(building_objects_list, **kwargs):
         threads.append(thread)
 
     # Add download tasks to the queue and update progress bar
-    for bldg in building_objects_list:
+    for bldg in jobs:
         download_queue.put(bldg)
         # pbar.update()  # Update progress bar for each added task
 
@@ -137,13 +149,13 @@ def download_unzip(building_objects_list, **kwargs):
     hours = int(elapsed_time // 3600)
     minutes = int((elapsed_time % 3600) // 60)
     seconds = int(elapsed_time % 60)
-    print(f"{len(building_objects_list)} files downloaded in: {hours:02d}hr:{minutes:02d}min:{seconds:02d}sec \n")
+    print(f"{len(jobs)} files downloaded in: {hours:02d}hr:{minutes:02d}min:{seconds:02d}sec \n")
 
     if unzip: 
-        unzip_files(building_objects_list)
+        unzip_files(jobs)
 
-        # update the bldg objects with new files 
-        for i in range(len(building_objects_list)):
-            building_objects_list[i].assign_folders_contents()
-        
+    # update the bldg objects with xml file names
+    for i in range(len(building_objects_list)):
+        building_objects_list[i].assign_folders_contents()
+    
     return building_objects_list

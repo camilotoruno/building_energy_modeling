@@ -36,13 +36,12 @@ if __name__ == '__main__':
                 "buildstock_output_file": "testing_buildstock_24.03.14.csv",
                 
                 # "buildstock_output_folder": os.path.join(os.path.sep, "Volumes", "seas-mtcraig", "EPWFromTGW"), 
-                "buildstock_output_folder": "/Users/camilotoruno/Documents/ctoruno",
-                # "buildstock_output_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "local_research_data"), 
+                "buildstock_output_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "local_research_data"), 
 
                 # "buildstock_output_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data"), 
 
                 "federal_poverty_levels": ['0-100%', '100-150%', '150-200%'],   # federal poverty levels to match format of buildstock_file
-                "city_size_limit": 400,                                           # max number of houses per city
+                "city_size_limit": 3,                                           # max number of houses per city
                 "keep_cities": [
                                 # "AZ, Phoenix",
                                 # "CA, Los Angeles",
@@ -65,7 +64,7 @@ if __name__ == '__main__':
 
         oedi_querying_arguments = {
                 "oedi_download_folder": filtering_arguments['buildstock_output_folder'],
-                "bldg_download_folder_basename": 'Buildings',                               # set as desired. Root name for folder of generated files
+                "bldg_download_folder_basename": 'Buildings_Dallas_mac',                               # set as desired. Root name for folder of generated files
                 "unzip": True,      # default False
                 }
 
@@ -102,20 +101,18 @@ if __name__ == '__main__':
                 # # Windows example
                 # "conda_venv_dir": os.path.join(os.path.sep, "Users", "ctoruno", "AppData", "Local", "anaconda3", "envs", "ResStock2EnergyPlus"),
 
-                "verbose": False,
+                "verbose": True,
+                "overwrite_output": False,
+
                 "cwd": cwd,
-                "max_cpu_load": 0.8      # must be in the range (0, 1]. The value 1 indidcates all CPU cores, all the way down to but not including 0 percent of CPU cores
+                "max_cpu_load": 0.9      # must be in the range (0, 1]. The value 1 indidcates all CPU cores, all the way down to but not including 0 percent of CPU cores
                 }
         
         # add calculated openstudio arguments to user arguments
         arguments = {**filtering_arguments, **oedi_querying_arguments, **epw_data, **openstudio_workflow_arguments, **misc_arguments}
         arguments = argument_builder.set_optional_args(arguments)
         arguments = argument_builder.set_calculated_args(arguments)
-        print("Relative folder paths for input and output files generated.")
-
-        # Check for file locations before performing the downloads. 
-        buildstock_filtering.file_check(**arguments)
-        oedi_querying.file_check(None, **arguments)
+        argument_builder.file_check(**arguments)
 
         #################################### BEGING PROCESSING DATA ########################################################
 
@@ -133,11 +130,11 @@ if __name__ == '__main__':
         # if the files were unzipped, proceed with processing 
         if arguments["unzip"]: 
                 #  Modify the xml files to allow openstudio workflow to run.
-                building_objects_list = xml_modifier.modify_xml_files(building_objects_list)
+                building_objects_list = xml_modifier.modify_xml_files(building_objects_list, **arguments)
 
-                # Call the openstudi command line interface to generate the .idf from .xml 
-                modify_osw_and_run_openstudio.modify_and_run(building_objects_list, **arguments)
-        
+                # Call the openstudio command line interface to generate the .idf from .xml 
+                building_objects_list = modify_osw_and_run_openstudio.modify_and_run(building_objects_list, **arguments)
+
         # Convert elapsed time to hours, minutes, seconds
         elapsed_time = time.time() - startTime
         hours = int(elapsed_time // 3600)

@@ -15,7 +15,7 @@ import multiprocessing
 import math 
 import tqdm 
 from reset_idf_schedules_path import Set_Relative_Schedules_Filepath
-
+import warnings
 
 class Job:
     def __init__(self, bldg, id, no_jobs, **arguments):
@@ -131,7 +131,14 @@ def modify_and_run(buildings, **kwargs):
     # Constrcut the jobs to be run in parallel 
     jobs = []
     for i, bldg in enumerate(buildings):
-        jobs.append(Job(bldg, i, len(buildings), **kwargs))
+        idf_filename = os.path.join(bldg.folder, bldg.filebasename + ".idf")
+        # if the overwite signal is true or the output doesn't exist 
+        if kwargs.get('overwrite_output') or not(os.path.exists(idf_filename)):
+            if kwargs.get('verbose') and os.path.exists(idf_filename): print(f'\tOutput file is being overwritten: {idf_filename}')
+
+            jobs.append(Job(bldg, i, len(buildings), **kwargs))  # mark the building for processing
+        elif kwargs.get('verbose') and os.path.exists(idf_filename) and not kwargs.get('overwrite_output'): 
+            print(f'\tOutputfile exists and is not being overwritten: {idf_filename}')
 
     # Setup the job pool
     # at least one CPU core, up to max_cpu_load * num_cpu_cores, no more cores than jobs
@@ -144,8 +151,11 @@ def modify_and_run(buildings, **kwargs):
     for _ in tqdm.tqdm(pool.imap_unordered(run_job, jobs), total=no_jobs, desc="Generating .idf files", smoothing=0.01):
         pass
 
-    
-    
+    # return the buildings that were operated on
+    buildings = []
+    for job in jobs: buildings.append(job.bldg)
+
+    return buildings
     
     
     
