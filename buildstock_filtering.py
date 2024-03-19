@@ -130,17 +130,24 @@ def check_unique(buildstock):
     print('unique ratio', len(np.unique(buildstock.bldg_id.values))/len(buildstock))
 
 
-def filtering(**kwargs): 
-    
-    def initialize_bldg_obj_ls(buildstock):
-        building_objects = [BuildingFilesData(ID) for ID in buildstock['bldg_id'].values ]
+def file_check(**kwargs):
+    # check the input buildstock file exists
+    if not os.path.exists(os.path.join(kwargs.get('buildstock_folder'), kwargs.get('buildstock_file'))):
+        raise OSError(f"Could not find buildstock file {os.path.join(kwargs.get('buildstock_folder'), kwargs.get('buildstock_file'))}")
+    if not os.path.exists(kwargs.get('buildstock_output_folder')):
+        raise OSError(f"Could not find output folder {kwargs.get('buildstock_output_folder')}")
         
-        for i, bldg in enumerate(building_objects):
-            bldg.city = buildstock.loc[i, 'in.city'].split(", ")[1] # remove the state code from city
-            
-        return building_objects
-            
+
+def initialize_bldg_obj_ls(buildstock):
+    building_objects = [BuildingFilesData(ID) for ID in buildstock['bldg_id'].values ]
     
+    for i, bldg in enumerate(building_objects):
+        bldg.city = buildstock.loc[i, 'in.city'].split(", ")[1] # remove the state code from city
+        
+    return building_objects
+
+
+def filtering(**kwargs): 
             
     buildstock_folder = kwargs.get('buildstock_folder') 
     buildstock_file = kwargs.get('buildstock_file') 
@@ -152,12 +159,9 @@ def filtering(**kwargs):
     output_folder = kwargs.get('buildstock_output_folder')
     save_buildstock = kwargs.get('save_buildstock')
     verbose = kwargs.get('verbose')
-    
-    # check the input buildstock file exists
-    if not os.path.exists(os.path.join(buildstock_folder, buildstock_file)):
-        raise OSError(f'Could not find buildstock file {os.path.join(buildstock_folder, buildstock_file)}')
-    
-    
+
+    file_check(**kwargs)
+
     print('Loading buildstock and filtering..')
     ibuildstock = pd.read_csv(os.path.join(buildstock_folder, buildstock_file), low_memory=False)
     obuildstock = filter_cities(ibuildstock, keep_cities, exclude_cities, verbose)

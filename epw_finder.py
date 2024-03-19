@@ -16,8 +16,7 @@ def weather_file_lookup(building_objects_list, **kwargs):
     for i, bldg in enumerate(building_objects_list):
         weather_scenarios_for_city = [os.path.join(weather_folder, scenario, bldg.city) for scenario in scenario_folders]
 
-        if verbose: 
-            print()
+        if verbose: print()
 
         for i, weather_scenario_4city in enumerate(weather_scenarios_for_city):
 
@@ -35,7 +34,6 @@ def weather_file_lookup(building_objects_list, **kwargs):
                     bldg.filebasename = "bldg" + bldg.id + "_" + bldg.weather_scenario
                     new_buildings.append(copy.deepcopy(bldg))
 
-                    if verbose: 
-                        print('\tAdding', filepath, 'to building', bldg.id)
+                    if verbose: print('\tAdding', filepath, 'to building', bldg.id)
                     
     return new_buildings

@@ -30,13 +30,13 @@ if __name__ == '__main__':
                 "buildstock_file": "baseline_metadata_only.csv",              # must be generated (derived) by resstock-euss.2022.1 version of ResStock
                 # "buildstock_file": "baseline_metadata_only_example_subset.csv", # must be generated (derived) by resstock-euss.2022.1 version of ResStock
                 
-                # "buildstock_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "GitHub", "building_energy_modeling"),
-                "buildstock_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data"),
+                "buildstock_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "GitHub", "building_energy_modeling"),
+                # "buildstock_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data"),
 
                 "buildstock_output_file": "testing_buildstock_24.03.14.csv",
                 
-                # "buildstock_output_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "local_research_data"), 
-                "buildstock_output_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data"), 
+                "buildstock_output_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "local_research_data"), 
+                # "buildstock_output_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data"), 
 
                 "federal_poverty_levels": ['0-100%', '100-150%', '150-200%'],   # federal poverty levels to match format of buildstock_file
                 "city_size_limit": 4,                                           # max number of houses per city
@@ -67,32 +67,32 @@ if __name__ == '__main__':
                 }
 
         epw_data = {
-                # # Mac Example
-                # "weather_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "local_research_data", "weather"), 
+                # Mac Example
+                "weather_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "local_research_data", "weather"), 
 
-                # Windows example
-                "weather_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data", "weather"),
+                # # Windows example
+                # "weather_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data", "weather"),
 
                 "scenario_folders": ["Historical", "RCP4.5", "RCP8.5"]
                 }
 
         openstudio_workflow_arguments = {
-                # # Mac example
-                # "openstudio_path": os.path.join(os.path.sep, "usr", "local", "bin", "openstudio"),        # Set to local path. Requires openstudio version 3.4.0 in bin
-                # "openstudio_application_path": os.path.join(os.path.sep, "Applications", "OpenStudio-3.4.0"),  # set the OpenStudio application path to your downloaded copy. Requires OpenStudio 3.4.0
+                # Mac example
+                "openstudio_path": os.path.join(os.path.sep, "usr", "local", "bin", "openstudio"),        # Set to local path. Requires openstudio version 3.4.0 in bin
+                "openstudio_application_path": os.path.join(os.path.sep, "Applications", "OpenStudio-3.4.0"),  # set the OpenStudio application path to your downloaded copy. Requires OpenStudio 3.4.0
 
-                # Windows example 
-                "openstudio_path": os.path.join(os.path.sep, "openstudio-3.4.0", "bin", "openstudio.exe"),        # Set to local path. Requires openstudio version 3.4.0 in bin
-                "openstudio_application_path":  os.path.join(os.path.sep, "openstudio-3.4.0"),   # set the OpenStudio application path to your downloaded copy. Requires OpenStudio 3.4.0
+                # # Windows example 
+                # "openstudio_path": os.path.join(os.path.sep, "openstudio-3.4.0", "bin", "openstudio.exe"),        # Set to local path. Requires openstudio version 3.4.0 in bin
+                # "openstudio_application_path":  os.path.join(os.path.sep, "openstudio-3.4.0"),   # set the OpenStudio application path to your downloaded copy. Requires OpenStudio 3.4.0
                 }
 
         misc_arguments = {
-                # # set the location of your virtual environment 
-                # # Mac example
-                # "conda_venv_dir": os.path.join(os.path.sep, "Users", "camilotoruno", "anaconda3", "envs", "research"),
+                # set the location of your virtual environment 
+                # Mac example
+                "conda_venv_dir": os.path.join(os.path.sep, "Users", "camilotoruno", "anaconda3", "envs", "research"),
 
-                # Windows example
-                "conda_venv_dir": os.path.join(os.path.sep, "Users", "ctoruno", "AppData", "Local", "anaconda3", "envs", "ResStock2EnergyPlus"),
+                # # Windows example
+                # "conda_venv_dir": os.path.join(os.path.sep, "Users", "ctoruno", "AppData", "Local", "anaconda3", "envs", "ResStock2EnergyPlus"),
 
                 "verbose": False,
                 "cwd": cwd
@@ -102,7 +102,11 @@ if __name__ == '__main__':
         arguments = {**filtering_arguments, **oedi_querying_arguments, **epw_data, **openstudio_workflow_arguments, **misc_arguments}
         arguments = argument_builder.set_optional_args(arguments)
         arguments = argument_builder.set_calculated_args(arguments)
+        print("Relative folder paths for input and output files generated.")
 
+        # Check for file locations before performing the downloads. 
+        buildstock_filtering.file_check(**arguments)
+        oedi_querying.file_check(None, **arguments)
 
         #################################### BEGING PROCESSING DATA ########################################################
 
@@ -124,8 +128,6 @@ if __name__ == '__main__':
 
                 # Call the openstudi command line interface to generate the .idf from .xml 
                 modify_osw_and_run_openstudio.modify_and_run(building_objects_list, **arguments)
-
-
         
         # Convert elapsed time to hours, minutes, seconds
         elapsed_time = time.time() - startTime

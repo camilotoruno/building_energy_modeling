@@ -16,18 +16,10 @@ import threading
 import queue
 import time 
 from tqdm import tqdm 
+import warnings 
 
 from botocore import UNSIGNED
 from botocore.client import Config
-
-def create_bldg_folder(folder_path, verbose):
-    """Creates a folder with user confirmation for overwrite."""
-    if os.path.exists(folder_path):
-        shutil.rmtree(folder_path)  # Remove existing folder
-        os.mkdir(folder_path)  # Create a new one
-        if verbose: print(f"Folder '{folder_path}' overwritten successfully.")
-    else:
-        os.makedirs(folder_path)
         
 
 def generate_bldg_foldernames(building_objects_list, bldg_download_folder_basename, **kwargs):
@@ -67,14 +59,34 @@ def download_worker(q, s3):
             s3.download_file(
                 Bucket="oedi-data-lake",
                 Key=bldg.oedi_zip_fldr,
-                Filename=bldg.zip
-            )
+                Filename=bldg.zip)
         except Exception as e:
             raise FileNotFoundError(f"Building {bldg.id} failed to download. Error: {e}")
         q.task_done()  # Signal task completion for queue management
 
 
-        
+def file_check(building_objects_list, **kwargs): 
+    # overwrite download folder 
+    download_folder = os.path.join(kwargs.get('oedi_download_folder'), kwargs.get('bldg_download_folder_basename'))
+    if os.path.exists(download_folder):
+        if kwargs.get('verbose'): warnings.warn('Overwriting OEDI download folder contents')
+        shutil.rmtree( download_folder )  # Remove existing folder
+        os.mkdir( download_folder )  # Create a new one
+    
+    if building_objects_list:
+        # Create / check for building folders
+        for bldg in building_objects_list:
+            """Creates a folder with user confirmation for overwrite."""
+            folder_path = os.path.split(bldg.folder)[0] 
+            if os.path.exists(folder_path):
+                if kwargs.get('verbose'): warnings.warn(f"Building folder '{folder_path}' overwritten.")
+                shutil.rmtree(folder_path)  # Remove existing folder
+                os.mkdir(folder_path)  # Create a new one
+            else:
+                if kwargs.get('verbose'): warnings.warn(f"Making building folder '{folder_path}'.")
+                os.makedirs(folder_path)
+
+
 def download_unzip(building_objects_list, **kwargs): 
     startTime = time.time()
 
@@ -84,18 +96,9 @@ def download_unzip(building_objects_list, **kwargs):
         
     # oedi has a standard form for how a bldg id maps to a folder name, generate it
     building_objects_list = generate_bldg_foldernames(building_objects_list, **kwargs)
-    
-    # overwrite download folder 
-    download_folder = os.path.join(kwargs.get('oedi_download_folder'), kwargs.get('bldg_download_folder_basename'))
-    if os.path.exists(download_folder):
-        shutil.rmtree( download_folder )  # Remove existing folder
-        os.mkdir( download_folder )  # Create a new one
-    
+    file_check(building_objects_list, **kwargs)
+
     s3 = boto3.client('s3', config = Config(signature_version = UNSIGNED))
-    
-    # Create / check for building folders
-    for bldg in building_objects_list:
-        create_bldg_folder(os.path.split(bldg.folder)[0], verbose)
 
     print(f'Downloading {len(building_objects_list)} building files from OEDI...')
     print(f"Rough download time estimate: {round(0.1375*len(building_objects_list)/60, 2)} min")

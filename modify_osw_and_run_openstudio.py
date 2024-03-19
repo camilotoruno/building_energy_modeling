@@ -5,7 +5,7 @@ Created on Wed Feb 14 09:58:26 2024
 
 @author: camilotoruno
 """
-
+import warnings
 import xml.etree.ElementTree as ET
 import os 
 import subprocess
@@ -38,10 +38,9 @@ def run_job(job):
     # Build the openstudio arguments for this job and create a working copy of the base workflow folder
     openstudio_args = argument_builder.set_openstudio_args("workflow-" + str(job.id+1), **job.arguments)
 
-    # if the destination exists, delete it 
+    # if the working folder exists, delete it (it is only there for a given parallel run, files will be copied to output)
     if os.path.exists(openstudio_args["openstudio_workflow_folder"]):
         shutil.rmtree(openstudio_args["openstudio_workflow_folder"])
-
     shutil.copytree(openstudio_args['base_workflow'], openstudio_args["openstudio_workflow_folder"])
 
     if not os.path.exists(openstudio_args["osw_path"]):
@@ -73,9 +72,9 @@ def run_job(job):
         
         # Check for errors and process the output
         if result.returncode != 0:
-            print("Error running OpenStudio:", result.stderr)
+            print("\n\tError running OpenStudio:", result.stderr)
         if job.arguments["verbose"]:
-            print("OpenStudio output:", result.stdout)
+            print("\n\tOpenStudio output:", result.stdout)
         
         # copy the generated .idf file to the correct output folder
         generated_idf = os.path.join(openstudio_args["openstudio_workflow_folder"], 'run', 'in.idf')
