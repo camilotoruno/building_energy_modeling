@@ -19,6 +19,7 @@ def weather_file_lookup(building_objects_list, **kwargs):
 
         if verbose: print()
 
+        # for each weather scenario
         for i, weather_scenario_4city in enumerate(weather_scenarios_for_city):
 
             files = glob.glob(weather_scenario_4city + "/*.epw")
@@ -27,14 +28,15 @@ def weather_file_lookup(building_objects_list, **kwargs):
                 msg = f"No weather located at {weather_scenario_4city!r}"
                 raise FileNotFoundError(msg)
             
-            for j, filepath in enumerate(os.listdir(weather_scenario_4city)):
-                
+            # for each weather file in scenario 
+            for j, filepath in enumerate(files):                
                 if ".epw" in filepath:
                     bldg.epw = filepath
                     bldg.weather_scenario = scenario_folders[i] + "-" + str(j) # add the scenario name 
                     bldg.filebasename = "bldg" + bldg.id + "_" + bldg.weather_scenario
-                    new_buildings.append(copy.deepcopy(bldg))
+                    new_buildings.append(copy.deepcopy(bldg))       # create a building file for each bldg and weather file pair 
 
                     if verbose: print('\tAdding', filepath, 'to building', bldg.id)
-                    
-    return new_buildings
+    
+    if verbose: print()
+    return new_buildings    # return bldg with weather file for each bldg for each weather file 

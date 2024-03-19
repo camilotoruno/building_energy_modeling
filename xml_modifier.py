@@ -49,7 +49,8 @@ def modify_xml_files(buildings):
         
         remove_tags(root, 'EmissionsScenarios')  # Replace with the tag name you want to remove
         change_attrib_text(buildings[i].schedules, root, attrib='SchedulesFilePath')
-        change_attrib_text(#new_text="../../../weather/G5100330.epw", 
+        change_attrib_text(
+                            # new_text="../../../weather/G5100330.epw", 
                             new_text = buildings[i].epw, 
                             root=root, 
                             attrib='EPWFilePath') # point to arbitrary epw file I have (required for workflow, not for .idf)

@@ -5,7 +5,6 @@ Created on Wed Feb 14 09:58:26 2024
 
 @author: camilotoruno
 """
-import warnings
 import xml.etree.ElementTree as ET
 import os 
 import subprocess
@@ -13,10 +12,10 @@ import json
 import shutil
 import argument_builder
 import multiprocessing
-import time 
 import math 
 import tqdm 
 from reset_idf_schedules_path import Set_Relative_Schedules_Filepath
+
 
 class Job:
     def __init__(self, bldg, id, no_jobs, **arguments):
@@ -32,6 +31,7 @@ def find_file_w_name_fragment(name_fragment, path):
         for file in files:
             if name_fragment in file:
                 return os.path.join(root, file)
+
 
 def run_job(job):
 
@@ -123,7 +123,6 @@ def modify_and_run(buildings, **kwargs):
       ValueError: If the JSON file cannot be loaded or modified.
       subprocess.CalledProcessError: If the OpenStudio CLI command fails.
     """
-    startTime = time.time()
 
     ET.register_namespace("", "http://hpxmlonline.com/2019/10")
     ET.register_namespace("xsi", 'http://www.w3.org/2001/XMLSchema-instance')
@@ -135,10 +134,10 @@ def modify_and_run(buildings, **kwargs):
         jobs.append(Job(bldg, i, len(buildings), **kwargs))
 
     # Setup the job pool
-    num_cpus = max(min( math.floor( kwargs.get('max_cpu_load') * multiprocessing.cpu_count()), len(jobs)), 1)  # at least one CPU core, up to max_cpu_load * num_cpu_cores  
+    # at least one CPU core, up to max_cpu_load * num_cpu_cores, no more cores than jobs
+    num_cpus = max(min( math.floor( kwargs.get('max_cpu_load') * multiprocessing.cpu_count()), len(jobs)), 1)    
     pool = multiprocessing.Pool(processes=num_cpus)
     no_jobs = len(jobs)
-    startTime = time.time()
     
     # Execute the job pool and track progress with tqdm progress bar
     print(f'Generating {len(jobs)} .idf files using {num_cpus} CPU cores')

@@ -100,7 +100,7 @@ if __name__ == '__main__':
                 # # Windows example
                 # "conda_venv_dir": os.path.join(os.path.sep, "Users", "ctoruno", "AppData", "Local", "anaconda3", "envs", "ResStock2EnergyPlus"),
 
-                "verbose": False,
+                "verbose": True,
                 "cwd": cwd,
                 "max_cpu_load": 0.8      # must be in the range (0, 1]. The value 1 indidcates all CPU cores, all the way down to but not including 0 percent of CPU cores
                 }

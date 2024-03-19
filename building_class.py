@@ -23,7 +23,7 @@ class BuildingFilesData:
 
         self.xml = None        
         self.idf = None
-        self.epw = None      # list to store epws to use in generation of bldg 
+        self.epw = None      
 
         ## Generated files 
         self.modified_xml = None     # list of modified xmls (one for each weather file)
