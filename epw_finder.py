@@ -14,7 +14,8 @@ def weather_file_lookup(building_objects_list, **kwargs):
     new_buildings = []      # create a longer list of buildings where each bldg object is associated with a single weather file
 
     for i, bldg in enumerate(building_objects_list):
-        weather_scenarios_for_city = [os.path.join(weather_folder, scenario, bldg.city) for scenario in scenario_folders]
+        # Convert the building name from having spaces to having a dot for reading weather file format
+        weather_scenarios_for_city = [os.path.join(weather_folder, scenario, bldg.city.replace(" ", ".")) for scenario in scenario_folders]
 
         if verbose: print()
 

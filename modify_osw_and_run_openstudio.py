@@ -135,7 +135,7 @@ def modify_and_run(buildings, **kwargs):
         jobs.append(Job(bldg, i, len(buildings), **kwargs))
 
     # Setup the job pool
-    num_cpus = min( math.floor(0.9 * multiprocessing.cpu_count()), len(jobs)) 
+    num_cpus = max(min( math.floor( kwargs.get('max_cpu_load') * multiprocessing.cpu_count()), len(jobs)), 1)  # at least one CPU core, up to max_cpu_load * num_cpu_cores  
     pool = multiprocessing.Pool(processes=num_cpus)
     no_jobs = len(jobs)
     startTime = time.time()
