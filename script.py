@@ -27,8 +27,8 @@ if __name__ == '__main__':
 
         ######################################### SET USER DEFINED ARGUMENTS ####################################################################
         filtering_arguments = {
-                # "buildstock_file": "baseline_metadata_only.csv",              # must be generated (derived) by resstock-euss.2022.1 version of ResStock
-                "buildstock_file": "baseline_metadata_only_example_subset.csv", # must be generated (derived) by resstock-euss.2022.1 version of ResStock
+                "buildstock_file": "baseline_metadata_only.csv",              # must be generated (derived) by resstock-euss.2022.1 version of ResStock
+                # "buildstock_file": "baseline_metadata_only_example_subset.csv", # must be generated (derived) by resstock-euss.2022.1 version of ResStock
                 
                 "buildstock_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "GitHub", "building_energy_modeling"),
                 # "buildstock_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data"),
@@ -42,7 +42,7 @@ if __name__ == '__main__':
                 # "buildstock_output_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data"), 
 
                 "federal_poverty_levels": ['0-100%', '100-150%', '150-200%'],   # federal poverty levels to match format of buildstock_file
-                "city_size_limit": 1,                                           # max number of houses per city
+                "city_size_limit": 400,                                           # max number of houses per city
                 "keep_cities": [
                                 # "AZ, Phoenix",
                                 # "CA, Los Angeles",
@@ -71,15 +71,17 @@ if __name__ == '__main__':
 
         epw_data = {
                 # Mac Example
-                # "weather_folder": os.path.join(os.path.sep, "Volumes", "seas-mtcraig", "EPWFromTGW", "TGWEPWs"), 
                 # "weather_folder": "/Users/camilotoruno/Documents/ctoruno/TGWEPWs",
-                "weather_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "ctoruno", "weather"), 
+                # "weather_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "ctoruno", "weather"), 
 
                 # # Windows example
                 # "weather_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data", "weather"),
 
-                # "scenario_folders": ["historical_1980-2020"]#, "rcp45cooler_2020-2060", "rcp45hotter_2020-2060", "rcp85cooler_2020-2060"],
-                "scenario_folders": ["Historical"]
+                # Turbo location 
+                "weather_folder": os.path.join(os.path.sep, "Volumes", "seas-mtcraig", "EPWFromTGW", "TGWEPWs"), 
+
+                "scenario_folders": ["historical_1980-2020"]#, "rcp45cooler_2020-2060", "rcp45hotter_2020-2060", "rcp85cooler_2020-2060"],
+                # "scenario_folders": ["Historical"]
                 }
 
         openstudio_workflow_arguments = {
@@ -100,7 +102,7 @@ if __name__ == '__main__':
                 # # Windows example
                 # "conda_venv_dir": os.path.join(os.path.sep, "Users", "ctoruno", "AppData", "Local", "anaconda3", "envs", "ResStock2EnergyPlus"),
 
-                "verbose": True,
+                "verbose": False,
                 "cwd": cwd,
                 "max_cpu_load": 0.8      # must be in the range (0, 1]. The value 1 indidcates all CPU cores, all the way down to but not including 0 percent of CPU cores
                 }
