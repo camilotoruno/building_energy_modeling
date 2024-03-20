@@ -29,7 +29,7 @@ if __name__ == '__main__':
         filtering_arguments = {
                 "buildstock_file": "baseline_metadata_only.csv",              # must be generated (derived) by resstock-euss.2022.1 version of ResStock
                 # "buildstock_file": "baseline_metadata_only_example_subset.csv", # must be generated (derived) by resstock-euss.2022.1 version of ResStock
-                "buildstock_output_file": "Dallas_buildstock_24.03.19.csv",
+                "buildstock_output_file": "Dallas_buildstock_24.03.20.csv",
 
                 "buildstock_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "GitHub", "building_energy_modeling"),
                 # "buildstock_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data"),
@@ -39,7 +39,7 @@ if __name__ == '__main__':
                 # "buildstock_output_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data"), 
 
                 "federal_poverty_levels": ['0-100%', '100-150%', '150-200%'],   # federal poverty levels to match format of buildstock_file
-                "city_size_limit": 1,                                           # max number of houses per city
+                "statistical_sample_size": 400,                                 # statistically representative sample size for a city. See discussion in ASSET Lab
                 "keep_cities": [
                                 # "AZ, Phoenix",
                                 # "CA, Los Angeles",
@@ -62,7 +62,7 @@ if __name__ == '__main__':
 
         oedi_querying_arguments = {
                 "oedi_download_folder": filtering_arguments['buildstock_output_folder'],
-                "bldg_download_folder_basename": 'Buildings',                               # set as desired. Root name for folder of generated files
+                "bldg_download_folder_basename": 'Buildings_Dallas_downsample',                               # set as desired. Root name for folder of generated files
                 "unzip": True,      # default False
                 }
 
@@ -101,7 +101,7 @@ if __name__ == '__main__':
                 # "conda_venv_dir": os.path.join(os.path.sep, "Users", "ctoruno", "AppData", "Local", "anaconda3", "envs", "ResStock2EnergyPlus"),
 
                 "verbose": False,
-                "overwrite_output": False,
+                "overwrite_output": True,
 
                 "cwd": cwd,
                 "max_cpu_load": 0.99      # must be in the range [0, 1]. The value 1 indidcates all CPU cores, 0 indicates 1 CPU core
