@@ -71,12 +71,12 @@ def file_check(building_objects_list, **kwargs):
     
     if not os.path.exists(download_folder):
         print(f'Making output folder {download_folder}')
-        os.mkdir( download_folder )  # Create a new one
+        os.makedirs( download_folder )  # Create a new one
 
     elif kwargs.get('overwrite_output'):
         print(f'Overwriting: {download_folder}')
         shutil.rmtree( download_folder )  # Remove existing folder
-        os.mkdir( download_folder )  # Create a new one
+        os.makedirs( download_folder )  # Create a new one
 
     else: print(f"Download folder exists and overwrite not enabled. Existing files will be skipped during processing.")
     
@@ -84,13 +84,13 @@ def file_check(building_objects_list, **kwargs):
         # Create / check for building folders
         for bldg in building_objects_list:
             if not os.path.exists(bldg.folder):
-                os.mkdir(bldg.folder)  # Create a new one
+                os.makedirs(bldg.folder)  # Create a new one
                 jobs.append(bldg)
 
             elif kwargs.get('overwrite_output'):
                 if kwargs.get('verbose'): warnings.warn(f"Output building folder '{bldg.folder}' overwritten.")
                 shutil.rmtree(bldg.folder)  # Remove existing folder
-                os.mkdir(bldg.folder)  # Create a new one                
+                os.makedirs(bldg.folder)  # Create a new one                
                 jobs.append(bldg)
 
             elif kwargs.get('verbose'): print(f'\tOutput building folder already exists. Not overwritten: {bldg.folder}')
