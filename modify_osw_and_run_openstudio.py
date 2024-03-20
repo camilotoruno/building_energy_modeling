@@ -5,7 +5,6 @@ Created on Wed Feb 14 09:58:26 2024
 
 @author: camilotoruno
 """
-
 import xml.etree.ElementTree as ET
 import os 
 import subprocess
@@ -13,8 +12,10 @@ import json
 import shutil
 import argument_builder
 import multiprocessing
-import time 
-
+import math 
+import tqdm 
+from reset_idf_schedules_path import Set_Relative_Schedules_Filepath
+import warnings
 
 class Job:
     def __init__(self, bldg, id, no_jobs, **arguments):
@@ -37,10 +38,9 @@ def run_job(job):
     # Build the openstudio arguments for this job and create a working copy of the base workflow folder
     openstudio_args = argument_builder.set_openstudio_args("workflow-" + str(job.id+1), **job.arguments)
 
-    # if the destination exists, delete it 
+    # if the working folder exists, delete it (it is only there for a given parallel run, files will be copied to output)
     if os.path.exists(openstudio_args["openstudio_workflow_folder"]):
         shutil.rmtree(openstudio_args["openstudio_workflow_folder"])
-
     shutil.copytree(openstudio_args['base_workflow'], openstudio_args["openstudio_workflow_folder"])
 
     if not os.path.exists(openstudio_args["osw_path"]):
@@ -72,9 +72,9 @@ def run_job(job):
         
         # Check for errors and process the output
         if result.returncode != 0:
-            print("Error running OpenStudio:", result.stderr)
+            print("\n\tError running OpenStudio:", result.stderr)
         if job.arguments["verbose"]:
-            print("OpenStudio output:", result.stdout)
+            print("\n\tOpenStudio output:", result.stdout)
         
         # copy the generated .idf file to the correct output folder
         generated_idf = os.path.join(openstudio_args["openstudio_workflow_folder"], 'run', 'in.idf')
@@ -91,6 +91,9 @@ def run_job(job):
         shutil.copy(os.path.join(openstudio_args["openstudio_workflow_folder"], 'run', 'run.log'), 
                     os.path.join(job.bldg.folder, job.bldg.filebasename + "_osw.log"))
         job.bldg.new_schedule = os.path.join(job.bldg.folder, os.path.split(generated_schedule)[1])
+
+        # change the idf file to have a relative filepath for the schedule file
+        Set_Relative_Schedules_Filepath(job.bldg, **job.arguments)
 
 
     # raise errors if they occured while reading openstudio json file
@@ -120,7 +123,6 @@ def modify_and_run(buildings, **kwargs):
       ValueError: If the JSON file cannot be loaded or modified.
       subprocess.CalledProcessError: If the OpenStudio CLI command fails.
     """
-    startTime = time.time()
 
     ET.register_namespace("", "http://hpxmlonline.com/2019/10")
     ET.register_namespace("xsi", 'http://www.w3.org/2001/XMLSchema-instance')
@@ -129,36 +131,31 @@ def modify_and_run(buildings, **kwargs):
     # Constrcut the jobs to be run in parallel 
     jobs = []
     for i, bldg in enumerate(buildings):
-        jobs.append(Job(bldg, i, len(buildings), **kwargs))
+        idf_filename = os.path.join(bldg.folder, bldg.filebasename + ".idf")
+        # if the overwite signal is true or the output doesn't exist 
+        if kwargs.get('overwrite_output') or not(os.path.exists(idf_filename)):
+            if kwargs.get('verbose') and os.path.exists(idf_filename): print(f'\tOutput file is being overwritten: {idf_filename}')
 
-    num_cpus = min(multiprocessing.cpu_count(), len(jobs)) - 2
-    print(f'Generating {len(jobs)} .idf files using {num_cpus} CPU cores')
+            jobs.append(Job(bldg, i, len(buildings), **kwargs))  # mark the building for processing
+        elif kwargs.get('verbose') and os.path.exists(idf_filename) and not kwargs.get('overwrite_output'): 
+            print(f'\tOutputfile exists and is not being overwritten: {idf_filename}')
+
+    # Setup the job pool
+    # at least one CPU core, up to max_cpu_load * num_cpu_cores, no more cores than jobs
+    num_cpus = max(min( math.floor( kwargs.get('max_cpu_load') * multiprocessing.cpu_count()), len(jobs)), 1)    
     pool = multiprocessing.Pool(processes=num_cpus)
-
     no_jobs = len(jobs)
-    startTime = time.time()
-    result = pool.map_async(run_job, jobs)
-    while not result.ready():
-        # Print remaining jobs (optional)
-        no_completed = no_jobs - result._number_left
-        if no_completed > 0:
-            elapsed_time = time.time() - startTime
-            rate = (no_completed / elapsed_time) * (60*60)        #hours
-            est_remaining_time = round(no_jobs / rate, 2)
-            print(f"Jobs remaining: {result._number_left}. Estimated time remaining {est_remaining_time} (hrs)")
-            time.sleep(10)
+    
+    # Execute the job pool and track progress with tqdm progress bar
+    print(f'Generating {len(jobs)} .idf files using {num_cpus} CPU cores')
+    for _ in tqdm.tqdm(pool.imap_unordered(run_job, jobs), total=no_jobs, desc="Generating .idf files", smoothing=0.01):
+        pass
 
-    real_results = result.get()
-    elapsed_time = round((time.time() - startTime) / 60/60, 2)
-    print(f"{len(jobs)} jobs completed in {elapsed_time} seconds.")  # Print total completed jobs
-
+    # return the buildings that were operated on
     buildings = []
-    for result in real_results:
-        buildings.append(result.bldg)  # Assign results back to jobs
+    for job in jobs: buildings.append(job.bldg)
 
     return buildings
-    
-    
     
     
     
