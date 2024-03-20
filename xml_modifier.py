@@ -60,12 +60,12 @@ def modify_xml_files(buildings, **kwargs):
             tree = ET.parse(buildings[i].xml)
             root = tree.getroot()
             
-            remove_tags(root, 'EmissionsScenarios')  # Replace with the tag name you want to remove
+            remove_tags(root, 'EmissionsScenarios')  
             change_attrib_text(buildings[i].schedules, root, attrib='SchedulesFilePath')
             change_attrib_text(# new_text="../../../weather/G5100330.epw", 
                                 new_text = buildings[i].epw, 
                                 root=root, 
-                                attrib='EPWFilePath') # point to arbitrary epw file I have (required for workflow, not for .idf)
+                                attrib='EPWFilePath') 
             
             # write the modified building xml file 
             tree.write(buildings[i].modified_xml, encoding="UTF-8", xml_declaration=True)
