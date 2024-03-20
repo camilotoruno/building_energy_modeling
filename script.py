@@ -31,15 +31,15 @@ if __name__ == '__main__':
                 # "buildstock_file": "baseline_metadata_only_example_subset.csv", # must be generated (derived) by resstock-euss.2022.1 version of ResStock
                 "buildstock_output_file": "Dallas_buildstock_24.03.19.csv",
 
-                # "buildstock_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "GitHub", "building_energy_modeling"),
-                "buildstock_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data"),
+                "buildstock_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "GitHub", "building_energy_modeling"),
+                # "buildstock_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data"),
 
                 # "buildstock_output_folder": os.path.join(os.path.sep, "Volumes", "seas-mtcraig", "EPWFromTGW"), 
-                # "buildstock_output_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "local_research_data"), 
-                "buildstock_output_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data"), 
+                "buildstock_output_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "local_research_data"), 
+                # "buildstock_output_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data"), 
 
                 "federal_poverty_levels": ['0-100%', '100-150%', '150-200%'],   # federal poverty levels to match format of buildstock_file
-                "city_size_limit": 400,                                           # max number of houses per city
+                "city_size_limit": 1,                                           # max number of houses per city
                 "keep_cities": [
                                 # "AZ, Phoenix",
                                 # "CA, Los Angeles",
@@ -76,29 +76,29 @@ if __name__ == '__main__':
 
                 # Turbo location 
                 "weather_folder": os.path.join(os.path.sep, "Volumes", "seas-mtcraig", "EPWFromTGW", "TGWEPWs"), 
-                "weather_folder": os.path.join(os.path.sep, "Z:", "EPWFromTGW", "TGWEPWs"), 
+                # "weather_folder": os.path.join(os.path.sep, "Z:", "EPWFromTGW", "TGWEPWs"), 
 
                 "scenario_folders": ["historical_1980-2020"]#, "rcp45cooler_2020-2060", "rcp45hotter_2020-2060", "rcp85cooler_2020-2060"],
                 # "scenario_folders": ["Historical"]
                 }
 
         openstudio_workflow_arguments = {
-                # # Mac example
-                # "openstudio_path": os.path.join(os.path.sep, "usr", "local", "bin", "openstudio"),        # Set to local path. Requires openstudio version 3.4.0 in bin
-                # "openstudio_application_path": os.path.join(os.path.sep, "Applications", "OpenStudio-3.4.0"),  # set the OpenStudio application path to your downloaded copy. Requires OpenStudio 3.4.0
+                # Mac example
+                "openstudio_path": os.path.join(os.path.sep, "usr", "local", "bin", "openstudio"),        # Set to local path. Requires openstudio version 3.4.0 in bin
+                "openstudio_application_path": os.path.join(os.path.sep, "Applications", "OpenStudio-3.4.0"),  # set the OpenStudio application path to your downloaded copy. Requires OpenStudio 3.4.0
 
-                # Windows example 
-                "openstudio_path": os.path.join(os.path.sep, "openstudio-3.4.0", "bin", "openstudio.exe"),        # Set to local path. Requires openstudio version 3.4.0 in bin
-                "openstudio_application_path":  os.path.join(os.path.sep, "openstudio-3.4.0"),   # set the OpenStudio application path to your downloaded copy. Requires OpenStudio 3.4.0
+                # # Windows example 
+                # "openstudio_path": os.path.join(os.path.sep, "openstudio-3.4.0", "bin", "openstudio.exe"),        # Set to local path. Requires openstudio version 3.4.0 in bin
+                # "openstudio_application_path":  os.path.join(os.path.sep, "openstudio-3.4.0"),   # set the OpenStudio application path to your downloaded copy. Requires OpenStudio 3.4.0
                 }
 
         misc_arguments = {
                 # set the location of your virtual environment 
-                # # Mac example
-                # "conda_venv_dir": os.path.join(os.path.sep, "Users", "camilotoruno", "anaconda3", "envs", "research"),
+                # Mac example
+                "conda_venv_dir": os.path.join(os.path.sep, "Users", "camilotoruno", "anaconda3", "envs", "research"),
 
-                # Windows example
-                "conda_venv_dir": os.path.join(os.path.sep, "Users", "ctoruno", "AppData", "Local", "anaconda3", "envs", "ResStock2EnergyPlus"),
+                # # Windows example
+                # "conda_venv_dir": os.path.join(os.path.sep, "Users", "ctoruno", "AppData", "Local", "anaconda3", "envs", "ResStock2EnergyPlus"),
 
                 "verbose": False,
                 "overwrite_output": False,
