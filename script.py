@@ -101,7 +101,7 @@ if __name__ == '__main__':
                 # # Windows example
                 # "conda_venv_dir": os.path.join(os.path.sep, "Users", "ctoruno", "AppData", "Local", "anaconda3", "envs", "ResStock2EnergyPlus"),
 
-                "verbose": True,
+                "verbose": False,
                 "overwrite_output": False,
 
                 "cwd": cwd,

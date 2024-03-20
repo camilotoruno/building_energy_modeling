@@ -83,19 +83,17 @@ def file_check(building_objects_list, **kwargs):
     if building_objects_list:    # If a bldg objects list is passed check for folders. 
         # Create / check for building folders
         for bldg in building_objects_list:
-            folder_path = bldg.folder
-            print(f"\toedi_querying: folder_path: {folder_path}")
-            if not os.path.exists(folder_path):
-                os.mkdir(folder_path)  # Create a new one
+            if not os.path.exists(bldg.folder):
+                os.mkdir(bldg.folder)  # Create a new one
                 jobs.append(bldg)
 
             elif kwargs.get('overwrite_output'):
-                if kwargs.get('verbose'): warnings.warn(f"Output building folder '{folder_path}' overwritten.")
-                shutil.rmtree(folder_path)  # Remove existing folder
-                os.mkdir(folder_path)  # Create a new one                
+                if kwargs.get('verbose'): warnings.warn(f"Output building folder '{bldg.folder}' overwritten.")
+                shutil.rmtree(bldg.folder)  # Remove existing folder
+                os.mkdir(bldg.folder)  # Create a new one                
                 jobs.append(bldg)
 
-            elif kwargs.get('verbose'): print(f'\tOutput building folder already exists. Not overwritten: {folder_path}')
+            elif kwargs.get('verbose'): print(f'\tOutput building folder already exists. Not overwritten: {bldg.folder}')
 
     return jobs
 
