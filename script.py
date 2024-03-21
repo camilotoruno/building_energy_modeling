@@ -39,7 +39,10 @@ if __name__ == '__main__':
                 # "buildstock_output_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data"), 
 
                 "federal_poverty_levels": ['0-100%', '100-150%', '150-200%'],   # federal poverty levels to match format of buildstock_file
-                "statistical_sample_size": 400,                                 # statistically representative sample size for a city. See discussion in ASSET Lab
+                "statistical_sample_size": 400,         # statistically representative sample size for a city. DOES NOT DEFINE CITY SIZE LIMIT.
+                                                        # Defines what we consider a statistically representative sample size, then scales the number of 
+                                                        # buildings to reach a proprtionally statistically representative sample by federal poverty level. 
+                                                        # See discussion in ASSET Lab
                 "keep_cities": [
                                 # "AZ, Phoenix",
                                 # "CA, Los Angeles",
@@ -102,7 +105,6 @@ if __name__ == '__main__':
 
                 "verbose": False,
                 "overwrite_output": True,
-
                 "cwd": cwd,
                 "max_cpu_load": 0.99      # must be in the range [0, 1]. The value 1 indidcates all CPU cores, 0 indicates 1 CPU core
                 }
