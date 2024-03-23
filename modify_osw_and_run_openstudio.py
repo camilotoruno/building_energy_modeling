@@ -21,15 +21,7 @@ class Job:
         self.id = id
         self.no_jobs = no_jobs
         self.arguments = arguments
-
-       
-def find_file_w_name_fragment(name_fragment, path):
-    # return the first file with a given name_fragment in its file name
-    for root, dirs, files in os.walk(path):
-        for file in files:
-            if name_fragment in file:
-                return os.path.join(root, file)
-
+        
 
 def run_job(job):
 
@@ -76,19 +68,11 @@ def run_job(job):
         
         # copy the generated .idf file to the correct output folder
         generated_idf = os.path.join(openstudio_args["openstudio_workflow_folder"], 'run', 'in.idf')
-        output_idf = os.path.join(job.bldg.folder, job.bldg.filebasename + ".idf")
-        shutil.copy(generated_idf, output_idf)
+        shutil.copy(generated_idf, job.bldg.idf)
         
-        # copy the generated schedules file to the correct output folder and save name to bldg object
-        search_path = os.path.join(openstudio_args["openstudio_workflow_folder"], "generated_files")
-        generated_schedule = find_file_w_name_fragment('schedule', search_path)  # find schedules file in openstudio output folder
-        shutil.copy(generated_schedule, job.bldg.folder)
-        job.bldg.schedules_new = os.path.basename(generated_schedule)
-
         # copy the run log
         shutil.copy(os.path.join(openstudio_args["openstudio_workflow_folder"], 'run', 'run.log'), 
                     os.path.join(job.bldg.folder, job.bldg.filebasename + "_osw.log"))
-        job.bldg.new_schedule = os.path.join(job.bldg.folder, os.path.split(generated_schedule)[1])
 
     # raise errors if they occured while reading openstudio json file
     except (ValueError, json.JSONDecodeError) as e:
