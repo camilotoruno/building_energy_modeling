@@ -14,8 +14,6 @@ import argument_builder
 import multiprocessing
 import math 
 import tqdm 
-from reset_idf_schedules_path import Set_Relative_Schedules_Filepath
-import warnings
 
 class Job:
     def __init__(self, bldg, id, no_jobs, **arguments):
@@ -91,10 +89,6 @@ def run_job(job):
         shutil.copy(os.path.join(openstudio_args["openstudio_workflow_folder"], 'run', 'run.log'), 
                     os.path.join(job.bldg.folder, job.bldg.filebasename + "_osw.log"))
         job.bldg.new_schedule = os.path.join(job.bldg.folder, os.path.split(generated_schedule)[1])
-
-        # change the idf file to have a relative filepath for the schedule file
-        Set_Relative_Schedules_Filepath(job.bldg, **job.arguments)
-
 
     # raise errors if they occured while reading openstudio json file
     except (ValueError, json.JSONDecodeError) as e:

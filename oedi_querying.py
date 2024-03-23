@@ -10,12 +10,9 @@ import boto3
 import zipfile
 import os
 import shutil
-import math 
-import multiprocessing
 import threading 
 import queue
 import time 
-from tqdm import tqdm 
 import warnings 
 
 from botocore import UNSIGNED

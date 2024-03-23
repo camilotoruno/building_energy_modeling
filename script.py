@@ -18,7 +18,7 @@ import buildstock_filtering
 import xml_modifier
 import modify_osw_and_run_openstudio 
 import argument_builder  
-from reset_idf_schedules_path import Set_Relative_Schedules_Filepath
+import reset_idf_schedules_path
 import epw_finder
 
 if __name__ == '__main__':
@@ -27,8 +27,8 @@ if __name__ == '__main__':
 
         ######################################### SET USER DEFINED ARGUMENTS ####################################################################
         filtering_arguments = {
-                "buildstock_file": "baseline_metadata_only.csv",              # must be generated (derived) by resstock-euss.2022.1 version of ResStock
-                # "buildstock_file": "baseline_metadata_only_example_subset.csv", # must be generated (derived) by resstock-euss.2022.1 version of ResStock
+                # "buildstock_file": "baseline_metadata_only.csv",              # must be generated (derived) by resstock-euss.2022.1 version of ResStock
+                "buildstock_file": "baseline_metadata_only_example_subset.csv", # must be generated (derived) by resstock-euss.2022.1 version of ResStock
                 "buildstock_output_file": "Dallas_buildstock_24.03.20.csv",
 
                 "buildstock_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "GitHub", "building_energy_modeling"),
@@ -39,7 +39,7 @@ if __name__ == '__main__':
                 # "buildstock_output_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data"), 
 
                 "federal_poverty_levels": ['0-100%', '100-150%', '150-200%'],   # federal poverty levels to match format of buildstock_file
-                "statistical_sample_size": 400,         # statistically representative sample size for a city. DOES NOT DEFINE CITY SIZE LIMIT.
+                "statistical_sample_size": 1,         # statistically representative sample size for a city. DOES NOT DEFINE CITY SIZE LIMIT.
                                                         # Defines what we consider a statistically representative sample size, then scales the number of 
                                                         # buildings to reach a proprtionally statistically representative sample by federal poverty level. 
                                                         # See discussion in ASSET Lab
@@ -65,20 +65,20 @@ if __name__ == '__main__':
 
         oedi_querying_arguments = {
                 "oedi_download_folder": filtering_arguments['buildstock_output_folder'],
-                "bldg_download_folder_basename": 'Buildings_Dallas_downsample',                               # set as desired. Root name for folder of generated files
+                "bldg_download_folder_basename": 'bldgs_idf_output_flags',                               # set as desired. Root name for folder of generated files
                 "unzip": True,      # default False
                 }
 
         epw_data = {
                 # Mac Example
-                # "weather_folder": "/Users/camilotoruno/Documents/ctoruno/TGWEPWs",
+                "weather_folder": "/Users/camilotoruno/Documents/GitHub/EnergyPlus-Python/TGWEPWs_trimmed",
                 # "weather_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "ctoruno", "weather"), 
 
                 # # Windows example
                 # "weather_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data", "weather"),
 
                 # Turbo location 
-                "weather_folder": os.path.join(os.path.sep, "Volumes", "seas-mtcraig", "EPWFromTGW", "TGWEPWs"), 
+                # "weather_folder": os.path.join(os.path.sep, "Volumes", "seas-mtcraig", "EPWFromTGW", "TGWEPWs"), 
                 # "weather_folder": os.path.join(os.path.sep, "Z:", "EPWFromTGW", "TGWEPWs"), 
 
                 "scenario_folders": ["historical_1980-2020"]#, "rcp45cooler_2020-2060", "rcp45hotter_2020-2060", "rcp85cooler_2020-2060"],
@@ -94,6 +94,71 @@ if __name__ == '__main__':
                 # "openstudio_path": os.path.join(os.path.sep, "openstudio-3.4.0", "bin", "openstudio.exe"),        # Set to local path. Requires openstudio version 3.4.0 in bin
                 # "openstudio_application_path":  os.path.join(os.path.sep, "openstudio-3.4.0"),   # set the OpenStudio application path to your downloaded copy. Requires OpenStudio 3.4.0
                 }
+        
+
+        # Define the desired output file settings
+        new_Output_Control_Files = {"field":'OutputControl:Files',
+                               "options": [
+                                        {'Yes': 'Output_MTR',                       
+                                        'Yes': 'Output_ESO',                       
+                                        'No': 'Output_Tabular',                      
+                                        'No': 'Output_SQLite',                      
+                                        'No': 'Output_JSON',}
+                                        ]
+                            }
+
+        new_Output_Variables = {"field": "Output:Variable", 
+                                "options": [
+                                        {"*": "Key_Value",
+                                        "Zone Air Temperature": "Variable_Name",
+                                        "Hourly": "Reporting_Frequency"},
+
+                                        {"*": "Key_Value",
+                                        "Site Outdoor Air Wetbulb Temperature": "Variable_Name",
+                                        "Timestep": "Reporting_Frequency"},
+
+                                        {"*": "Key_Value",
+                                        "Zone Air Relative Humidity": "Variable_Name",
+                                        "Daily": "Reporting_Frequency"},
+
+                                        {"*": "Key_Value",
+                                        "Zone Air Relative Humidity": "Variable_Name",
+                                        "Hourly": "Reporting_Frequency"},
+
+                                        {"*": "Key_Value",
+                                        "Site Outdoor Air Drybulb Temperature": "Variable_Name",
+                                        "Monthly": "Reporting_Frequency"}
+                                    ]
+                                }
+
+        new_Output_Meters = {"field": "Output:Meter", 
+                            "options": [
+                                {"Electricity:Facility": "Key_Name",
+                                "Timestep": "Reporting_Frequency"},
+
+                                {"NaturalGas:Facility": "Key_Name",
+                                "Timestep": "Reporting_Frequency"},
+
+                                {"DistrictCooling:Facility": "Key_Name",
+                                "Timestep": "Reporting_Frequency"},
+
+                                {"DistrictHeatingWater:Facility:": "Key_Name",
+                                "Timestep": "Reporting_Frequency"}
+                                ]
+                            }
+
+        new_Outputs_MeterFileOnly = {"field": "Output:Meter:MeterFileOnly", 
+                                     "options": [
+                                        {"NaturalGas:Facility": "Key_Name",
+                                        "Daily": "Reporting_Frequency"},
+
+                                        {"Electricity:Facility": "Key_Name",
+                                        "Timestep": "Reporting_Frequency"},
+
+                                        {"Electricity:Facility": "Key_Name",
+                                        "Daily": "Reporting_Frequency"}
+                                        ]
+                                    }
 
         misc_arguments = {
                 # set the location of your virtual environment 
@@ -115,6 +180,9 @@ if __name__ == '__main__':
         arguments = argument_builder.set_calculated_args(arguments)
         argument_builder.file_check(**arguments)
 
+        # Collect the desired output file settings
+        new_idf_options = [new_Output_Control_Files, new_Output_Variables, new_Output_Meters, new_Outputs_MeterFileOnly]
+
         #################################### BEGING PROCESSING DATA ########################################################
 
         # Filter the buildstock data by the desired characteristics 
@@ -135,6 +203,10 @@ if __name__ == '__main__':
 
                 # Call the openstudio command line interface to generate the .idf from .xml 
                 building_objects_list = modify_osw_and_run_openstudio.modify_and_run(building_objects_list, **arguments)
+
+                # change the idf file to have a relative filepath for the schedule file
+                # Add the desired output arguments for EnergyPlus simulations
+                reset_idf_schedules_path.Set_EnergyPlus_Simulation_Output(building_objects_list, new_idf_options, **arguments)
 
         # Convert elapsed time to hours, minutes, seconds
         elapsed_time = time.time() - startTime
