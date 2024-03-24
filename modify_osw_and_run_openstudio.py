@@ -92,11 +92,6 @@ def modify_and_run(buildings, **kwargs):
     """
     Iterates through filenames, modifies a JSON entry, and executes OpenStudio workflow.
     
-    Args:
-      filenames: A list of filenames.
-      osw_path: The path to the JSON file to modify.
-      cli_command: The OpenStudio CLI command string.
-    
     Raises:
       ValueError: If the JSON file cannot be loaded or modified.
       subprocess.CalledProcessError: If the OpenStudio CLI command fails.

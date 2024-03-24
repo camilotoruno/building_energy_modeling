@@ -20,14 +20,12 @@ def weather_file_lookup(building_objects_list, **kwargs):
     weather_folder = kwargs.get('weather_folder')
     verbose = kwargs.get('verbose')
     scenario_folders = kwargs.get('scenario_folders')        
-
     new_buildings = []      # create a longer list of buildings where each bldg object is associated with a single weather file
 
-    # Convert the building name from having spaces to having a dot for reading weather file format (e.g. Los Angles -> Los.Angeles)
-    weather_scenarios_for_city = [os.path.join(weather_folder, scenario, bldg.city.replace(" ", ".")) for scenario in scenario_folders]
-    
     for bldg in tqdm.tqdm(building_objects_list, total=len(building_objects_list), desc='Finding EPW fines', smoothing=0.01):
-
+        # Convert the building name from having spaces to having a dot for reading weather file format (e.g. Los Angles -> Los.Angeles)
+        weather_scenarios_for_city = [os.path.join(weather_folder, scenario, bldg.city.replace(" ", ".")) for scenario in scenario_folders]
+        
         if verbose: print()
 
         for i, weather_scenario_4city in enumerate(weather_scenarios_for_city):          # for each weather scenario
