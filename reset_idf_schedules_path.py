@@ -38,25 +38,45 @@ def set_Schedules_Paths_Relative(buildings, **kwargs):
 
         idf_obj.save()          # overwrite original with modifications
 
-def set_EnergyPlus_Simulation_Output(buildings, new_idf_options, **kwargs):
+def set_EnergyPlus_Simulation_Output(buildings, **kwargs):
 
     # For each building 
     for bldg in tqdm.tqdm(buildings, total=len(buildings), desc = 'Setting IDF simulation outputs', smoothing=0.01):
 
         # load the IDF
         idf_obj = init_eppy(bldg.idf, **kwargs)
+        configuration = init_eppy(kwargs.get('idf_configuration'), **kwargs)
+        # print(f'Configuration file: {configuration}')
 
-        for New_Outputs in new_idf_options:             # For all the new output types we want to add
-            for options in New_Outputs['options']:      # for all the options for that field type
-                
-                # create a new output flag and set its values to the user supplied ones
-                field = New_Outputs['field']
-                if field == 'OutputControl:Files': new_flag = idf_obj.idfobjects[field][0] 
+        # raise RuntimeError
+        # print("\n\n")
+        # print(configuration.idfobjects)
+        # print("\n\n")
+        print(dir(configuration), '\n\n')
+        # print(f"type(configuration.idfobjects): {type(configuration.idfobjects)} \n\n")
+        
+        print('idf_obj.getiddgroupdict()')
+        for key, value in idf_obj.getiddgroupdict().items():
+            print(f'key, value: {key} \t\t {value}\n\n')
 
-                else: new_flag = idf_obj.newidfobject(field)  # generate a new IDF output variable object
+        print('\n\n\n\n\n\n ########################################################################################################## \n\n\n\n\n\n\n\n')
+        print('configuration.getiddgroupdict()')
+        for key, value in configuration.getiddgroupdict().items():
+            print(f'key, value: {key} \t\t {value}\n\n')
 
-                for value, attrib in options.items():
-                    if not hasattr(new_flag, attrib): raise RuntimeError(f'IDF file {field} does not have the attribute {attrib}')        
-                    setattr(new_flag, attrib, value)         
 
+        # print(f"getiddgroupdict: {configuration.getiddgroupdict()}")
+        for field in configuration.idfobjects:
+
+            # if the configuration file IDF object has instances of the field type (len > 0)                
+            if len(configuration.idfobjects[field]) > 0:
+                try: 
+                    idf_obj.idfobjects[field] = configuration.idfobjects[field]    # The building IDF may not have the field
+                except:           
+                    # if the field isnt in the bldg file, add it then set its value 
+                    print(f'IDF does not have field {field}')
+                    new_flag = idf_obj.newidfobject(field)
+                    idf_obj.idfobjects[field] = configuration.idfobjects[field]
+
+        # raise RuntimeError
         idf_obj.save()          # overwrite original with modifications
