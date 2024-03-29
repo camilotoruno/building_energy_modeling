@@ -23,16 +23,16 @@ import epw_finder
 
 if __name__ == '__main__':
 	multiprocessing.freeze_support()
-	cwd = os.getcwd()   
 
 	######################################### SET USER DEFINED ARGUMENTS ####################################################################
 	filtering_arguments = {
-		"buildstock_file": "baseline_metadata_only.csv",              # must be generated (derived) by resstock-euss.2022.1 version of ResStock
-		# "buildstock_file": "baseline_metadata_only_example_subset.csv", # must be generated (derived) by resstock-euss.2022.1 version of ResStock
-		"buildstock_output_file": "LA_Detroit_buildstock_24.03.23.csv",
-
+		# "buildstock_file": "baseline_metadata_only.csv",              # must be generated (derived) by resstock-euss.2022.1 version of ResStock
+		"buildstock_file": "baseline_metadata_only_example_subset.csv", # must be generated (derived) by resstock-euss.2022.1 version of ResStock
 		"buildstock_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "GitHub", "building_energy_modeling"),
 		# "buildstock_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data"),
+
+		"buildstock_output_file": "test_buildstock.csv",
+		"bldg_download_folder_basename": 'testing_run',                               # set as desired. Root name for folder of generated files
 
 		# "buildstock_output_folder": os.path.join(os.path.sep, "Volumes", "seas-mtcraig", "EPWFromTGW"), 
 		"buildstock_output_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "local_research_data"), 
@@ -45,7 +45,7 @@ if __name__ == '__main__':
 												# See discussion in ASSET Lab
 		"keep_cities": [
 			# "AZ, Phoenix",
-			"CA, Los Angeles",
+			# "CA, Los Angeles",
 			# "CO, Denver",
 			# "FL, Orlando",
 			# "GA, Atlanta",
@@ -53,12 +53,12 @@ if __name__ == '__main__':
 			# "IL, Chicago",
 			# "KS, Kansas City",
 			# "MA, Boston",
-			"MI, Detroit",
+			# "MI, Detroit",
 			# "MN, Minneapolis",
 			# "NE, Omaha",
 			# "NY, New York",
 			# "PA, Philadelphia",
-			# "TX, Dallas"
+			"TX, Dallas"
 			],
 
 		"exclude_cities": ['In another census Place', 'Not in a census Place']     # can be an empty list
@@ -66,22 +66,21 @@ if __name__ == '__main__':
 
 	oedi_querying_arguments = {
 		"oedi_download_folder": filtering_arguments['buildstock_output_folder'],
-		"bldg_download_folder_basename": 'bldgs_idf_output_flags',                               # set as desired. Root name for folder of generated files
 		"unzip": True,      # default False
 		}
 
 	epw_data = {
 		# Mac Example
-		# "weather_folder": "/Users/camilotoruno/Documents/GitHub/EnergyPlus-Python/TGWEPWs_trimmed",
+		"weather_folder": "/Users/camilotoruno/Documents/GitHub/EnergyPlus-Python/TGWEPWs_trimmed",
 		# "weather_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "ctoruno", "weather"), 
 
 		# # Windows example
 		# "weather_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data", "weather"),
 
 		# Turbo location 
-		"weather_folder": os.path.join(os.path.sep, "Volumes", "seas-mtcraig", "EPWFromTGW", "TGWEPWs"), 
+		# "weather_folder": os.path.join(os.path.sep, "Volumes", "seas-mtcraig-1", "EPWFromTGW", "TGWEPWs"), 
 		# "weather_folder": os.path.join(os.path.sep, "Z:", "EPWFromTGW", "TGWEPWs"), 
-
+		
 		"scenario_folders": ["historical_1980-2020", "rcp45cooler_2020-2060"]#, "rcp45hotter_2020-2060", "rcp85cooler_2020-2060"],
 		}
 
@@ -180,8 +179,8 @@ if __name__ == '__main__':
 		# "conda_venv_dir": os.path.join(os.path.sep, "Users", "ctoruno", "AppData", "Local", "anaconda3", "envs", "ResStock2EnergyPlus"),
 
 		"verbose": False,
-		"overwrite_output": True,
-		"cwd": cwd,
+		"overwrite_output": False,
+		"cwd": os.getcwd(), 
 		"max_cpu_load": 0.99      # must be in the range [0, 1]. The value 1 indidcates all CPU cores, 0 indicates 1 CPU core
 		}
 	
