@@ -12,14 +12,14 @@ import os
 import multiprocessing
 import time 
 
-# import custom classes and functions
-import oedi_querying 
-import buildstock_filtering 
-import xml_modifier
-import modify_osw_and_run_openstudio 
-import argument_builder  
-import reset_idf_schedules_path
-import epw_finder
+# import custom functions
+from functions import oedi_querying 
+from functions import buildstock_filtering 
+from functions import xml_modifier
+from functions import modify_osw_and_run_openstudio 
+from functions import argument_builder  
+from functions import reset_idf_schedules_path
+from functions import epw_finder
 
 if __name__ == '__main__':
 	multiprocessing.freeze_support()
