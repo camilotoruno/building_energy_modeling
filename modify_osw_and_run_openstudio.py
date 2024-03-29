@@ -2,11 +2,8 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Feb 14 09:58:26 2024
+
 @author: camilotoruno
-
-TODO: 
-    rename to BuildstockGenerateIDFs
-
 """
 import xml.etree.ElementTree as ET
 import os 

@@ -29,6 +29,7 @@ if __name__ == '__main__':
 	filtering_arguments = {
 		# "buildstock_file": "baseline_metadata_only.csv",              # must be generated (derived) by resstock-euss.2022.1 version of ResStock
 		"buildstock_file": "baseline_metadata_only_example_subset.csv", # must be generated (derived) by resstock-euss.2022.1 version of ResStock
+		"buildstock_output_file": "bldgstock_test.csv",
 
 		"buildstock_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "GitHub", "building_energy_modeling"),
 		# "buildstock_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data"),
@@ -65,7 +66,7 @@ if __name__ == '__main__':
 
 	oedi_querying_arguments = {
 		"oedi_download_folder": filtering_arguments['buildstock_output_folder'],
-		"bldg_download_folder_basename": 'buildings_csv_testing',                               # set as desired. Root name for folder of generated files
+		"bldg_download_folder_basename": 'bldgs_idf_output_flags',                               # set as desired. Root name for folder of generated files
 		"unzip": True,      # default False
 		}
 
@@ -95,9 +96,80 @@ if __name__ == '__main__':
 		}
 	
 
-	idf_simulation_configuration = {
-        'idf_configuration': "/Users/camilotoruno/Documents/GitHub/EnergyPlus-Python/simulation_output_configuration.idf",
-	}
+	# Define the desired output file settings
+	new_Output_Control_Files = {
+		"field":'OutputControl:Files',
+		"options": [
+			# turn on (OpenStudio defaults of no)
+			{'Yes': 'Output_MTR'},     
+
+			{'Yes': 'Output_ESO'},      
+
+			# turn off (OpenStudio defaults of yes)
+			{'No': 'Output_Tabular'},   
+
+			{'No': 'Output_SQLite'},     
+
+			{'No': 'Output_JSON'},
+			]
+		}
+	
+
+	new_Output_Variables = {
+		"field": "Output:Variable", 
+		"options": [
+			{"*": "Key_Value",
+			"Zone Air Temperature": "Variable_Name",
+			"Hourly": "Reporting_Frequency"},
+
+			{"*": "Key_Value",
+			"Site Outdoor Air Wetbulb Temperature": "Variable_Name",
+			"Timestep": "Reporting_Frequency"},
+
+			{"*": "Key_Value",
+			"Zone Air Relative Humidity": "Variable_Name",
+			"Daily": "Reporting_Frequency"},
+
+			{"*": "Key_Value",
+			"Zone Air Relative Humidity": "Variable_Name",
+			"Hourly": "Reporting_Frequency"},
+
+			{"*": "Key_Value",
+			"Site Outdoor Air Drybulb Temperature": "Variable_Name",
+			"Monthly": "Reporting_Frequency"}
+				]
+		}
+
+	new_Output_Meters = {
+		"field": "Output:Meter", 
+		"options": [
+			{"Electricity:Facility": "Key_Name",
+			"Timestep": "Reporting_Frequency"},
+
+			{"NaturalGas:Facility": "Key_Name",
+			"Timestep": "Reporting_Frequency"},
+
+			{"DistrictCooling:Facility": "Key_Name",
+			"Timestep": "Reporting_Frequency"},
+
+			{"DistrictHeatingWater:Facility:": "Key_Name",
+			"Timestep": "Reporting_Frequency"}
+			]
+		}
+
+	new_Outputs_MeterFileOnly = {
+		"field": "Output:Meter:MeterFileOnly", 
+		"options": [
+			{"NaturalGas:Facility": "Key_Name",
+			"Daily": "Reporting_Frequency"},
+
+			{"Electricity:Facility": "Key_Name",
+			"Timestep": "Reporting_Frequency"},
+
+			{"Electricity:Facility": "Key_Name",
+			"Daily": "Reporting_Frequency"}
+			]
+		}
 
 	misc_arguments = {
 		# set the location of your virtual environment 
@@ -114,10 +186,11 @@ if __name__ == '__main__':
 		}
 	
 	# add calculated openstudio arguments to user arguments
-	arguments = {**filtering_arguments, **oedi_querying_arguments, **epw_data, **openstudio_workflow_arguments, **idf_simulation_configuration, **misc_arguments}
+	arguments = {**filtering_arguments, **oedi_querying_arguments, **epw_data, **openstudio_workflow_arguments, **misc_arguments}
 	arguments = argument_builder.set_optional_args(arguments)
 	arguments = argument_builder.set_calculated_args(arguments)
 	argument_builder.file_check(**arguments)
+	new_idf_options = [new_Output_Control_Files, new_Output_Variables, new_Output_Meters, new_Outputs_MeterFileOnly]
 
 	#################################### BEGING PROCESSING DATA ########################################################
 	startTime = time.time()
@@ -138,12 +211,12 @@ if __name__ == '__main__':
 		building_objects_list = xml_modifier.modify_xml_files(building_objects_list, **arguments)
 		
 		# Call the openstudio command line interface to generate the .idf from .xml 
-		building_objects_list = modify_osw_and_run_openstudio.modify_and_run(building_objects_list, **arguments)  #Rename to BuildstockGenerateIDFs
+		building_objects_list = modify_osw_and_run_openstudio.modify_and_run(building_objects_list, **arguments)
 
 		# change the idf file to have a relative filepath for the schedule file
 		# Add the desired output arguments for EnergyPlus simulations
 		reset_idf_schedules_path.set_Schedules_Paths_Relative(building_objects_list, **arguments)
-		reset_idf_schedules_path.set_EnergyPlus_Simulation_Output(building_objects_list, **arguments)
+		reset_idf_schedules_path.set_EnergyPlus_Simulation_Output(building_objects_list, new_idf_options, **arguments)
 
 	# Convert elapsed time to hours, minutes, seconds
 	elapsed_time = time.time() - startTime

@@ -150,6 +150,7 @@ def filtering(**kwargs):
     federal_poverty_levels = kwargs.get('federal_poverty_levels') 
     keep_cities = kwargs.get('keep_cities') 
     exclude_cities = kwargs.get('exclude_cities') 
+    output_file = kwargs.get('buildstock_output_file')
     output_folder = kwargs.get('buildstock_output_folder')
     statistical_sample_size = kwargs.get('statistical_sample_size')
     save_buildstock = kwargs.get('save_buildstock')
@@ -170,9 +171,8 @@ def filtering(**kwargs):
     
     print('\nBuildstock filtered.', len(obuildstock), 'houses remaining.')
     if save_buildstock:
-        output_file = os.path.join(output_folder, kwargs.get('bldg_download_folder_basename'), 'buildstock.csv')
         obuildstock.to_csv(os.path.join(output_folder, output_file), index=False)
-        if verbose: print('Filtered buildstock saved at', output_file)
+        if verbose: print('Filtered buildstock saved at', os.path.join(output_folder, output_file))
     else:
         print('Filtered buildstock not saved!')
 
