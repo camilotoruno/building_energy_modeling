@@ -13,17 +13,17 @@ class BuildingFilesData:
     """
     def __init__(self, ID):
         # require initialization with the folder of the files for the building
-        self.id = ID
+        self.id = str(ID).zfill(7) # padd the building number with zeros
         self.city = None    
         self.weather_scenario = None
         self.filebasename = None
 
         ## Input files / folders
         self.folder = None
-
         self.xml = None        
         self.idf = None
         self.epw = None      
+        self.epw_name = None
 
         ## Generated files 
         self.modified_xml = None     # list of modified xmls (one for each weather file)

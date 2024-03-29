@@ -10,44 +10,23 @@ import boto3
 import zipfile
 import os
 import shutil
-import math 
-import multiprocessing
 import threading 
 import queue
 import time 
-from tqdm import tqdm 
 import warnings 
+import tqdm 
 
 from botocore import UNSIGNED
 from botocore.client import Config
-        
-
-def generate_bldg_foldernames(building_objects_list, bldg_download_folder_basename, **kwargs):
-    # bldg zip folder names generated to match the naming scheme on OEDI
-    
-    for i, bldg in enumerate(building_objects_list):
-        # construct the zip folder name from the id and scenario (-up-00 means upgrade 0)
-        
-        building_objects_list[i].id = str(bldg.id).zfill(7) # padd the building number with zeros
-        
-        # generate the oedi folder name and the download folder name
-        bldg_zip = "bldg" + building_objects_list[i].id + "-up00.zip"  # add the prefix and suffix to filename
-        building_objects_list[i].oedi_zip_fldr = os.path.join(kwargs.get('oedi_filepath'), bldg_zip)
-        building_objects_list[i].zip = os.path.join(kwargs.get('oedi_download_folder'), bldg_download_folder_basename, bldg.city, bldg_zip)
-        building_objects_list[i].folder = building_objects_list[i].zip.split('.zip')[0]
-        
-    return building_objects_list
-
 
 def unzip_files(building_objects_list):    
-    for bldg in building_objects_list:
+    for bldg in tqdm.tqdm(building_objects_list, total=len(building_objects_list), desc='Unzipping OEDI folders', smoothing=0.01):
         try: 
             with zipfile.ZipFile(bldg.zip, 'r') as zip_ref:
                 zip_ref.extractall(bldg.folder)
             
         except: 
             raise Exception('\nError:', bldg.zip, 'failed to unzip')
-            break              
         
         
 def download_worker(q, s3):
@@ -105,7 +84,6 @@ def download_unzip(building_objects_list, **kwargs):
     verbose = kwargs.get('verbose')   
         
     # oedi has a standard form for how a bldg id maps to a folder name, generate it
-    building_objects_list = generate_bldg_foldernames(building_objects_list, **kwargs)
     jobs = file_check(building_objects_list, **kwargs)
 
     s3 = boto3.client('s3', config = Config(signature_version = UNSIGNED))
