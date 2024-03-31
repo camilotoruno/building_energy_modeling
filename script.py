@@ -71,7 +71,7 @@ if __name__ == '__main__':
 
 	epw_data = {
 		# Mac Example
-		"weather_folder": "/Users/camilotoruno/Documents/GitHub/EnergyPlus-Python/TGWEPWs_trimmed",
+		"weather_folder": "/Users/camilotoruno/Documents/local_research_data/TGWEPWs_trimmed",
 		# "weather_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "ctoruno", "weather"), 
 
 		# # Windows example
@@ -191,12 +191,18 @@ if __name__ == '__main__':
 	argument_builder.file_check(**arguments)
 	new_idf_options = [new_Output_Control_Files, new_Output_Variables, new_Output_Meters, new_Outputs_MeterFileOnly]
 
-	#################################### BEGING PROCESSING DATA ########################################################
+	#################################### FILTER BUILDINGS DATA ########################################################
 	startTime = time.time()
 
 	# Filter the buildstock data by the desired characteristics 
-	# capture a list of custom objects to track the folders, id and other useful info for each building
-	building_objects_list = buildstock_filtering.filtering(**arguments)
+	buildstock_filtering.filtering(**arguments)
+
+	# point to a filtered buildstock file
+	arguments['filtered_buildstock'] = os.path.join(arguments['buildstock_output_folder'], arguments['buildstock_output_file']) 
+	    
+	#################################### BEGING PROCESSING DATA ########################################################
+    # create list of bldg objects for workflow
+	building_objects_list = argument_builder.initialize_bldg_obj_ls(**arguments)
 
 	# Find the weather files for each building and scenario and attach to each bldg in building objects list
 	building_objects_list = epw_finder.weather_file_lookup(building_objects_list, **arguments)
