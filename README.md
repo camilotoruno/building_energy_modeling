@@ -32,3 +32,4 @@ Either run the script.py from your favorite IDE with the anaconda envrionment's 
 
 ## Defining EnergyPlus simulation output
 See page 2746 of the file ```EnergyPlus-22-1-0/Documentation/InputOutputReference.pdf``` for useful guidance on setting output to be generated in the EnergyPlus simulation. 
+
