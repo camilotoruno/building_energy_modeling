@@ -51,18 +51,18 @@ def set_EnergyPlus_Simulation_Output(buildings, **kwargs):
         # raise RuntimeError
         # print("\n\n")
         # print(configuration.idfobjects)
-        # print("\n\n")
-        print(dir(configuration), '\n\n')
-        # print(f"type(configuration.idfobjects): {type(configuration.idfobjects)} \n\n")
+        # # print("\n\n")
+        # print(dir(configuration), '\n\n')
+        # # print(f"type(configuration.idfobjects): {type(configuration.idfobjects)} \n\n")
         
-        print('idf_obj.getiddgroupdict()')
-        for key, value in idf_obj.getiddgroupdict().items():
-            print(f'key, value: {key} \t\t {value}\n\n')
+        # print('idf_obj.getiddgroupdict()')
+        # for key, value in idf_obj.getiddgroupdict().items():
+        #     print(f'key, value: {key} \t\t {value}\n\n')
 
-        print('\n\n\n\n\n\n ########################################################################################################## \n\n\n\n\n\n\n\n')
-        print('configuration.getiddgroupdict()')
-        for key, value in configuration.getiddgroupdict().items():
-            print(f'key, value: {key} \t\t {value}\n\n')
+        # print('\n\n\n\n\n\n ########################################################################################################## \n\n\n\n\n\n\n\n')
+        # print('configuration.getiddgroupdict()')
+        # for key, value in configuration.getiddgroupdict().items():
+        #     print(f'key, value: {key} \t\t {value}\n\n')
 
 
         # print(f"getiddgroupdict: {configuration.getiddgroupdict()}")

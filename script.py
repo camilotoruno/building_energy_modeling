@@ -13,13 +13,13 @@ import multiprocessing
 import time 
 
 # import custom classes and functions
-import oedi_querying 
-import buildstock_filtering 
-import xml_modifier
-import modify_osw_and_run_openstudio 
-import argument_builder  
-import reset_idf_schedules_path
-import epw_finder
+from functions import oedi_querying 
+from functions import buildstock_filtering 
+from functions import xml_modifier
+from functions import modify_osw_and_run_openstudio 
+from functions import argument_builder  
+from functions import reset_idf_schedules_path
+from functions import epw_finder
 
 if __name__ == '__main__':
 	multiprocessing.freeze_support()
@@ -38,13 +38,13 @@ if __name__ == '__main__':
 		# "buildstock_output_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data"), 
 
 		"federal_poverty_levels": ['0-100%', '100-150%', '150-200%'],   # federal poverty levels to match format of buildstock_file
-		"statistical_sample_size": 1,         # statistically representative sample size for a city. DOES NOT DEFINE CITY SIZE LIMIT.
+		"statistical_sample_size": 400,         # statistically representative sample size for a city. DOES NOT DEFINE CITY SIZE LIMIT.
 												# Defines what we consider a statistically representative sample size, then scales the number of 
 												# buildings to reach a proprtionally statistically representative sample by federal poverty level. 
 												# See discussion in ASSET Lab
 		"keep_cities": [
 			# "AZ, Phoenix",
-			# # "CA, Los Angeles",
+			# "CA, Los Angeles",
 			# "CO, Denver",
 			# "FL, Orlando",
 			# "GA, Atlanta",
@@ -52,7 +52,7 @@ if __name__ == '__main__':
 			# "IL, Chicago",
 			# "KS, Kansas City",
 			# "MA, Boston",
-			# # "MI, Detroit",
+			# "MI, Detroit",
 			# "MN, Minneapolis",
 			# "NE, Omaha",
 			# "NY, New York",
@@ -65,13 +65,13 @@ if __name__ == '__main__':
 
 	oedi_querying_arguments = {
 		"oedi_download_folder": filtering_arguments['buildstock_output_folder'],
-		"bldg_download_folder_basename": 'buildings_csv_testing',                               # set as desired. Root name for folder of generated files
+		"bldg_download_folder_basename": 'buildings_config_testing',                               # set as desired. Root name for folder of generated files
 		"unzip": True,      # default False
 		}
 
 	epw_data = {
 		# Mac Example
-		"weather_folder": "/Users/camilotoruno/Documents/GitHub/EnergyPlus-Python/TGWEPWs_trimmed",
+		"weather_folder": "/Users/camilotoruno/Documents/local_research_data/TGWEPWs_trimmed",
 		# "weather_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "ctoruno", "weather"), 
 
 		# # Windows example
