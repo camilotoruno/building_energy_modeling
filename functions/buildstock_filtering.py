@@ -15,7 +15,6 @@ import random
 import os 
 from functions.building_class import BuildingFilesData
 import math 
-from functions import argument_builder  
 
 def filter_cities(buildstock, keep_cities, exclude_cities, verbose):
     # note this modifies the original buildstock object (?)
@@ -151,7 +150,6 @@ def filtering(**kwargs):
     federal_poverty_levels = kwargs.get('federal_poverty_levels') 
     keep_cities = kwargs.get('keep_cities') 
     exclude_cities = kwargs.get('exclude_cities') 
-    output_file = kwargs.get('buildstock_output_file')
     output_folder = kwargs.get('buildstock_output_folder')
     statistical_sample_size = kwargs.get('statistical_sample_size')
     save_buildstock = kwargs.get('save_buildstock')
@@ -166,10 +164,17 @@ def filtering(**kwargs):
     obuildstock = filter_poverty(obuildstock, federal_poverty_levels, verbose)
     obuildstock = obuildstock.reset_index(drop=True)   
     obuildstock = filter_city_size(obuildstock, representative_sample_fracs, keep_cities, verbose)
-
+    
+    # create list of bldg objects for workflow
+    building_objects = initialize_bldg_obj_ls(obuildstock)
+    
     print('\nBuildstock filtered.', len(obuildstock), 'houses remaining.')
     if save_buildstock:
+        output_file = os.path.join(output_folder, kwargs.get('bldg_download_folder_basename'), 'buildstock.csv')
         obuildstock.to_csv(os.path.join(output_folder, output_file), index=False)
-        if verbose: print('Filtered buildstock saved at', os.path.join(output_folder, output_file))
+        if verbose: print('Filtered buildstock saved at', output_file)
     else:
         print('Filtered buildstock not saved!')
+
+    return building_objects
+

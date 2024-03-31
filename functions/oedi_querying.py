@@ -45,7 +45,6 @@ def download_worker(q, s3):
 
 
 def file_check(**kwargs): 
-
     download_folder = os.path.join(kwargs.get('oedi_download_folder'), kwargs.get('bldg_download_folder_basename'))
     
     if not os.path.exists(download_folder):
@@ -60,7 +59,6 @@ def file_check(**kwargs):
 
     else: print(f"Download folder exists and overwrite not enabled. Existing files will be skipped during processing.")
 
-      
 def generate_job_list(building_objects_list, **kwargs):
     jobs = []
 
