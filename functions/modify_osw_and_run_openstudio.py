@@ -2,20 +2,22 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Feb 14 09:58:26 2024
-
 @author: camilotoruno
+
+TODO: 
+    rename to BuildstockGenerateIDFs
+
+
 """
 import xml.etree.ElementTree as ET
 import os 
 import subprocess
 import json
 import shutil
+import functions.argument_builder as argument_builder
 import multiprocessing
 import math 
 import tqdm 
-
-import functions.argument_builder as argument_builder
-
 
 class Job:
     def __init__(self, bldg, id, no_jobs, **arguments):
@@ -93,12 +95,13 @@ def modify_and_run(buildings, **kwargs):
     
     """
     Iterates through filenames, modifies a JSON entry, and executes OpenStudio workflow.
-    
+
     Args:
       filenames: A list of filenames.
       osw_path: The path to the JSON file to modify.
       cli_command: The OpenStudio CLI command string.
     
+
     Raises:
       ValueError: If the JSON file cannot be loaded or modified.
       subprocess.CalledProcessError: If the OpenStudio CLI command fails.

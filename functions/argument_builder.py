@@ -2,6 +2,7 @@ import os
 from sys import platform 
 import pandas as pd 
 
+
 # import custom classes and functions
 from functions import oedi_querying 
 from functions import buildstock_filtering 
@@ -23,13 +24,14 @@ def initialize_bldg_obj_ls(**arguments):
 def file_check(**arguments):
     # Check for file locations before performing workflow. 
     buildstock_filtering.file_check(**arguments)
-    oedi_querying.file_check(None, **arguments)
+    oedi_querying.file_check(**arguments)
     epw_finder.file_check(**arguments)
 
     # # If no errors occured then it prints
     # print('Output files overwritten:', arguments[''])
     # print("Relative folder paths for input and output files generated. Required input folders present and outputfolders overwritten ({arguments}).")
 
+    
 def set_optional_args(arguments):
     # defaults for optional arguments
     if 'save_buildstock' not in arguments.keys(): arguments['save_buildstock'] = True
@@ -49,7 +51,7 @@ def set_calculated_args(arguments):
 
     arguments["iddfile"] = os.path.join(arguments["openstudio_application_path"], "EnergyPlus", "Energy+.idd")
     arguments["oedi_filepath"] = "nrel-pds-building-stock/end-use-load-profiles-for-us-building-stock/2022/resstock_amy2018_release_1/building_energy_models/upgrade=0/"
-    
+
     return arguments
 
 

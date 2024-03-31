@@ -66,6 +66,7 @@ if __name__ == '__main__':
 
 	oedi_querying_arguments = {
 		"oedi_download_folder": filtering_arguments['buildstock_output_folder'],
+		"bldg_download_folder_basename": 'buildings_config_testing',                               # set as desired. Root name for folder of generated files
 		"unzip": True,      # default False
 		}
 

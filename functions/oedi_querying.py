@@ -44,8 +44,8 @@ def download_worker(q, s3):
         q.task_done()  # Signal task completion for queue management
 
 
-def file_check(building_objects_list, **kwargs): 
-    jobs = []
+def file_check(**kwargs): 
+
     download_folder = os.path.join(kwargs.get('oedi_download_folder'), kwargs.get('bldg_download_folder_basename'))
     
     if not os.path.exists(download_folder):
@@ -53,12 +53,17 @@ def file_check(building_objects_list, **kwargs):
         os.makedirs( download_folder )  # Create a new one
 
     elif kwargs.get('overwrite_output'):
-        print(f'Overwriting: {download_folder}')
+        print(f'Warning: Overwriting output folder {download_folder}. Cancel job if overwrite chosen in error.')
+        time.sleep(5)
         shutil.rmtree( download_folder )  # Remove existing folder
         os.makedirs( download_folder )  # Create a new one
 
     else: print(f"Download folder exists and overwrite not enabled. Existing files will be skipped during processing.")
-    
+
+      
+def generate_job_list(building_objects_list, **kwargs):
+    jobs = []
+
     if building_objects_list:    # If a bldg objects list is passed check for folders. 
         # Create / check for building folders
         for bldg in building_objects_list:
@@ -81,10 +86,9 @@ def download_unzip(building_objects_list, **kwargs):
 
     # laod arguments 
     unzip = kwargs.get('unzip') 
-    verbose = kwargs.get('verbose')   
         
     # oedi has a standard form for how a bldg id maps to a folder name, generate it
-    jobs = file_check(building_objects_list, **kwargs)
+    jobs = generate_job_list(building_objects_list, **kwargs)
 
     s3 = boto3.client('s3', config = Config(signature_version = UNSIGNED))
 

@@ -13,6 +13,7 @@ import pandas as pd
 import numpy as np 
 import random
 import os 
+from functions.building_class import BuildingFilesData
 import math 
 from functions import argument_builder  
 
