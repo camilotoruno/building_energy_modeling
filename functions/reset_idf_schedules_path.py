@@ -38,8 +38,8 @@ def set_Schedules_Paths_Relative(buildings, **kwargs):
 
         idf_obj.save()          # overwrite original with modifications
 
+        
 def set_EnergyPlus_Simulation_Output(buildings, **kwargs):
-
     # For each building 
     for bldg in tqdm.tqdm(buildings, total=len(buildings), desc = 'Setting IDF simulation outputs', smoothing=0.01):
 
@@ -79,4 +79,5 @@ def set_EnergyPlus_Simulation_Output(buildings, **kwargs):
                     idf_obj.idfobjects[field] = configuration.idfobjects[field]
 
         # raise RuntimeError
+
         idf_obj.save()          # overwrite original with modifications

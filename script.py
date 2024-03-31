@@ -12,7 +12,7 @@ import os
 import multiprocessing
 import time 
 
-# import custom classes and functions
+# import custom functions
 from functions import oedi_querying 
 from functions import buildstock_filtering 
 from functions import xml_modifier
@@ -23,15 +23,16 @@ from functions import epw_finder
 
 if __name__ == '__main__':
 	multiprocessing.freeze_support()
-	cwd = os.getcwd()   
 
 	######################################### SET USER DEFINED ARGUMENTS ####################################################################
 	filtering_arguments = {
 		# "buildstock_file": "baseline_metadata_only.csv",              # must be generated (derived) by resstock-euss.2022.1 version of ResStock
 		"buildstock_file": "baseline_metadata_only_example_subset.csv", # must be generated (derived) by resstock-euss.2022.1 version of ResStock
-
 		"buildstock_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "GitHub", "building_energy_modeling"),
 		# "buildstock_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data"),
+
+		"buildstock_output_file": "test_buildstock.csv",
+		"bldg_download_folder_basename": 'testing_run',                               # set as desired. Root name for folder of generated files
 
 		# "buildstock_output_folder": os.path.join(os.path.sep, "Volumes", "seas-mtcraig", "EPWFromTGW"), 
 		"buildstock_output_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "local_research_data"), 
@@ -56,7 +57,7 @@ if __name__ == '__main__':
 			# "MN, Minneapolis",
 			# "NE, Omaha",
 			# "NY, New York",
-			"PA, Philadelphia",
+			# "PA, Philadelphia",
 			"TX, Dallas"
 			],
 
@@ -78,9 +79,9 @@ if __name__ == '__main__':
 		# "weather_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data", "weather"),
 
 		# Turbo location 
-		# "weather_folder": os.path.join(os.path.sep, "Volumes", "seas-mtcraig", "EPWFromTGW", "TGWEPWs"), 
+		# "weather_folder": os.path.join(os.path.sep, "Volumes", "seas-mtcraig-1", "EPWFromTGW", "TGWEPWs"), 
 		# "weather_folder": os.path.join(os.path.sep, "Z:", "EPWFromTGW", "TGWEPWs"), 
-
+		
 		"scenario_folders": ["historical_1980-2020", "rcp45cooler_2020-2060"]#, "rcp45hotter_2020-2060", "rcp85cooler_2020-2060"],
 		}
 
@@ -95,9 +96,80 @@ if __name__ == '__main__':
 		}
 	
 
-	idf_simulation_configuration = {
-        'idf_configuration': "/Users/camilotoruno/Documents/GitHub/EnergyPlus-Python/simulation_output_configuration.idf",
-	}
+	# Define the desired output file settings
+	new_Output_Control_Files = {
+		"field":'OutputControl:Files',
+		"options": [
+			# turn on (OpenStudio defaults of no)
+			{'Yes': 'Output_MTR'},     
+
+			{'Yes': 'Output_ESO'},      
+
+			# turn off (OpenStudio defaults of yes)
+			{'No': 'Output_Tabular'},   
+
+			{'No': 'Output_SQLite'},     
+
+			{'No': 'Output_JSON'},
+			]
+		}
+	
+
+	new_Output_Variables = {
+		"field": "Output:Variable", 
+		"options": [
+			{"*": "Key_Value",
+			"Zone Air Temperature": "Variable_Name",
+			"Hourly": "Reporting_Frequency"},
+
+			{"*": "Key_Value",
+			"Site Outdoor Air Wetbulb Temperature": "Variable_Name",
+			"Timestep": "Reporting_Frequency"},
+
+			{"*": "Key_Value",
+			"Zone Air Relative Humidity": "Variable_Name",
+			"Daily": "Reporting_Frequency"},
+
+			{"*": "Key_Value",
+			"Zone Air Relative Humidity": "Variable_Name",
+			"Hourly": "Reporting_Frequency"},
+
+			{"*": "Key_Value",
+			"Site Outdoor Air Drybulb Temperature": "Variable_Name",
+			"Monthly": "Reporting_Frequency"}
+				]
+		}
+
+	new_Output_Meters = {
+		"field": "Output:Meter", 
+		"options": [
+			{"Electricity:Facility": "Key_Name",
+			"Timestep": "Reporting_Frequency"},
+
+			{"NaturalGas:Facility": "Key_Name",
+			"Timestep": "Reporting_Frequency"},
+
+			{"DistrictCooling:Facility": "Key_Name",
+			"Timestep": "Reporting_Frequency"},
+
+			{"DistrictHeatingWater:Facility:": "Key_Name",
+			"Timestep": "Reporting_Frequency"}
+			]
+		}
+
+	new_Outputs_MeterFileOnly = {
+		"field": "Output:Meter:MeterFileOnly", 
+		"options": [
+			{"NaturalGas:Facility": "Key_Name",
+			"Daily": "Reporting_Frequency"},
+
+			{"Electricity:Facility": "Key_Name",
+			"Timestep": "Reporting_Frequency"},
+
+			{"Electricity:Facility": "Key_Name",
+			"Daily": "Reporting_Frequency"}
+			]
+		}
 
 	misc_arguments = {
 		# set the location of your virtual environment 
@@ -108,23 +180,30 @@ if __name__ == '__main__':
 		# "conda_venv_dir": os.path.join(os.path.sep, "Users", "ctoruno", "AppData", "Local", "anaconda3", "envs", "ResStock2EnergyPlus"),
 
 		"verbose": False,
-		"overwrite_output": True,
-		"cwd": cwd,
+		"overwrite_output": False,
+		"cwd": os.getcwd(), 
 		"max_cpu_load": 0.99      # must be in the range [0, 1]. The value 1 indidcates all CPU cores, 0 indicates 1 CPU core
 		}
 	
 	# add calculated openstudio arguments to user arguments
-	arguments = {**filtering_arguments, **oedi_querying_arguments, **epw_data, **openstudio_workflow_arguments, **idf_simulation_configuration, **misc_arguments}
+	arguments = {**filtering_arguments, **oedi_querying_arguments, **epw_data, **openstudio_workflow_arguments, **misc_arguments}
 	arguments = argument_builder.set_optional_args(arguments)
 	arguments = argument_builder.set_calculated_args(arguments)
 	argument_builder.file_check(**arguments)
+	new_idf_options = [new_Output_Control_Files, new_Output_Variables, new_Output_Meters, new_Outputs_MeterFileOnly]
 
-	#################################### BEGING PROCESSING DATA ########################################################
+	#################################### FILTER BUILDINGS DATA ########################################################
 	startTime = time.time()
 
 	# Filter the buildstock data by the desired characteristics 
-	# capture a list of custom objects to track the folders, id and other useful info for each building
-	building_objects_list = buildstock_filtering.filtering(**arguments)
+	buildstock_filtering.filtering(**arguments)
+
+	# point to a filtered buildstock file
+	arguments['filtered_buildstock'] = os.path.join(arguments['buildstock_output_folder'], arguments['buildstock_output_file']) 
+	    
+	#################################### BEGING PROCESSING DATA ########################################################
+    # create list of bldg objects for workflow
+	building_objects_list = argument_builder.initialize_bldg_obj_ls(**arguments)
 
 	# Find the weather files for each building and scenario and attach to each bldg in building objects list
 	building_objects_list = epw_finder.weather_file_lookup(building_objects_list, **arguments)
@@ -138,12 +217,12 @@ if __name__ == '__main__':
 		building_objects_list = xml_modifier.modify_xml_files(building_objects_list, **arguments)
 		
 		# Call the openstudio command line interface to generate the .idf from .xml 
-		building_objects_list = modify_osw_and_run_openstudio.modify_and_run(building_objects_list, **arguments)  #Rename to BuildstockGenerateIDFs
+		building_objects_list = modify_osw_and_run_openstudio.modify_and_run(building_objects_list, **arguments)
 
 		# change the idf file to have a relative filepath for the schedule file
 		# Add the desired output arguments for EnergyPlus simulations
 		reset_idf_schedules_path.set_Schedules_Paths_Relative(building_objects_list, **arguments)
-		reset_idf_schedules_path.set_EnergyPlus_Simulation_Output(building_objects_list, **arguments)
+		reset_idf_schedules_path.set_EnergyPlus_Simulation_Output(building_objects_list, new_idf_options, **arguments)
 
 	# Convert elapsed time to hours, minutes, seconds
 	elapsed_time = time.time() - startTime
