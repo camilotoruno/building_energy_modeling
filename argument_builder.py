@@ -11,7 +11,7 @@ def file_check(**arguments):
 
     # Check for file locations before performing workflow. 
     buildstock_filtering.file_check(**arguments)
-    oedi_querying.file_check(None, **arguments)
+    oedi_querying.file_check(**arguments)
     epw_finder.file_check(**arguments)
 
     # # If no errors occured then it prints

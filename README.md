@@ -30,3 +30,5 @@ Describe the weather scenarios you want to run by listing the folders that conta
     
 Either run the script.py from your favorite IDE with the anaconda envrionment's python as the interpretter or Navigate to the folder where script.py is located. Activate your anaconda environment with ```conda activate <env_name>``` and then call ```python script.py```
 
+## Defining EnergyPlus simulation output
+See page 2746 of the file ```EnergyPlus-22-1-0/Documentation/InputOutputReference.pdf``` for useful guidance on setting output to be generated in the EnergyPlus simulation. 
