@@ -13,7 +13,7 @@ import pandas as pd
 import numpy as np 
 import random
 import os 
-from building_class import BuildingFilesData  
+from functions.building_class import BuildingFilesData
 import math 
 
 def filter_cities(buildstock, keep_cities, exclude_cities, verbose):
