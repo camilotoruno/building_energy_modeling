@@ -163,5 +163,3 @@ def filtering(**kwargs):
         if verbose: print('Filtered buildstock saved at', output_file)
     else:
         print('Filtered buildstock not saved!')
-
-

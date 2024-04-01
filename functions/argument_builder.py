@@ -2,10 +2,10 @@ import os
 from sys import platform 
 
 # import custom classes and functions
-import oedi_querying 
-import buildstock_filtering 
-import epw_finder
-from building_class import BuildingFilesData
+from functions import oedi_querying 
+from functions import buildstock_filtering 
+from functions import epw_finder
+from functions.building_class import BuildingFilesData
 
 def file_check(**arguments):
     # Check for file locations before performing workflow. 

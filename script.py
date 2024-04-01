@@ -28,8 +28,8 @@ if __name__ == '__main__':
 
 	######################################### SET USER DEFINED ARGUMENTS ####################################################################
 	filtering_arguments = {
-		"buildstock_file": "baseline_metadata_only.csv",              # must be generated (derived) by resstock-euss.2022.1 version of ResStock
-		# "buildstock_file": "baseline_metadata_only_example_subset.csv", # must be generated (derived) by resstock-euss.2022.1 version of ResStock
+		# "buildstock_file": "baseline_metadata_only.csv",              # must be generated (derived) by resstock-euss.2022.1 version of ResStock
+		"buildstock_file": "baseline_metadata_only_example_subset.csv", # must be generated (derived) by resstock-euss.2022.1 version of ResStock
 
 		"buildstock_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "GitHub", "building_energy_modeling"),
 		# "buildstock_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data"),
@@ -45,7 +45,7 @@ if __name__ == '__main__':
 												# See discussion in ASSET Lab
 		"keep_cities": [
 			# "AZ, Phoenix",
-			"CA, Los Angeles",
+			# "CA, Los Angeles",
 			# "CO, Denver",
 			# "FL, Orlando",
 			# "GA, Atlanta",
@@ -53,12 +53,12 @@ if __name__ == '__main__':
 			# "IL, Chicago",
 			# "KS, Kansas City",
 			# "MA, Boston",
-			"MI, Detroit",
+			# "MI, Detroit",
 			# "MN, Minneapolis",
 			# "NE, Omaha",
 			# "NY, New York",
-			# "PA, Philadelphia",
-			# "TX, Dallas"
+			"PA, Philadelphia",
+			"TX, Dallas"
 			],
 
 		"exclude_cities": ['In another census Place', 'Not in a census Place']     # can be an empty list
@@ -66,20 +66,20 @@ if __name__ == '__main__':
 
 	oedi_querying_arguments = {
 		"oedi_download_folder": filtering_arguments['buildstock_output_folder'],
-		"bldg_download_folder_basename": 'buildings_LA_Detroit',                               # set as desired. Root name for folder of generated files
+		"bldg_download_folder_basename": 'buildings_testing',                               # set as desired. Root name for folder of generated files
 		"unzip": True,      # default False
 		}
 
 	epw_data = {
 		# Mac Example
-		# "weather_folder": "/Users/camilotoruno/Documents/local_research_data/TGWEPWs_trimmed",
+		"weather_folder": "/Users/camilotoruno/Documents/local_research_data/TGWEPWs_trimmed",
 		# "weather_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "ctoruno", "weather"), 
 
 		# # Windows example
 		# "weather_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data", "weather"),
 
 		# Turbo location 
-		"weather_folder": os.path.join(os.path.sep, "Volumes", "seas-mtcraig", "EPWFromTGW", "TGWEPWs"), 
+		# "weather_folder": os.path.join(os.path.sep, "Volumes", "seas-mtcraig", "EPWFromTGW", "TGWEPWs"), 
 		# "weather_folder": os.path.join(os.path.sep, "Z:", "EPWFromTGW", "TGWEPWs"), 
 
 		"scenario_folders": ["historical_1980-2020", "rcp45cooler_2020-2060"]#, "rcp45hotter_2020-2060", "rcp85cooler_2020-2060"],
@@ -130,7 +130,7 @@ if __name__ == '__main__':
 	#################################### BEGING PROCESSING DATA ########################################################
 	    
     # create list of bldg objects for workflow
-	buildstock = pd.read_csv(os.path.join(arguments["buildstock_output_folder"], arguments["bldg_download_folder_basename"]))
+	buildstock = pd.read_csv(os.path.join(arguments["buildstock_output_folder"], arguments['bldg_download_folder_basename'], 'buildstock.csv'))
 	building_objects_list = argument_builder.initialize_bldg_obj_ls(buildstock)
 
 	# Find the weather files for each building and scenario and attach to each bldg in building objects list
