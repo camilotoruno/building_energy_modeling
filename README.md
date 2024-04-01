@@ -6,7 +6,7 @@ The script.py can be run from terminal or an IDE. Arguments for the functions ar
 
 ## Package Setup:
 
-To function this package requires that the ResStock repository resstock-euss.2022.1 (https://github.com/NREL/resstock/releases/tag/euss.2022.1) be downloaded. For the workflow to work the file ```custom-run-hpxml.osw``` must be located ```resstock-euss.2022.1/resources/hpxml-measures/workflow```. To meet these requirments simply unzip the copy of the ResStock repository held in this repository. This package also requires OpenStudio 3.4.0, the release and download versions for which can be found here (https://github.com/NREL/OpenStudio/releases?page=2). Note that OpenStudio released an update for the Windows installer after this release which may be necessary for some uses. 
+To function this package requires that the ResStock repository resstock-euss.2022.1 (https://github.com/NREL/resstock/releases/tag/euss.2022.1) be downloaded. For the workflow to work the file ```custom-run-hpxml.osw``` must be located ```resstock-euss.2022.1/resources/hpxml-measures/workflow```. To meet these requirments simply unzip the copy of the ResStock repository held in this repository. This package also requires OpenStudio 3.4.0, the release and download versions for which can be found here (https://github.com/NREL/OpenStudio/releases?page=2) under version 3.4.0 release, scroll down to the "Assets" drop down and download the OpenStudio compatible with your OS. Note that OpenStudio released an update for the Windows installer after this release which may be necessary for some uses. 
 
 Then you must add the OpenStudio package to the PATH environment variable. 
 On Mac's Terminal enter ```export PATH=$PATH:~/usr/local/bin/openstudio```. 
