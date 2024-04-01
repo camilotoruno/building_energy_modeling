@@ -2,19 +2,25 @@ import os
 from sys import platform 
 
 # import custom classes and functions
-from functions import oedi_querying 
-from functions import buildstock_filtering 
-from functions import epw_finder
+import oedi_querying 
+import buildstock_filtering 
+import epw_finder
+from building_class import BuildingFilesData
 
 def file_check(**arguments):
     # Check for file locations before performing workflow. 
     buildstock_filtering.file_check(**arguments)
     oedi_querying.file_check(**arguments)
     epw_finder.file_check(**arguments)
+    
 
-    # # If no errors occured then it prints
-    # print('Output files overwritten:', arguments[''])
-    # print("Relative folder paths for input and output files generated. Required input folders present and outputfolders overwritten ({arguments}).")
+def initialize_bldg_obj_ls(buildstock):
+    building_objects = [BuildingFilesData(ID) for ID in buildstock['bldg_id'].values ]
+    
+    for i, bldg in enumerate(building_objects):
+        bldg.city = buildstock.loc[i, 'in.city'].split(", ")[1] # remove the state code from city
+        
+    return building_objects
 
 
 def set_optional_args(arguments):

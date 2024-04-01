@@ -13,8 +13,8 @@ import pandas as pd
 import numpy as np 
 import random
 import os 
-from functions.building_class import BuildingFilesData
 import math 
+
 
 def filter_cities(buildstock, keep_cities, exclude_cities, verbose):
     # note this modifies the original buildstock object (?)
@@ -123,15 +123,6 @@ def file_check(**kwargs):
         raise OSError(f"Could not find buildstock file {os.path.join(kwargs.get('buildstock_folder'), kwargs.get('buildstock_file'))}")
     if not os.path.exists(kwargs.get('buildstock_output_folder')):
         raise OSError(f"Could not find output folder {kwargs.get('buildstock_output_folder')}")
-        
-
-def initialize_bldg_obj_ls(buildstock):
-    building_objects = [BuildingFilesData(ID) for ID in buildstock['bldg_id'].values ]
-    
-    for i, bldg in enumerate(building_objects):
-        bldg.city = buildstock.loc[i, 'in.city'].split(", ")[1] # remove the state code from city
-        
-    return building_objects
 
 
 def determine_representative_sample_size(buildstock, keep_cities, statistical_sample_size):
@@ -165,9 +156,6 @@ def filtering(**kwargs):
     obuildstock = obuildstock.reset_index(drop=True)   
     obuildstock = filter_city_size(obuildstock, representative_sample_fracs, keep_cities, verbose)
     
-    # create list of bldg objects for workflow
-    building_objects = initialize_bldg_obj_ls(obuildstock)
-    
     print('\nBuildstock filtered.', len(obuildstock), 'houses remaining.')
     if save_buildstock:
         output_file = os.path.join(output_folder, kwargs.get('bldg_download_folder_basename'), 'buildstock.csv')
@@ -176,5 +164,4 @@ def filtering(**kwargs):
     else:
         print('Filtered buildstock not saved!')
 
-    return building_objects
 
