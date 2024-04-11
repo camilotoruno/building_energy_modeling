@@ -28,14 +28,14 @@ if __name__ == '__main__':
 
 	######################################### SET USER DEFINED ARGUMENTS ####################################################################
 	filtering_arguments = {
-		# "buildstock_file": "baseline_metadata_only.csv",              # must be generated (derived) by resstock-euss.2022.1 version of ResStock
-		"buildstock_file": "baseline_metadata_only_example_subset.csv", # must be generated (derived) by resstock-euss.2022.1 version of ResStock
+		"buildstock_file": "baseline_metadata_only.csv",              # must be generated (derived) by resstock-euss.2022.1 version of ResStock
+		# "buildstock_file": "baseline_metadata_only_example_subset.csv", # must be generated (derived) by resstock-euss.2022.1 version of ResStock
 
-		"buildstock_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "GitHub", "building_energy_modeling"),
+		"buildstock_folder": "/Users/camilotoruno/Documents/GitHub/building_energy_modeling",
 		# "buildstock_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data"),
 
 		# "buildstock_output_folder": os.path.join(os.path.sep, "Volumes", "seas-mtcraig", "EPWFromTGW"), 
-		"buildstock_output_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "local_research_data"), 
+		"buildstock_output_folder": "/Users/camilotoruno/Documents/local_research_data",
 		# "buildstock_output_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data"), 
 
 		"federal_poverty_levels": ['0-100%', '100-150%', '150-200%'],   # federal poverty levels to match format of buildstock_file
@@ -45,7 +45,7 @@ if __name__ == '__main__':
 												# See discussion in ASSET Lab
 		"keep_cities": [
 			# "AZ, Phoenix",
-			# "CA, Los Angeles",
+			"CA, Los Angeles",
 			# "CO, Denver",
 			# "FL, Orlando",
 			# "GA, Atlanta",
@@ -53,12 +53,12 @@ if __name__ == '__main__':
 			# "IL, Chicago",
 			# "KS, Kansas City",
 			# "MA, Boston",
-			# "MI, Detroit",
+			"MI, Detroit",
 			# "MN, Minneapolis",
 			# "NE, Omaha",
 			# "NY, New York",
-			"PA, Philadelphia",
-			"TX, Dallas"
+			# "PA, Philadelphia",
+			# "TX, Dallas"
 			],
 
 		"exclude_cities": ['In another census Place', 'Not in a census Place']     # can be an empty list
@@ -66,29 +66,29 @@ if __name__ == '__main__':
 
 	oedi_querying_arguments = {
 		"oedi_download_folder": filtering_arguments['buildstock_output_folder'],
-		"bldg_download_folder_basename": 'buildings_testing',                               # set as desired. Root name for folder of generated files
+		"bldg_download_folder_basename": 'buildings_LA_Detroit',                               # set as desired. Root name for folder of generated files
 		"unzip": True,      # default False
 		}
 
 	epw_data = {
 		# Mac Example
-		"weather_folder": "/Users/camilotoruno/Documents/local_research_data/TGWEPWs_trimmed",
+		# "weather_folder": "/Users/camilotoruno/Documents/local_research_data/TGWEPWs_trimmed",
 		# "weather_folder": os.path.join(os.path.sep, "Users", "camilotoruno", "Documents", "ctoruno", "weather"), 
 
 		# # Windows example
 		# "weather_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data", "weather"),
 
 		# Turbo location 
-		# "weather_folder": os.path.join(os.path.sep, "Volumes", "seas-mtcraig", "EPWFromTGW", "TGWEPWs"), 
+		"weather_folder": "/Volumes/seas-mtcraig/EPWFromTGW/TGWEPWs", 
 		# "weather_folder": os.path.join(os.path.sep, "Z:", "EPWFromTGW", "TGWEPWs"), 
 
-		"scenario_folders": ["historical_1980-2020", "rcp45cooler_2020-2060"]#, "rcp45hotter_2020-2060", "rcp85cooler_2020-2060"],
+		"scenario_folders": ["historical_1980-2020", "rcp45cooler_2020-2060", "rcp45hotter_2020-2060", "rcp85cooler_2020-2060"], # ["historical_1980-2020", "rcp45cooler_2020-2060", "rcp45hotter_2020-2060", "rcp85cooler_2020-2060"],
 		}
 
 	openstudio_workflow_arguments = {
 		# Mac example
-		"openstudio_path": os.path.join(os.path.sep, "usr", "local", "bin", "openstudio"),        # Set to local path. Requires openstudio version 3.4.0 in bin
-		"openstudio_application_path": os.path.join(os.path.sep, "Applications", "OpenStudio-3.4.0"),  # set the OpenStudio application path to your downloaded copy. Requires OpenStudio 3.4.0
+		"openstudio_path": "/usr/local/bin/openstudio",        # Set to local path. Requires openstudio version 3.4.0 in bin
+		"openstudio_application_path": "/Applications/OpenStudio-3.4.0",  # set the OpenStudio application path to your downloaded copy. Requires OpenStudio 3.4.0
 
 		# # Windows example 
 		# "openstudio_path": os.path.join(os.path.sep, "openstudio-3.4.0", "bin", "openstudio.exe"),        # Set to local path. Requires openstudio version 3.4.0 in bin
@@ -101,17 +101,17 @@ if __name__ == '__main__':
 	}
 
 	misc_arguments = {
-		# set the location of your virtual environment 
+		# Set the location of your virtual environment 
 		# Mac example
-		"conda_venv_dir": os.path.join(os.path.sep, "Users", "camilotoruno", "anaconda3", "envs", "research"),
+		"conda_venv_dir": "/Users/camilotoruno/anaconda3/envs/research",
 
 		# # Windows example
 		# "conda_venv_dir": os.path.join(os.path.sep, "Users", "ctoruno", "AppData", "Local", "anaconda3", "envs", "ResStock2EnergyPlus"),
 
 		"verbose": False,
-		"overwrite_output": True,
+		"overwrite_output": False,
 		"cwd": cwd,
-		"max_cpu_load": 0.7      # must be in the range [0, 1]. The value 1 indidcates all CPU cores, 0 indicates 1 CPU core
+		"max_cpu_load": 0.4      # must be in the range [0, 1]. The value 1 indidcates all CPU cores, 0 indicates 1 CPU core
 		}
 	
 	# add calculated openstudio arguments to user arguments

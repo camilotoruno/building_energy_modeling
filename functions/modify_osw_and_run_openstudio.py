@@ -47,6 +47,7 @@ def run_job(job):
         with open(openstudio_args['osw_path'] , 'r') as f:
             openstudio_workflow_file = json.load(f)
 
+        # set the input and output for openstudio in the openstudio workflow file
         openstudio_workflow_file['steps'][0]['arguments']['hpxml_path'] = job.bldg.modified_xml  
         openstudio_workflow_file['steps'][0]['arguments']['output_dir'] = os.path.join('..', 'workflow', 'run')
 
@@ -60,22 +61,22 @@ def run_job(job):
             shell = True,  # Set to False if not using shell features
             cwd = openstudio_args["hpxml_measures_folder"],
             capture_output = True,
-            text = True
-            )
+            text = True)
         
         # Check for errors and process the output
         if result.returncode != 0:
-            print("\n\tError running OpenStudio:", result.stderr)
+            print("\n\tOpenStudio output:", result.stdout)
+            raise RuntimeError(f"OpenStudio failed with Error {result.returncode}. See run logs located at {os.path.join(openstudio_args.openstudio_workflow_folder, 'run', 'run.log')}")
         if job.arguments["verbose"]:
             print("\n\tOpenStudio output:", result.stdout)
-        
-        # copy the generated .idf file to the correct output folder
-        generated_idf = os.path.join(openstudio_args["openstudio_workflow_folder"], 'run', 'in.idf')
-        shutil.copy(generated_idf, job.bldg.idf)
-        
+                
         # copy the run log
         shutil.copy(os.path.join(openstudio_args["openstudio_workflow_folder"], 'run', 'run.log'), 
                     os.path.join(job.bldg.folder, job.bldg.filebasename + "_osw.log"))
+        
+        # copy the generated .idf file from the working folder to the correct output folder
+        generated_idf = os.path.join(openstudio_args["openstudio_workflow_folder"], 'run', 'in.idf')
+        shutil.copy(generated_idf, job.bldg.idf)
 
     # raise errors if they occured while reading openstudio json file
     except (ValueError, json.JSONDecodeError) as e:
