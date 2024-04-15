@@ -66,7 +66,7 @@ def run_job(job):
         # Check for errors and process the output
         if result.returncode != 0:
             print("\n\tOpenStudio output:", result.stdout)
-            raise RuntimeError(f"OpenStudio failed with Error {result.returncode}. See run logs located at {os.path.join(openstudio_args.openstudio_workflow_folder, 'run', 'run.log')}")
+            raise RuntimeError(f"OpenStudio failed with Error {result.returncode}. See run logs located at {os.path.join(openstudio_args.get('openstudio_workflow_folder'), 'run', 'run.log')}")
         if job.arguments["verbose"]:
             print("\n\tOpenStudio output:", result.stdout)
                 

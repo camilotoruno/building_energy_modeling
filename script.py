@@ -47,8 +47,8 @@ if __name__ == '__main__':
 			# "AZ, Phoenix",
 			"CA, Los Angeles",
 			# "CO, Denver",
-			# "FL, Orlando",
-			# "GA, Atlanta",
+			"FL, Orlando",
+			"GA, Atlanta",
 			# "ID, Boise City",
 			# "IL, Chicago",
 			# "KS, Kansas City",
@@ -56,7 +56,7 @@ if __name__ == '__main__':
 			"MI, Detroit",
 			# "MN, Minneapolis",
 			# "NE, Omaha",
-			# "NY, New York",
+			"NY, New York",
 			# "PA, Philadelphia",
 			# "TX, Dallas"
 			],
@@ -82,7 +82,15 @@ if __name__ == '__main__':
 		"weather_folder": "/Volumes/seas-mtcraig/EPWFromTGW/TGWEPWs", 
 		# "weather_folder": os.path.join(os.path.sep, "Z:", "EPWFromTGW", "TGWEPWs"), 
 
-		"scenario_folders": ["historical_1980-2020", "rcp45cooler_2020-2060", "rcp45hotter_2020-2060", "rcp85cooler_2020-2060"], # ["historical_1980-2020", "rcp45cooler_2020-2060", "rcp45hotter_2020-2060", "rcp85cooler_2020-2060"],
+		"scenario_folders": [
+                "historical_1980-2020",
+                "rcp45cooler_2020-2060",
+                # "rcp45cooler_2060-2100",
+                # "rcp45hotter_2020-2060",
+                # "rcp45hotter_2060-2100",
+                "rcp85cooler_2020-2060",
+                ### "rcp85cooler_2060-2100", - incomplete epw data 
+                ], 
 		}
 
 	openstudio_workflow_arguments = {
@@ -111,7 +119,7 @@ if __name__ == '__main__':
 		"verbose": False,
 		"overwrite_output": False,
 		"cwd": cwd,
-		"max_cpu_load": 0.4      # must be in the range [0, 1]. The value 1 indidcates all CPU cores, 0 indicates 1 CPU core
+		"max_cpu_load": 0.7      # must be in the range [0, 1]. The value 1 indidcates all CPU cores, 0 indicates 1 CPU core
 		}
 	
 	# add calculated openstudio arguments to user arguments

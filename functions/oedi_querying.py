@@ -80,6 +80,8 @@ def generate_job_list(building_objects_list, **kwargs):
     return jobs
 
 def download_unzip(building_objects_list, **kwargs): 
+    num_threads = 20
+
     startTime = time.time()
 
     # laod arguments 
@@ -88,15 +90,14 @@ def download_unzip(building_objects_list, **kwargs):
     # oedi has a standard form for how a bldg id maps to a folder name, generate it
     jobs = generate_job_list(building_objects_list, **kwargs)
 
-    s3 = boto3.client('s3', config = Config(signature_version = UNSIGNED))
+    s3 = boto3.client('s3', config = Config(signature_version = UNSIGNED))   # connect to Amazon S3 API client 
 
     print(f'Downloading {len(jobs)} building files from OEDI...')
-    print(f"Rough download time estimate: {round(0.1375*len(jobs)/60, 2)} min")
+    print(f"Rough download time estimate: {round(0.2865*len(jobs)/60/num_threads, 2)} min")
 
     # Create a progress bar with total number of buildings
     # pbar = tqdm(total=len(building_objects_list), desc="Downloading OEDI files", smoothing=0.01)
     # num_threads = math.floor(multiprocessing.cpu_count() * (3/4)) * 40
-    num_threads = 20
     download_queue = queue.Queue()
 
     # Create worker threads
