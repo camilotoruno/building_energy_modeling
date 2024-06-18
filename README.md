@@ -32,6 +32,11 @@ The script.py can be run from terminal or an IDE. Arguments for the functions ar
     
 Either run the script.py from your favorite IDE with the anaconda envrionment's python as the interpretter or navigate to the folder where script.py is located, activate your anaconda environment with ```conda activate <env_name>``` and then call ```python script.py```
 
+Note, if the script fails mid run, and must be restarted, and the overwrite_existing_output is false, the script will skip over the files it generated in the first run and generate the ones it didn't get to. However, the script will fail to update the idf files with the schedules file and desired simulation output. To ensure all files are correctly genereated / modified, run the workflow with everything commented out after the function call ```building_objects_list = modify_osw_and_run_openstudio.modify_and_run(building_objects_list, **arguments)``` to generate the building files. Then re-run the script with the function the following function calls commented out 
+- ```building_objects_list = oedi_querying.download_unzip(building_objects_list, **arguments)```
+- ```building_objects_list = xml_modifier.modify_xml_files(building_objects_list, **arguments)```
+- ```building_objects_list = modify_osw_and_run_openstudio.modify_and_run(building_objects_list, **arguments)```
+
 ## Defining EnergyPlus simulation output
 See page 2746 of the file ```EnergyPlus-22-1-0/Documentation/InputOutputReference.pdf``` for useful guidance on setting output to be generated in the EnergyPlus simulation. 
 
