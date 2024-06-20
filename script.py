@@ -44,21 +44,31 @@ if __name__ == '__main__':
 												# buildings to reach a proprtionally statistically representative sample by federal poverty level. 
 												# See discussion in ASSET Lab
 		"keep_cities": [
-			# "AZ, Phoenix",
+			"AZ, Phoenix",
 			"CA, Los Angeles",
+			# "CA, San Diego",
+			# "CA, San Francisco",
 			# "CO, Denver",
-			"FL, Orlando",
-			"GA, Atlanta",
-			# "ID, Boise City",
-			# "IL, Chicago",
-			# "KS, Kansas City",
-			# "MA, Boston",
+			"FL, Jacksonville",
+			"FL, Miami",
+			"IL, Chicago",
+			# "IN, Indianapolis City Balance",
+			# "KY, Louisville Jefferson County Metro Government Balance",
+			"MD, Baltimore",
 			"MI, Detroit",
-			# "MN, Minneapolis",
-			# "NE, Omaha",
+			"MN, Duluth",
+			# "MT, Billings",
+			"NM, Albuquerque",
 			"NY, New York",
-			# "PA, Philadelphia",
-			# "TX, Dallas"
+			# "OH, Cleveland",
+			"OK, Oklahoma City",
+			"OR, Portland",
+			"PA, Philadelphia",
+			"TN, Memphis",
+			"TX, Dallas",
+			"TX, Houston",
+			# "TX, San Antonio",
+			# "WI, Milwaukee",
 			],
 
 		"exclude_cities": ['In another census Place', 'Not in a census Place']     # can be an empty list
@@ -66,7 +76,7 @@ if __name__ == '__main__':
 
 	oedi_querying_arguments = {
 		"oedi_download_folder": filtering_arguments['buildstock_output_folder'],
-		"bldg_download_folder_basename": 'buildings_LA_Detroit',                               # set as desired. Root name for folder of generated files
+		"bldg_download_folder_basename": 'buildings',                               # set as desired. Root name for folder of generated files
 		"unzip": True,      # default False
 		}
 
@@ -119,7 +129,7 @@ if __name__ == '__main__':
 		"verbose": False,
 		"overwrite_output": False,
 		"cwd": cwd,
-		"max_cpu_load": 0.7      # must be in the range [0, 1]. The value 1 indidcates all CPU cores, 0 indicates 1 CPU core
+		"max_cpu_load": 0.5      # must be in the range [0, 1]. The value 1 indidcates all CPU cores, 0 indicates 1 CPU core
 		}
 	
 	# add calculated openstudio arguments to user arguments
@@ -144,7 +154,7 @@ if __name__ == '__main__':
 	# Find the weather files for each building and scenario and attach to each bldg in building objects list
 	building_objects_list = epw_finder.weather_file_lookup(building_objects_list, **arguments)
 
-	# Query oedi for the required building zip file
+	# # Query oedi for the required building zip file
 	building_objects_list = oedi_querying.download_unzip(building_objects_list, **arguments)
 
 	# if the files were unzipped, proceed with processing 
