@@ -14,6 +14,9 @@ import time
 import pandas as pd
 from pathlib import Path
 
+import xml.etree.ElementTree as ET
+
+
 # import custom classes and functions
 from functions import oedi_querying 
 from functions import buildstock_filtering 
@@ -22,9 +25,11 @@ from functions import modify_osw_and_run_openstudio
 from functions import argument_builder  
 from functions import reset_idf_schedules_path
 from functions import epw_finder
+import shutil
 
 if __name__ == '__main__':
 	multiprocessing.freeze_support()
+	cwd = os.getcwd()   
 
 	######################################### SET USER DEFINED ARGUMENTS ####################################################################
 	filtering_arguments = {
@@ -39,11 +44,10 @@ if __name__ == '__main__':
 		# "buildstock_output_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data"), 
 
 		"federal_poverty_levels": ['0-100%', '100-150%', '150-200%'],   # federal poverty levels to match format of buildstock_file
-		"statistical_sample_size": 800,         # statistically representative sample size for a city. DOES NOT DEFINE CITY SIZE LIMIT.
+		"statistical_sample_size": 400,         # statistically representative sample size for a city. DOES NOT DEFINE CITY SIZE LIMIT.
 												# Defines what we consider a statistically representative sample size, then scales the number of 
 												# buildings to reach a proprtionally statistically representative sample by federal poverty level. 
 												# See discussion in ASSET Lab
-												
 		"keep_cities": [
 			"AZ, Phoenix",
 			"CA, Los Angeles",
@@ -59,17 +63,20 @@ if __name__ == '__main__':
 			"MI, Detroit",
 			"MN, Duluth",
 			"MT, Billings",
-			"NM, Albuquerque",
-			"NY, New York",
-			"OH, Cleveland",
-			"OK, Oklahoma City",
-			"OR, Portland",
-			"PA, Philadelphia",
-			"TN, Memphis",
-			"TX, Dallas",
-			"TX, Houston",
-			"TX, San Antonio",
-			"WI, Milwaukee",
+
+
+
+			# "NM, Albuquerque",
+			# "NY, New York",
+			# "OH, Cleveland",
+			# "OK, Oklahoma City",
+			# "OR, Portland",
+			# "PA, Philadelphia",
+			# "TN, Memphis",
+			# "TX, Dallas",
+			# "TX, Houston",
+			# "TX, San Antonio",
+			# "WI, Milwaukee",
 			],
 
 		"exclude_cities": ['In another census Place', 'Not in a census Place']     # can be an empty list
@@ -77,7 +84,7 @@ if __name__ == '__main__':
 
 	oedi_querying_arguments = {
 		"oedi_download_folder": filtering_arguments['buildstock_output_folder'],
-		"bldg_download_folder_basename": 'buildings2',                               # set as desired. Root name for folder of generated files
+		"bldg_download_folder_basename": 'buildings',                               # set as desired. Root name for folder of generated files
 		"unzip": True,      # default False
 		}
 
@@ -95,12 +102,12 @@ if __name__ == '__main__':
 
 		"scenario_folders": [
                 "historical_1980-2020",
-                # "rcp45cooler_2020-2060",
+                "rcp45cooler_2020-2060",
                 # "rcp45cooler_2060-2100",
                 "rcp45hotter_2020-2060",
                 # "rcp45hotter_2060-2100",
                 "rcp85cooler_2020-2060",
-                ## "rcp85cooler_2060-2100", - incomplete epw data 
+                ### "rcp85cooler_2060-2100", - incomplete epw data 
                 ], 
 		}
 
@@ -128,8 +135,8 @@ if __name__ == '__main__':
 
 		"verbose": False,
 		"overwrite_output": False,
-		"cwd": os.getcwd(),
-		"max_cpu_load": 2/12,      # must be in the range [0, 1]. The value 1 indidcates all CPU cores, 0 indicates 1 CPU core
+		"cwd": cwd,
+		"max_cpu_load": 6/12,      # must be in the range [0, 1]. The value 1 indidcates all CPU cores, 0 indicates 1 CPU core
 		}
 	
 	arguments = {**filtering_arguments, **oedi_querying_arguments, **epw_data, **openstudio_workflow_arguments, **idf_simulation_configuration, **misc_arguments}   	# add calculated openstudio arguments to user arguments
@@ -137,29 +144,90 @@ if __name__ == '__main__':
 	arguments = argument_builder.set_calculated_args(arguments)
 	argument_builder.file_check(**arguments)
 
-	#################################### FILTER / LOAD BUILDSTOCK ########################################################
+	####################################  ########################################################
 	startTime = time.time()
 
-	buildstock_filtering.filtering(**arguments)    		# Filter the buildstock data by the desired characteristics and save to download folder
+	configuration = reset_idf_schedules_path.init_eppy(arguments.get('idf_configuration'), **arguments)
 
-	#################################### BEGING PROCESSING DATA ########################################################
-	buildstock = pd.read_csv(Path(arguments["buildstock_output_folder"], arguments['bldg_download_folder_basename'], 'buildstock.csv'))   # load the filtered buildstock 
-	building_objects_list = argument_builder.initialize_bldg_obj_ls(buildstock)     	# capture a list of custom objects to track the folders, id and other useful info for each building
+	counter = 0
 
-	building_objects_list = epw_finder.weather_file_lookup(building_objects_list, **arguments)		# Find the weather files for each building and scenario and attach to each bldg in building objects list
+	base_folder = Path(arguments['oedi_download_folder'], arguments['bldg_download_folder_basename'])
+	for scenario in os.listdir(base_folder):
+		if ('.DS_Store' not in scenario) and ('.zip' not in scenario) and ('.csv' not in scenario): 
+			print('\n')
+			scenario_folder = Path(base_folder, scenario)
 
-	building_objects_list = oedi_querying.download_unzip(building_objects_list, **arguments)   		# Query oedi for the required building zip file
+			for city in os.listdir(scenario_folder):
+				if '.DS_Store' not in city: 
+					print('\n')
+					city_folder = Path(scenario_folder, city)
 
-	if arguments["unzip"]:  	# if the files were unzipped, proceed with processing 
-		building_objects_list = xml_modifier.modify_xml_files(building_objects_list, **arguments)    		#  Modify the xml files to allow openstudio workflow to run.
+					for file in os.listdir(city_folder):
+						if '.zip' in file: os.remove(Path(city_folder, file))
+						elif '.DS_Store' not in file: 
 
-		_ = modify_osw_and_run_openstudio.modify_and_run(building_objects_list, **arguments)  		# Call the openstudio command line interface to generate the .idf from .xml 
+							bldg_folder = Path(city_folder, file)
+							upper_level_schedules = Path(bldg_folder, 'schedules.csv')
 
-		reset_idf_schedules_path.set_Schedules_and_Output(building_objects_list, **arguments)           # set schedules to original from OEDI (not the one copied and renamed by the OpenStudio workflow)
+							for bldg_weather_year in os.listdir(bldg_folder):
 
-	# Calculate elapsed time in hours, minutes, seconds
-	elapsed_time = time.time() - startTime
-	hours = int(elapsed_time // 3600)
-	minutes = int((elapsed_time % 3600) // 60)
-	seconds = int(elapsed_time % 60)
-	print(f"\nWorkflow completed. {len(building_objects_list)} buildings generated in: {hours:02d}hr:{minutes:02d}min:{seconds:02d}sec \n")
+								if ('.DS_Store' not in bldg_weather_year) and ('.csv' not in bldg_weather_year):
+									bldg_weather_year_folder = Path(bldg_folder, bldg_weather_year)
+									lower_level_schedules = Path(bldg_weather_year_folder, 'schedules.csv')
+
+									if lower_level_schedules.exists():
+
+										if not upper_level_schedules.exists():
+											shutil.copy(lower_level_schedules, upper_level_schedules)
+
+										os.remove(lower_level_schedules)
+
+
+									for file in os.listdir(bldg_weather_year_folder):
+										
+										if '.idf' in file:
+
+											idf_obj = reset_idf_schedules_path.init_eppy(Path(bldg_weather_year_folder, file), **arguments)
+											
+											# modify each schedule:File entry in an .idf
+											for schedule in idf_obj.idfobjects['Schedule:File']:
+												schedule.File_Name = str(upper_level_schedules)   # NOTE: Changed to use absolute file path 
+
+											for field in configuration.idfobjects:
+
+												# if the configuration file IDF object has instances of the field type (len > 0)                
+												if len(configuration.idfobjects[field]) > 0:
+													try: 
+														idf_obj.idfobjects[field] = configuration.idfobjects[field]    # The building IDF may not have the field
+													except:           
+														# if the field isnt in the bldg file, add it then set its value 
+														print(f'IDF does not have field {field}')
+														# new_flag = idf_obj.newidfobject(field)
+														idf_obj.idfobjects[field] = configuration.idfobjects[field]
+
+											idf_obj.save()          # overwrite original with modifications
+
+											counter = counter + 1
+											elapsed_time = time.time() - startTime
+
+											print(f'\r{scenario}. {city}. Completed {counter} idf updates. Rate: {round(counter/elapsed_time,1)}.', end="")
+
+										if ('.xml' in file) and ('in.xml' not in file):
+											
+											ET.register_namespace("", "http://hpxmlonline.com/2019/10")
+											ET.register_namespace("xsi", 'http://www.w3.org/2001/XMLSchema-instance')
+											ET.register_namespace("", 'http://hpxmlonline.com/2019/10') 
+
+											file = Path(bldg_weather_year_folder, file)   
+											
+											try: 
+												tree = ET.parse(file)
+											except: 
+												raise RuntimeError(f"Error loading bldg xml file {file}")
+
+											root = tree.getroot()
+																					
+											xml_modifier.change_attrib_text(str(upper_level_schedules), root, attrib='SchedulesFilePath')
+											
+											# write the modified building xml file 
+											tree.write(file, encoding="UTF-8", xml_declaration=True)

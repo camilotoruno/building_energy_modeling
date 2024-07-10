@@ -15,6 +15,8 @@ import queue
 import time 
 import warnings 
 import tqdm 
+from pathlib import Path
+from datetime import datetime
 
 from botocore import UNSIGNED
 from botocore.client import Config
@@ -24,9 +26,14 @@ def unzip_files(building_objects_list):
         try: 
             with zipfile.ZipFile(bldg.zip, 'r') as zip_ref:
                 zip_ref.extractall(bldg.folder)
-            
+
+            if not Path(Path(bldg.folder).parents[0], "schedules.csv").exists():   # if we've not yet copied the schedules to the parent folder 
+                shutil.copy(Path(bldg.folder, "schedules.csv"),  Path(Path(bldg.folder).parents[0], "schedules.csv"))  # copy the schedules file to the building-weather year folder to the building parent directory 
+
+            if Path(bldg.folder, "schedules.csv").exists(): os.remove(Path(bldg.folder, "schedules.csv"))   # delete the building-weather year's local copy of the schedules to reduce data storage requriement 
+
         except: 
-            raise Exception('\nError:', bldg.zip, 'failed to unzip')
+            raise RuntimeError('\nError:', bldg.zip, 'failed to unzip')
         
         
 def download_worker(q, s3):
@@ -40,12 +47,12 @@ def download_worker(q, s3):
                 Key=bldg.oedi_zip_fldr,
                 Filename=bldg.zip)
         except Exception as e:
-            raise FileNotFoundError(f"Building {bldg.id} failed to download. Error: {e}")
+            raise RuntimeError(f"Building {bldg.id} failed to download. Error: {e}")
         q.task_done()  # Signal task completion for queue management
 
 
 def file_check(**kwargs): 
-    download_folder = os.path.join(kwargs.get('oedi_download_folder'), kwargs.get('bldg_download_folder_basename'))
+    download_folder = Path(kwargs.get('oedi_download_folder'), kwargs.get('bldg_download_folder_basename'))
     
     if not os.path.exists(download_folder):
         print(f'Making output folder {download_folder}')
@@ -59,16 +66,16 @@ def file_check(**kwargs):
 
     else: print(f"Download folder exists and overwrite not enabled. Existing files will be skipped during processing.")
 
+
 def generate_job_list(building_objects_list, **kwargs):
     jobs = []
 
     if building_objects_list:    # If a bldg objects list is passed check for folders. 
-        # Create / check for building folders
-        for bldg in building_objects_list:
-            if not os.path.exists(bldg.folder):
+        for bldg in building_objects_list:          # check for building folders to determine whether to download 
+            if not Path(bldg.folder).exists():
                 os.makedirs(bldg.folder)  # Create a new one
                 jobs.append(bldg)
-
+            
             elif kwargs.get('overwrite_output'):
                 if kwargs.get('verbose'): warnings.warn(f"Output building folder '{bldg.folder}' overwritten.")
                 shutil.rmtree(bldg.folder)  # Remove existing folder
@@ -93,7 +100,7 @@ def download_unzip(building_objects_list, **kwargs):
     s3 = boto3.client('s3', config = Config(signature_version = UNSIGNED))   # connect to Amazon S3 API client 
 
     print(f'Downloading {len(jobs)} building files from OEDI...')
-    print(f"Rough download time estimate: {round(0.2865*len(jobs)/60/num_threads, 2)} min")
+    print(f'Rough download time estimate: {round(0.2865*len(jobs)/60/num_threads, 2)} min. Start time: {datetime.now().strftime("%H:%M:%S")}')
 
     # Create a progress bar with total number of buildings
     # pbar = tqdm(total=len(building_objects_list), desc="Downloading OEDI files", smoothing=0.01)
@@ -136,5 +143,8 @@ def download_unzip(building_objects_list, **kwargs):
     # update the bldg objects with xml file names
     for i in range(len(building_objects_list)):
         building_objects_list[i].assign_folders_contents()
+
+        if Path(building_objects_list[i].zip).exists():
+            os.remove(building_objects_list[i].zip)  # delete the zip file to reduce data storage 
     
     return building_objects_list

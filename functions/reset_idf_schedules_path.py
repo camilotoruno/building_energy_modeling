@@ -10,6 +10,9 @@ from eppy.modeleditor import IDF
 import sys
 import os 
 import tqdm
+from copy import copy
+import math
+import multiprocessing
 
 def init_eppy(idf, **kwargs):
     # load the function's arguments 
@@ -26,26 +29,21 @@ def init_eppy(idf, **kwargs):
 
     return IDF(idf)
 
-def set_Schedules_Paths_Relative(buildings, **kwargs):
 
-    for bldg in tqdm.tqdm(buildings, total=len(buildings), desc = 'Setting IDF schedules paths relative', smoothing=0.01):
+def worker(job):
+        bldg = job
+        kwargs = job.kwargs
         idf_obj = init_eppy(bldg.idf, **kwargs)
+        configuration = init_eppy(kwargs.get('idf_configuration'), **kwargs)
+
+        if bldg.schedules == None: 
+            raise RuntimeError(f"Bldg has None schedules. {bldg.weather_scenario} / {bldg.city} / Bldg {bldg.id}")
 
         # modify each schedule:File entry in an .idf
         for schedule in idf_obj.idfobjects['Schedule:File']:
-            # remove all the filepath, leaving just the file name for relative file path instead of absolute file path
-            schedule.File_Name = os.path.basename(bldg.schedules)
-
-        idf_obj.save()          # overwrite original with modifications
-
-def set_EnergyPlus_Simulation_Output(buildings, **kwargs):
-
-    # For each building 
-    for bldg in tqdm.tqdm(buildings, total=len(buildings), desc = 'Setting IDF simulation outputs', smoothing=0.01):
+            schedule.File_Name = str(bldg.schedules)   # NOTE: Changed to use absolute file path 
 
         # load the IDF
-        idf_obj = init_eppy(bldg.idf, **kwargs)
-        configuration = init_eppy(kwargs.get('idf_configuration'), **kwargs)
         # print(f'Configuration file: {configuration}')
 
         # raise RuntimeError
@@ -64,19 +62,41 @@ def set_EnergyPlus_Simulation_Output(buildings, **kwargs):
         # for key, value in configuration.getiddgroupdict().items():
         #     print(f'key, value: {key} \t\t {value}\n\n')
 
-
         # print(f"getiddgroupdict: {configuration.getiddgroupdict()}")
+
         for field in configuration.idfobjects:
 
             # if the configuration file IDF object has instances of the field type (len > 0)                
             if len(configuration.idfobjects[field]) > 0:
-                try: 
-                    idf_obj.idfobjects[field] = configuration.idfobjects[field]    # The building IDF may not have the field
-                except:           
-                    # if the field isnt in the bldg file, add it then set its value 
-                    print(f'IDF does not have field {field}')
-                    new_flag = idf_obj.newidfobject(field)
+                try:   # The building IDF may not have the field
+                    idf_obj.idfobjects[field] = configuration.idfobjects[field]  
+                except:  # if the field isnt in the bldg file, add it then set its value 
+                    if kwargs.get('verbose'): print(f'IDF does not have field {field}')
+                    # new_flag = idf_obj.newidfobject(field)
                     idf_obj.idfobjects[field] = configuration.idfobjects[field]
 
-        # raise RuntimeError
         idf_obj.save()          # overwrite original with modifications
+
+        
+def set_Schedules_and_Output(buildings, **kwargs):
+
+    # assign arguments for job list
+    jobs = []
+    for bldg in buildings: 
+        job = copy(bldg)
+        job.kwargs = kwargs
+        jobs.append(job)
+
+    # Setup the job pool
+    # at least one CPU core, up to max_cpu_load * num_cpu_cores, no more cores than jobs
+    num_cpus = max(min( math.floor( kwargs.get('max_cpu_load') * multiprocessing.cpu_count()), len(jobs)), 1)    
+    pool = multiprocessing.Pool(processes=num_cpus)
+    no_jobs = len(jobs)
+    
+    # Execute the job pool and track progress with tqdm progress bar
+    print(f'Setting {len(jobs)} IDF schedules paths using {num_cpus} CPU cores')
+    for _ in tqdm.tqdm(pool.imap_unordered(worker, jobs), total=no_jobs, desc="Setting IDF schedules and Simulation Configuration", smoothing=0.01):
+        pass
+
+
+        

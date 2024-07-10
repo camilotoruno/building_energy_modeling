@@ -6,6 +6,7 @@ Created on Mon Feb 26 20:32:22 2024
 @author: camilotoruno
 """
 import os 
+from pathlib import Path
 
 class BuildingFilesData:
     """
@@ -36,13 +37,15 @@ class BuildingFilesData:
         self.zip = None
 
 
-    def assign_folders_contents(self):  
+    def assign_folders_contents(self):
+        for file in os.listdir(Path(self.folder).parents[0]):
+            if "schedules.csv" in file and self.schedules == None:
+                self.schedules = Path(Path(self.folder).parents[0], file) 
+
         for file in os.listdir(self.folder):
             filepath = os.path.join(self.folder, file)
-            if "schedules.csv" in file and self.schedules == None:
-                # original schedules file downloaded for OEDI 
-                self.schedules = filepath
-            elif "in.xml" in file and self.xml == None:
+
+            if "in.xml" in file and self.xml == None:
                 self.xml = filepath
             elif "in.idf" in file and self.idf == None:
                 self.idf = filepath 
@@ -51,9 +54,3 @@ class BuildingFilesData:
                 # alpha numeric suffix that openstudio generates and 
                 # points the .idf files to.  
                 self.schedules_new = filepath
-                
-
-if __name__ == "__main__":
-    # Code that executes only when the script is run directly
-    # (This part is optional and can be left empty)
-    None
