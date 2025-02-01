@@ -125,9 +125,10 @@ def file_check(**kwargs):
         raise OSError(f"Could not find output folder {kwargs.get('buildstock_output_folder')}")
 
 
-def determine_representative_sample_size(buildstock, keep_cities, statistical_sample_size):
+def determine_representative_sample_size(buildstock, keep_cities, statistical_sample_size, verbose):
     sub_samples = {}
     for city in keep_cities:
+        if verbose: print(f"Determining representative sample size for {city}")
         total_num_houses = sum(buildstock["in.city"] == city)        
         sampling_fraction = min([statistical_sample_size / total_num_houses, 1])        # fraction cannot exceed 1 by use of min
         sub_samples.update({city: sampling_fraction})
@@ -151,7 +152,7 @@ def filtering(**kwargs):
     print('Loading buildstock and filtering..')
     ibuildstock = pd.read_csv(os.path.join(buildstock_folder, buildstock_file), low_memory=False)
     obuildstock = filter_cities(ibuildstock, keep_cities, exclude_cities, verbose)
-    representative_sample_fracs = determine_representative_sample_size(obuildstock, keep_cities, statistical_sample_size)
+    representative_sample_fracs = determine_representative_sample_size(obuildstock, keep_cities, statistical_sample_size, verbose)
     obuildstock = filter_poverty(obuildstock, federal_poverty_levels, verbose)
     obuildstock = obuildstock.reset_index(drop=True)   
     obuildstock = filter_city_size(obuildstock, representative_sample_fracs, keep_cities, verbose)

@@ -38,7 +38,7 @@ if __name__ == '__main__':
 		"buildstock_output_folder": "/Users/camilotoruno/Documents/local_research_data",
 		# "buildstock_output_folder": os.path.join(os.path.sep, "Users", "ctoruno", "Documents", "local_research_data"), 
 
-		"federal_poverty_levels": ['0-100%', '100-150%', '150-200%'],   # federal poverty levels to match format of buildstock_file
+		# "federal_poverty_levels": ['0-100%', '100-150%', '150-200%'],   # federal poverty levels to match format of buildstock_file
 		"statistical_sample_size": 800,         # statistically representative sample size for a city. DOES NOT DEFINE CITY SIZE LIMIT.
 												# Defines what we consider a statistically representative sample size, then scales the number of 
 												# buildings to reach a proprtionally statistically representative sample by federal poverty level. 
@@ -49,12 +49,12 @@ if __name__ == '__main__':
 			"CA, Los Angeles",
 			"CA, San Diego",
 			"CA, San Francisco",
-			# "CO, Denver",     # not in weather folder
+			"CO, Denver",     
 			"FL, Jacksonville",
 			"FL, Miami",
 			"IL, Chicago",
-			# "IN, Indianapolis",
-			# "KY, Louisville Jefferson County Metro Government Balance",   # not in weather folder
+			"IN, Indianapolis City Balance",
+			"KY, Louisville Jefferson County Metro Government Balance",   # not in weather folder - 8.5 cooler missing
 			"MD, Baltimore",
 			"MI, Detroit",
 			"MN, Duluth",
@@ -77,7 +77,7 @@ if __name__ == '__main__':
 
 	oedi_querying_arguments = {
 		"oedi_download_folder": filtering_arguments['buildstock_output_folder'],
-		"bldg_download_folder_basename": 'buildings2',                               # set as desired. Root name for folder of generated files
+		"bldg_download_folder_basename": 'buildings 24.08.12',                               # set as desired. Root name for folder of generated files
 		"unzip": True,      # default False
 		}
 
@@ -129,7 +129,7 @@ if __name__ == '__main__':
 		"verbose": False,
 		"overwrite_output": False,
 		"cwd": os.getcwd(),
-		"max_cpu_load": 2/12,      # must be in the range [0, 1]. The value 1 indidcates all CPU cores, 0 indicates 1 CPU core
+		"max_cpu_load": 6/12,      # must be in the range [0, 1]. The value 1 indidcates all CPU cores, 0 indicates 1 CPU core
 		}
 	
 	arguments = {**filtering_arguments, **oedi_querying_arguments, **epw_data, **openstudio_workflow_arguments, **idf_simulation_configuration, **misc_arguments}   	# add calculated openstudio arguments to user arguments
@@ -140,6 +140,7 @@ if __name__ == '__main__':
 	#################################### FILTER / LOAD BUILDSTOCK ########################################################
 	startTime = time.time()
 
+	# buildstock = buildstock_filtering.filtering(**arguments)    		# Filter the buildstock data by the desired characteristics and save to download folder
 	buildstock_filtering.filtering(**arguments)    		# Filter the buildstock data by the desired characteristics and save to download folder
 
 	#################################### BEGING PROCESSING DATA ########################################################
@@ -153,7 +154,7 @@ if __name__ == '__main__':
 	if arguments["unzip"]:  	# if the files were unzipped, proceed with processing 
 		building_objects_list = xml_modifier.modify_xml_files(building_objects_list, **arguments)    		#  Modify the xml files to allow openstudio workflow to run.
 
-		_ = modify_osw_and_run_openstudio.modify_and_run(building_objects_list, **arguments)  		# Call the openstudio command line interface to generate the .idf from .xml 
+		building_objects_list = modify_osw_and_run_openstudio.modify_and_run(building_objects_list, **arguments)  		# Call the openstudio command line interface to generate the .idf from .xml 
 
 		reset_idf_schedules_path.set_Schedules_and_Output(building_objects_list, **arguments)           # set schedules to original from OEDI (not the one copied and renamed by the OpenStudio workflow)
 
